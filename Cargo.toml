@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    "kmstool_enclave_lib",
+    "vaultron_enclave",
+    "vaultron_enclave_proxy"
+]
+resolver = "2"
+
+exclude = []
