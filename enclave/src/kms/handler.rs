@@ -1,10 +1,10 @@
-use crate::error::EnclaveError;
+use crate::common::EnclaveError;
 use anyhow::Result;
 use enclave_kmstool::{KmsDecryptRequest, KmsEncryptRequest, KmsInitRequest, KmsToolTrait};
 use log::info;
 use std::{sync::Arc, thread::sleep};
 
-#[cfg(not(feature = "mock_kms_for_workflow"))]
+#[cfg(not(feature = "workflow_build_feature"))]
 use enclave_kmstool::create_kmstool_clib_client;
 
 pub fn create_kms_handler() -> Result<(), EnclaveError> {
@@ -37,12 +37,12 @@ pub fn create_kms_handler() -> Result<(), EnclaveError> {
 }
 
 fn create_kms_client() -> Result<Arc<dyn KmsToolTrait + 'static>, EnclaveError> {
-    #[cfg(feature = "mock_kms_for_workflow")]
+    #[cfg(feature = "workflow_build_feature")]
     {
-        Err(EnclaveError::AwsEnclavesSdkCNotEnabledError)
+        panic!("KMS client is not available in workflow mode - this code path should not be executed in workflows")
     }
 
-    #[cfg(not(feature = "mock_kms_for_workflow"))]
+    #[cfg(not(feature = "workflow_build_feature"))]
     {
         Ok(create_kmstool_clib_client())
     }

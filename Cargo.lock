@@ -209,8 +209,6 @@ dependencies = [
  "cexpr",
  "clang-sys",
  "itertools 0.13.0",
- "log",
- "prettyplease 0.2.30",
  "proc-macro2",
  "quote",
  "regex",
@@ -349,6 +347,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "bindgen",
+ "byteorder",
  "libc",
  "log",
  "thiserror 2.0.12",
@@ -1142,16 +1141,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "prettyplease"
-version = "0.2.30"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f1ccf34da56fc294e7d4ccf69a85992b7dfb826b7cf57bac6a70bba3494cc08a"
-dependencies = [
- "proc-macro2",
- "syn 2.0.99",
-]
-
-[[package]]
 name = "proc-macro2"
 version = "1.0.94"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1183,7 +1172,7 @@ dependencies = [
  "log",
  "multimap",
  "petgraph",
- "prettyplease 0.1.25",
+ "prettyplease",
  "prost",
  "prost-types",
  "regex",

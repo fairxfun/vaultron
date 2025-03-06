@@ -2,19 +2,18 @@ name: Build
 
 on:
   push:
-    branches: ["master"]
+    branches: ["main"]
   pull_request:
     branches: ["*"]
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: [self-hosted, linux, X64]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.PACKAGES_TOKEN }}
-          lfs: true
           submodules: recursive
           persist-credentials: false
 
@@ -44,11 +43,11 @@ jobs:
         run: cargo fmt --all -- --check
 
       - name: Run Clippy
-        timeout-minutes: 60
+        timeout-minutes: 30
         run: cargo clippy --all-targets --all-features -j 4 -- -D warnings
 
       - name: Run Test
-        run: cargo llvm-cov test --no-report --features "mock_kms_for_workflow"
+        run: cargo llvm-cov test --no-report --all-features
 
       - name: Generate Coverage
         run: cargo llvm-cov report --lcov --output-path=lcov.info
@@ -60,4 +59,9 @@ jobs:
           fail_ci_if_error: true
 
       - name: Check Dirty Files
-        run: git diff --quiet || (echo "some generated files are not included in repo" && exit 1)
+        run: |
+          if ! git diff --quiet; then
+            echo "Some generated files are not included in repo:"
+            git diff --name-only
+            exit 1
+          fi

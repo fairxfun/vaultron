@@ -1,6 +1,6 @@
+use super::kmstool_enclave_lib::KMSTOOL_STATUS;
 use crate::c_lib::kmstool_enclave_lib::{
     kmstool_decrypt_params, kmstool_enclave_decrypt, kmstool_enclave_init, kmstool_encrypt_params, kmstool_init_params,
-    KMSTOOL_STATUS_KMSTOOL_SUCCESS,
 };
 use crate::{
     EnclaveKmstoolError, KmsDecryptRequest, KmsDecryptResponse, KmsEncryptRequest, KmsEncryptResponse, KmsInitRequest,
@@ -42,7 +42,7 @@ impl KmsToolTrait for KmsToolCLibClient {
 
         let rc = unsafe { kmstool_enclave_init(&params) };
 
-        if rc != KMSTOOL_STATUS_KMSTOOL_SUCCESS {
+        if rc != KMSTOOL_STATUS::KMSTOOL_SUCCESS as i32 {
             error!("kms tool enclave init error rc: {}", rc);
             return Err(EnclaveKmstoolError::AnyhowError(anyhow!(
                 "kmstool init failed with error code {}",
@@ -56,15 +56,15 @@ impl KmsToolTrait for KmsToolCLibClient {
     fn encrypt(&self, request: KmsEncryptRequest) -> anyhow::Result<KmsEncryptResponse, EnclaveKmstoolError> {
         let params = kmstool_encrypt_params {
             plaintext: request.plaintext.as_ptr(),
-            plaintext_len: request.plaintext.len(),
+            plaintext_len: request.plaintext.len() as u32,
         };
         let mut ciphertext_out: *mut u8 = ptr::null_mut();
-        let mut ciphertext_out_len: usize = 0;
+        let mut ciphertext_out_len: u32 = 0;
         let rc = unsafe {
             super::kmstool_enclave_lib::kmstool_enclave_encrypt(&params, &mut ciphertext_out, &mut ciphertext_out_len)
         };
 
-        if rc != super::kmstool_enclave_lib::KMSTOOL_STATUS_KMSTOOL_SUCCESS {
+        if rc != KMSTOOL_STATUS::KMSTOOL_SUCCESS as i32 {
             error!("kms tool enclave encrypt error rc: {}", rc);
             return Err(EnclaveKmstoolError::AnyhowError(anyhow!(
                 "kmstool encrypt with error code {}",
@@ -76,7 +76,7 @@ impl KmsToolTrait for KmsToolCLibClient {
             return Err(EnclaveKmstoolError::AnyhowError(anyhow!("Encryption output is null")));
         }
 
-        let ciphertext = unsafe { slice::from_raw_parts(ciphertext_out, ciphertext_out_len).to_vec() };
+        let ciphertext = unsafe { slice::from_raw_parts(ciphertext_out, ciphertext_out_len as usize).to_vec() };
         unsafe {
             libc::free(ciphertext_out as *mut libc::c_void);
         }
@@ -87,15 +87,15 @@ impl KmsToolTrait for KmsToolCLibClient {
     fn decrypt(&self, request: KmsDecryptRequest) -> anyhow::Result<KmsDecryptResponse, EnclaveKmstoolError> {
         let params = kmstool_decrypt_params {
             ciphertext: request.ciphertext.as_ptr(),
-            ciphertext_len: request.ciphertext.len(),
+            ciphertext_len: request.ciphertext.len() as u32,
         };
 
         let mut plaintext_out: *mut u8 = ptr::null_mut();
-        let mut plaintext_out_len: usize = 0;
+        let mut plaintext_out_len: u32 = 0;
 
         let rc = unsafe { kmstool_enclave_decrypt(&params, &mut plaintext_out, &mut plaintext_out_len) };
 
-        if rc != KMSTOOL_STATUS_KMSTOOL_SUCCESS {
+        if rc != KMSTOOL_STATUS::KMSTOOL_SUCCESS as i32 {
             error!("kms tool enclave decrypt error rc: {}", rc);
             return Err(EnclaveKmstoolError::AnyhowError(anyhow!(
                 "kmstool decrypt with error code {}",
@@ -106,7 +106,7 @@ impl KmsToolTrait for KmsToolCLibClient {
         if plaintext_out.is_null() {
             return Err(EnclaveKmstoolError::AnyhowError(anyhow!("Decryption output is null")));
         }
-        let plaintext = unsafe { slice::from_raw_parts(plaintext_out, plaintext_out_len).to_vec() };
+        let plaintext = unsafe { slice::from_raw_parts(plaintext_out, plaintext_out_len as usize).to_vec() };
         unsafe { libc::free(plaintext_out as *mut libc::c_void) };
         Ok(KmsDecryptResponse::builder().plaintext(plaintext).build())
     }

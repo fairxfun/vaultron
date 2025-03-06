@@ -7,7 +7,7 @@ edition = "2018"
 [features]
 default = []
 # Mock KMS functionality for CI/CD workflows and testing
-mock_kms_for_workflow = []
+workflow_build_feature = []
 
 [dependencies]
 anyhow = {version = "1.0"}
