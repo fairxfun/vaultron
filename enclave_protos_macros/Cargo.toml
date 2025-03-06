@@ -1,0 +1,13 @@
+[package]
+name = "enclave_protos_macros"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+heck = { version = "0.4.1" }
+proc-macro2 = { version = "1.0.56" }
+quote = { version = "1.0.27" }
+syn = { version = "2.0.15" }
