@@ -8,6 +8,8 @@ use thiserror::Error;
 pub enum EnclaveError {
     #[error("Failed to call kms decrypt: {0}")]
     KmsDecryptError(String),
+    #[error("aws enclave sdk c not enabled error")]
+    AwsEnclavesSdkCNotEnabledError,
     #[error(transparent)]
     EnclaveKmstoolError(#[from] EnclaveKmstoolError),
     #[error(transparent)]

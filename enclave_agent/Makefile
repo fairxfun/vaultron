@@ -8,11 +8,11 @@ build:
 # 	curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh -s -- -y
 # 	rustup target install ${ARCH}-unknown-linux-musl
 	cargo build --manifest-path=${RUST_DIR}/Cargo.toml --target=${ARCH}-unknown-linux-musl --release
-	cp ${RUST_DIR}/../target/${ARCH}-unknown-linux-musl/release/vaultron_enclave_proxy ${RUST_DIR}
+	cp ${RUST_DIR}/../target/${ARCH}-unknown-linux-musl/release/vaultron_enclave_agent ${RUST_DIR}
 
 start:
-	./vaultron_enclave_proxy
+	./vaultron_enclave_agent
 
 .PHONY: clean
 clean:
-	rm -rf ${RUST_DIR}/../target ${RUST_DIR}/vaultron_enclave_proxy
+	rm -rf ${RUST_DIR}/../target ${RUST_DIR}/vaultron_enclave_agent

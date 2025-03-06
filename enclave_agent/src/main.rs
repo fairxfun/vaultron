@@ -3,5 +3,5 @@ use enclave_agent::client::enclave_client;
 
 fn main() {
     let args = EnclaveArgs::builder().cid(1000).port(5001).build();
-    let _ = enclave_client(args).unwrap();
+    enclave_client(args).unwrap();
 }
