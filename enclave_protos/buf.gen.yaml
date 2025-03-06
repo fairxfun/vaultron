@@ -1,0 +1,27 @@
+version: v1
+managed:
+  enabled: true
+plugins:
+  - plugin: buf.build/community/neoeinstein-prost:v0.2.3
+    out: src/gen
+    opt:
+      - compile_well_known_types
+      - extern_path=.google.protobuf=::pbjson_types
+      - file_descriptor_set
+      - message_attribute=.=#[derive(typed_builder::TypedBuilder)]
+      - message_attribute=.=#[builder(field_defaults(default\, setter(into)))]
+      - message_attribute=.=#[derive(enclave_protos_macros::ProtoBuilder)]
+  - plugin: buf.build/community/neoeinstein-tonic:v0.3.0
+    opt:
+      - compile_well_known_types
+      - server_mod_attribute=.=#[cfg(feature = "grpc-server")]
+      - client_mod_attribute=.=#[cfg(feature = "grpc-client")]
+    out: src/gen
+  - plugin: buf.build/community/neoeinstein-prost-serde:v0.2.3
+    out: src/gen
+  - plugin: prost-crate
+    out: .
+    strategy: all
+    opt:
+      - include_file=src/gen/mod.rs
+      - gen_crate
