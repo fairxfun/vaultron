@@ -1,12 +1,18 @@
-use crate::error::EnclaveError;
-use crate::kms::create_kms_handler;
-use crate::trace::enclave_trace_init;
+use crate::{common::enclave_trace_init, common::EnclaveError, kms::create_kms_handler};
+use enclave_kmstool::KmsToolTrait;
 use log::info;
-use std::io::{Read, Write};
+use std::{
+    io::{Read, Write},
+    sync::Arc,
+};
 use vsock::{get_local_cid, VsockListener, VsockStream};
 
 const ENCLAVE_PORT: u32 = 5001;
 const BUF_MAX_LEN: usize = 8192;
+
+pub struct EnclaveServer<K: KmsToolTrait> {
+    pub kms_client: Arc<K>,
+}
 
 pub fn start_server() -> Result<(), EnclaveError> {
     enclave_trace_init("info")?;

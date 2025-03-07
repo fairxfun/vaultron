@@ -1,0 +1,67 @@
+name: Build
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["*"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          components: rustfmt, clippy, llvm-tools-preview
+
+      - name: Setup Buf
+        uses: bufbuild/buf-setup-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+
+      - name: Cargo Install
+        run: cargo install protoc-gen-prost-crate --force
+
+      - name: Build All Features
+        env:
+          RUSTFLAGS: "-D warnings"
+        run: cargo build --all-features
+
+      - name: Check Format
+        run: cargo fmt --all -- --check
+
+      - name: Run Clippy
+        timeout-minutes: 30
+        run: cargo clippy --all-targets --all-features -j 4 -- -D warnings
+
+      - name: Run Test
+        run: cargo llvm-cov test --no-report --all-features
+
+      - name: Generate Coverage
+        run: cargo llvm-cov report --lcov --output-path=lcov.info
+
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+
+      - name: Check Dirty Files
+        run: |
+          if ! git diff --quiet; then
+            echo "Some generated files are not included in repo:"
+            git diff --name-only
+            exit 1
+          fi

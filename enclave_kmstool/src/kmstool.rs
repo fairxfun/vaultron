@@ -51,3 +51,17 @@ pub trait KmsToolTrait {
     fn encrypt(&self, request: KmsEncryptRequest) -> anyhow::Result<KmsEncryptResponse, EnclaveKmstoolError>;
     fn decrypt(&self, request: KmsDecryptRequest) -> anyhow::Result<KmsDecryptResponse, EnclaveKmstoolError>;
 }
+
+impl KmsToolTrait for Box<dyn KmsToolTrait> {
+    fn init(&self, request: KmsInitRequest) -> anyhow::Result<(), EnclaveKmstoolError> {
+        self.as_ref().init(request)
+    }
+
+    fn encrypt(&self, request: KmsEncryptRequest) -> anyhow::Result<KmsEncryptResponse, EnclaveKmstoolError> {
+        self.as_ref().encrypt(request)
+    }
+
+    fn decrypt(&self, request: KmsDecryptRequest) -> anyhow::Result<KmsDecryptResponse, EnclaveKmstoolError> {
+        self.as_ref().decrypt(request)
+    }
+}

@@ -1,16 +1,29 @@
 [package]
 name = "enclave_kmstool"
 version = "0.1.0"
-authors = ["mike"]
+authors = ["mikerfrr"]
 edition = "2018"
 
+[features]
+default = []
+# Mock KMS functionality for CI/CD workflows and testing
+workflow_build_feature = []
+
 [dependencies]
-libc = "0.2.170"
-anyhow = { version = "1.0" }
-log = "0.4.25"
-byteorder = "1.3"
-thiserror = "2.0.11"
-typed-builder = "0.20.0"
+libc = {version = "0.2.170"}
+anyhow = {version = "1.0"}
+log = {version = "0.4.25"}
+byteorder = {version = "1.3"}
+thiserror = {version = "2.0.11"}
+typed-builder = {version = "0.20.0"}
 
 [build-dependencies]
-bindgen = "0.71.1"
+bindgen = {version = "0.71.1", default-features = false, features = ["runtime"]}
+
+[package.metadata.bindgen]
+generate_comments = false
+generate_block = true
+clean = true
+size_t_is_usize = true
+rustfmt_bindings = true
+sort_semantically = true
