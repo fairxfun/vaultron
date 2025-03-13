@@ -1,0 +1,15 @@
+[package]
+name = "enclave_utils"
+version = "0.1.0"
+authors = ["mikerfrr"]
+edition = "2021"
+
+[dependencies]
+anyhow = {version = "1.0.97"}
+ethers-core = {version = "2.0.14"}
+log = {version = "0.4.26"}
+rustc-hex = {version = "2.1.0"}
+serde = {version = "1.0.219", features = ["derive"]}
+serde_json = {version = "1.0.140"}
+thiserror = {version = "2.0.12"}
+typed-builder = {version = "0.20.0"}

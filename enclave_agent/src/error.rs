@@ -1,11 +1,7 @@
-use anyhow::Error as AnyhowError;
-use std::io::Error as IoError;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-pub enum FairxProxyError {
-    #[error(transparent)]
-    IoError(#[from] IoError),
-    #[error(transparent)]
-    AnyhowError(#[from] AnyhowError),
+pub enum EnclaveAgentError {
+    #[error("Failed to send request: {0}")]
+    VsockClientError(#[from] enclave_vsock::EnclaveVsockClientError),
 }
