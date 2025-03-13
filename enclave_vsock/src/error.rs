@@ -1,19 +1,13 @@
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-pub enum EnclaveVsockServerError {
+pub enum VsockServerError {
     #[error("IO error")]
     IoError(#[from] std::io::Error),
 }
 
 #[derive(Error, Debug)]
-pub enum EnclaveVsockClientError {
-    #[error("Protocol buffer encoding error")]
-    ProtobufEncodeError(#[from] prost::EncodeError),
-
-    #[error("Protocol buffer decoding error")]
-    ProtobufDecodeError(#[from] prost::DecodeError),
-
+pub enum VsockClientError {
     #[error("Lock error")]
     LockError,
 

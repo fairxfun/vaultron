@@ -7,10 +7,10 @@ impl serde::Serialize for CreateEnclaveWalletRequest {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
-        if self.user_id != 0 {
+        if !self.user_id.is_empty() {
             len += 1;
         }
-        if !self.user_account.is_empty() {
+        if !self.user_public_key.is_empty() {
             len += 1;
         }
         if self.signature_type != 0 {
@@ -23,11 +23,11 @@ impl serde::Serialize for CreateEnclaveWalletRequest {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.CreateEnclaveWalletRequest", len)?;
-        if self.user_id != 0 {
-            struct_ser.serialize_field("userId", ToString::to_string(&self.user_id).as_str())?;
+        if !self.user_id.is_empty() {
+            struct_ser.serialize_field("userId", pbjson::private::base64::encode(&self.user_id).as_str())?;
         }
-        if !self.user_account.is_empty() {
-            struct_ser.serialize_field("userAccount", pbjson::private::base64::encode(&self.user_account).as_str())?;
+        if !self.user_public_key.is_empty() {
+            struct_ser.serialize_field("userPublicKey", pbjson::private::base64::encode(&self.user_public_key).as_str())?;
         }
         if self.signature_type != 0 {
             let v = SignatureType::from_i32(self.signature_type)
@@ -52,8 +52,8 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletRequest {
         const FIELDS: &[&str] = &[
             "user_id",
             "userId",
-            "user_account",
-            "userAccount",
+            "user_public_key",
+            "userPublicKey",
             "signature_type",
             "signatureType",
             "message",
@@ -63,7 +63,7 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletRequest {
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             UserId,
-            UserAccount,
+            UserPublicKey,
             SignatureType,
             Message,
             Signature,
@@ -89,7 +89,7 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletRequest {
                     {
                         match value {
                             "userId" | "user_id" => Ok(GeneratedField::UserId),
-                            "userAccount" | "user_account" => Ok(GeneratedField::UserAccount),
+                            "userPublicKey" | "user_public_key" => Ok(GeneratedField::UserPublicKey),
                             "signatureType" | "signature_type" => Ok(GeneratedField::SignatureType),
                             "message" => Ok(GeneratedField::Message),
                             "signature" => Ok(GeneratedField::Signature),
@@ -113,7 +113,7 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletRequest {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut user_id__ = None;
-                let mut user_account__ = None;
+                let mut user_public_key__ = None;
                 let mut signature_type__ = None;
                 let mut message__ = None;
                 let mut signature__ = None;
@@ -124,14 +124,14 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletRequest {
                                 return Err(serde::de::Error::duplicate_field("userId"));
                             }
                             user_id__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
                             ;
                         }
-                        GeneratedField::UserAccount => {
-                            if user_account__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("userAccount"));
+                        GeneratedField::UserPublicKey => {
+                            if user_public_key__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("userPublicKey"));
                             }
-                            user_account__ = 
+                            user_public_key__ = 
                                 Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
                             ;
                         }
@@ -161,7 +161,7 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletRequest {
                 }
                 Ok(CreateEnclaveWalletRequest {
                     user_id: user_id__.unwrap_or_default(),
-                    user_account: user_account__.unwrap_or_default(),
+                    user_public_key: user_public_key__.unwrap_or_default(),
                     signature_type: signature_type__.unwrap_or_default(),
                     message: message__.unwrap_or_default(),
                     signature: signature__.unwrap_or_default(),

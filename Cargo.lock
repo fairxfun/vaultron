@@ -1351,17 +1351,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "enclave_socket"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "log",
- "thiserror 2.0.12",
- "typed-builder",
- "vsock",
-]
-
-[[package]]
 name = "enclave_tester"
 version = "0.1.0"
 dependencies = [
@@ -1400,7 +1389,6 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
- "enclave_socket",
  "log",
  "prost 0.13.5",
  "thiserror 2.0.12",

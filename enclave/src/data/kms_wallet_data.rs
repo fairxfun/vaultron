@@ -17,29 +17,29 @@ macro_rules! impl_serialization {
 
 #[derive(Debug, TypedBuilder, Serialize, Deserialize)]
 pub struct KmsAccountMnemonicPair {
-    pub user_id: u64,
-    pub user_account: Vec<u8>,
+    pub user_id: Vec<u8>,
+    pub user_public_key: Vec<u8>,
     pub mnemonic: String,
 }
 
 #[derive(Debug, TypedBuilder, Serialize, Deserialize)]
 pub struct KmsAccountEvmPair {
-    pub user_id: u64,
-    pub user_account: Vec<u8>,
+    pub user_id: Vec<u8>,
+    pub user_public_key: Vec<u8>,
     pub evm_private_key: Vec<u8>,
 }
 
 #[derive(Debug, TypedBuilder, Serialize, Deserialize)]
 pub struct KmsAccountSolanaPair {
-    pub user_id: u64,
-    pub user_account: Vec<u8>,
+    pub user_id: Vec<u8>,
+    pub user_public_key: Vec<u8>,
     pub solana_private_key: Vec<u8>,
 }
 
 #[derive(Debug, TypedBuilder, Serialize, Deserialize)]
 pub struct KmsAccountSuiPair {
-    pub user_id: u64,
-    pub user_account: Vec<u8>,
+    pub user_id: Vec<u8>,
+    pub user_public_key: Vec<u8>,
     pub sui_private_key: Vec<u8>,
 }
 

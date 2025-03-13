@@ -41,7 +41,7 @@ impl MessageHandler {
         let recovered_account = signature
             .recover(request_message_hash)
             .map_err(|_| EnclaveError::InvalidSignatureError)?;
-        let user_account = ethers_address_from_bytes(&request.user_account);
+        let user_account = ethers_address_from_bytes(&request.user_public_key);
         if recovered_account != user_account {
             return Err(EnclaveError::InvalidAccountError);
         }
@@ -54,8 +54,8 @@ impl MessageHandler {
         wallet: &enclave_wallet::MultiChainWallet,
     ) -> Result<CreateEnclaveWalletResponse, EnclaveError> {
         let kms_mnemonic = KmsAccountMnemonicPair::builder()
-            .user_id(request.user_id)
-            .user_account(request.user_account.clone())
+            .user_id(request.user_id.clone())
+            .user_public_key(request.user_public_key.clone())
             .mnemonic(wallet.mnemonic.clone())
             .build();
         let kms_mnemonic_bytes = kms_mnemonic.to_bytes()?;
@@ -66,8 +66,8 @@ impl MessageHandler {
         let encrypted_kms_mnemonic = ksm_response.ciphertext;
 
         let kms_evm = KmsAccountEvmPair::builder()
-            .user_id(request.user_id)
-            .user_account(request.user_account.clone())
+            .user_id(request.user_id.clone())
+            .user_public_key(request.user_public_key.clone())
             .evm_private_key(wallet.eth_keypair.private_key.clone())
             .build();
         let kms_evm_bytes = kms_evm.to_bytes()?;
@@ -78,8 +78,8 @@ impl MessageHandler {
         let encrypted_kms_evm = ksm_response.ciphertext;
 
         let kms_solana = KmsAccountSolanaPair::builder()
-            .user_id(request.user_id)
-            .user_account(request.user_account.clone())
+            .user_id(request.user_id.clone())
+            .user_public_key(request.user_public_key.clone())
             .solana_private_key(wallet.solana_keypair.private_key.clone())
             .build();
         let kms_solana_bytes = kms_solana.to_bytes()?;
@@ -90,8 +90,8 @@ impl MessageHandler {
         let encrypted_kms_solana = ksm_response.ciphertext;
 
         let kms_sui = KmsAccountSuiPair::builder()
-            .user_id(request.user_id)
-            .user_account(request.user_account.clone())
+            .user_id(request.user_id.clone())
+            .user_public_key(request.user_public_key.clone())
             .sui_private_key(wallet.sui_keypair.private_key.clone())
             .build();
         let kms_sui_bytes = kms_sui.to_bytes()?;

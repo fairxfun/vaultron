@@ -36,7 +36,7 @@ pub struct KeyPair {
 
 pub fn generate_multi_chain_wallet() -> Result<MultiChainWallet, EnclaveWalletError> {
     let mnemonic = generate_mnemonic(24)?;
-    let seed = mnemonic_to_seed(&mnemonic, "")?; // 空密码
+    let seed = mnemonic_to_seed(&mnemonic, "")?; // empty password
 
     debug!("Generated mnemonic with {} words", mnemonic.split_whitespace().count());
 

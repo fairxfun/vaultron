@@ -14,8 +14,8 @@ enum SignatureType {
 }
 
 message CreateEnclaveWalletRequest {
-    uint64        user_id          = 1;
-    bytes         user_account     = 2;
+    bytes         user_id          = 1;
+    bytes         user_public_key  = 2;
     SignatureType signature_type   = 3;
     bytes         message          = 4;
     bytes         signature        = 5;

@@ -1,16 +1,18 @@
 use crate::common::{enclave_trace_init, EnclaveError};
 use crate::message::create_message_handler;
 use crate::server::EnclaveServerContext;
-use anyhow::Result;
-use enclave_vsock::{create_vsock_server, VsockMessageHandlerTrait, VsockServer};
+use anyhow::{anyhow, Result};
+use enclave_vsock::{create_vsock_server, VsockMessageHandlerTrait, VsockServerTrait};
 use log::{error, info};
 use std::sync::Arc;
 use typed_builder::TypedBuilder;
 
+type EnclaveVsockServer = Box<dyn VsockServerTrait<EnclaveError>>;
+
 #[derive(Debug, TypedBuilder)]
 pub struct EnclaveServer {
     pub context: Arc<EnclaveServerContext>,
-    pub vsock_server: VsockServer<EnclaveError>,
+    pub vsock_server: Arc<EnclaveVsockServer>,
 }
 
 impl EnclaveServer {
@@ -20,6 +22,8 @@ impl EnclaveServer {
         let message_handler =
             Arc::new(Box::new(message_handler) as Box<dyn VsockMessageHandlerTrait<Error = EnclaveError>>);
         let vsock_server = create_vsock_server::<EnclaveError>(message_handler);
+        let vsock_server = Arc::new(Box::new(vsock_server) as EnclaveVsockServer);
+
         Ok(EnclaveServer::builder()
             .context(context)
             .vsock_server(vsock_server)
@@ -32,7 +36,7 @@ impl EnclaveServer {
         let result = self.vsock_server.start(port).await;
         if let Err(e) = result {
             error!("Failed to start vsock server: {}", e);
-            return Err(EnclaveError::AnyhowError(anyhow::anyhow!(e)));
+            return Err(EnclaveError::AnyhowError(anyhow!("Failed to start vsock server")));
         }
         Ok(())
     }

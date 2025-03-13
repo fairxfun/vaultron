@@ -3,14 +3,16 @@ use crate::{error::EnclaveAgentError, EnclaveAgentTrait};
 use enclave_protos::enclave::v1::{
     InitRequest, InitResponse, UpdateAwsCredentialsRequest, UpdateAwsCredentialsResponse,
 };
-use enclave_vsock::{create_vsock_client, VsockClient, VsockClientCreateOptions};
-use log::info;
+use enclave_vsock::{create_vsock_client, VsockClientCreateOptions, VsockClientTrait};
 use prost::Message;
+use std::sync::Arc;
 use typed_builder::TypedBuilder;
+
+type EnclaveVsockClient = Box<dyn VsockClientTrait>;
 
 #[derive(Debug, TypedBuilder)]
 pub(crate) struct EnclaveAgent {
-    client: VsockClient,
+    client: Arc<EnclaveVsockClient>,
 }
 
 impl EnclaveAgent {
@@ -21,18 +23,15 @@ impl EnclaveAgent {
                 .port(options.port)
                 .build(),
         )?;
-        info!(
-            "Connected to Enclave with cid: {} and port: {}",
-            options.cid, options.port
-        );
+        let vsock_client = Arc::new(Box::new(vsock_client) as EnclaveVsockClient);
         Ok(EnclaveAgent::builder().client(vsock_client).build())
     }
 
     async fn send_request<T: Message, R: Message + Default>(&self, request: &T) -> Result<R, EnclaveAgentError> {
-        self.client
-            .send_request(request)
-            .await
-            .map_err(EnclaveAgentError::VsockClientError)
+        let message = request.encode_to_vec();
+        let response = self.client.send_request(message.as_slice()).await?;
+        let response = R::decode(&mut response.as_slice())?;
+        Ok(response)
     }
 }
 

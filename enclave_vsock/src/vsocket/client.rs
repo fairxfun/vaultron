@@ -1,9 +1,7 @@
-use prost::Message;
+use crate::{VsockClientError, VsockClientTrait};
 use std::sync::Mutex;
 use typed_builder::TypedBuilder;
 use vsock::VsockStream;
-
-use crate::EnclaveVsockClientError;
 
 use super::{create_vsock_protocol, VsockProtocol};
 
@@ -22,7 +20,7 @@ pub struct VsockClient {
 }
 
 impl VsockClient {
-    fn new(options: VsockClientCreateOptions) -> Result<Self, EnclaveVsockClientError> {
+    fn new(options: VsockClientCreateOptions) -> Result<Self, VsockClientError> {
         // TODO: support reconnect
         let stream = VsockStream::connect_with_cid_port(options.cid, options.port)?;
         let protocol = create_vsock_protocol();
@@ -33,19 +31,18 @@ impl VsockClient {
             protocol,
         })
     }
+}
 
-    pub async fn send_request<T: Message, R: Message + Default>(
-        &self,
-        request: &T,
-    ) -> Result<R, EnclaveVsockClientError> {
-        let encoded_request = request.encode_to_vec();
-        let mut stream = self.stream.lock().map_err(|_| EnclaveVsockClientError::LockError)?;
-        self.protocol.write_message(&mut stream, &encoded_request)?;
+#[async_trait::async_trait]
+impl VsockClientTrait for VsockClient {
+    async fn send_request(&self, message: &[u8]) -> Result<Vec<u8>, VsockClientError> {
+        let mut stream = self.stream.lock().map_err(|_| VsockClientError::LockError)?;
+        self.protocol.write_message(&mut stream, message)?;
         let response = self.protocol.read_message(&mut stream)?;
-        Ok(R::decode(&response[..])?)
+        Ok(response)
     }
 }
 
-pub fn create_vsock_client(options: VsockClientCreateOptions) -> Result<VsockClient, EnclaveVsockClientError> {
+pub fn create_vsock_client(options: VsockClientCreateOptions) -> Result<VsockClient, VsockClientError> {
     VsockClient::new(options)
 }
