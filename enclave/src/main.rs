@@ -1,5 +1,7 @@
 use vaultron_enclave::server::start_server;
 
-fn main() {
-    start_server().unwrap();
+#[tokio::main]
+async fn main() {
+    let result = start_server().await;
+    println!("Server exit: {:?}", result);
 }

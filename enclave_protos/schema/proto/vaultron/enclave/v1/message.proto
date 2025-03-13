@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package vaultron.enclave.v1;
+
+import "vaultron/enclave/v1/common.proto";
+import "vaultron/enclave/v1/config.proto";
+import "vaultron/enclave/v1/wallet.proto";
+
+message EnclaveRequest {
+  oneof request {
+    InitRequest                  init_request                  = 1;
+    UpdateAwsCredentialsRequest  update_credentials_request    = 2;
+    CreateEnclaveWalletRequest   create_enclave_wallet_request = 3;
+  }
+}
+
+message EnclaveResponse {
+  oneof response {
+    InitResponse                 init_response                  = 1;
+    UpdateAwsCredentialsResponse update_credentials_response    = 2;
+    CreateEnclaveWalletResponse  create_enclave_wallet_response = 3; 
+  }
+}

@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package vaultron.enclave.v1;
+
+message StatusCode {
+  bool            success       = 1;
+  optional string error_message = 2; 
+  oneof error {
+    EnclaveError  enclave       = 3;
+  }
+}
+
+enum EnclaveError {
+  ENCLAVE_ERROR_UNSPECIFIED                      = 0;
+  ENCLAVE_ERROR_UNKNOWN_ERROR                    = 1;
+  ENCLAVE_ERROR_KMS_DECRYPT_ERROR                = 2;
+  ENCLAVE_ERROR_INVALID_REQUEST_ERROR            = 3;
+  ENCLAVE_ERROR_INVALID_SIGNATURE_ERROR          = 4;
+  ENCLAVE_ERROR_INVALID_ACCOUNT_ERROR            = 5;
+  ENCLAVE_ERROR_WALLET_GENERATION_ERROR          = 6;
+  ENCLAVE_ERROR_INVALID_PARAMETER_ERROR          = 7;
+  ENCLAVE_ERROR_INVALID_KMS_ENCRYPTED_DATA_ERROR = 8;
+  ENCLAVE_ERROR_PROTOBUF_ENCODE_ERROR            = 9;
+  ENCLAVE_ERROR_PROTOBUF_DECODE_ERROR            = 10;
+  ENCLAVE_ERROR_ENCLAVE_KMSTOOL_ERROR            = 11;
+  ENCLAVE_ERROR_ENCLAVE_WALLET_ERROR             = 12;
+  ENCLAVE_ERROR_POSTCARD_ERROR                   = 13;
+  ENCLAVE_ERROR_LOG_ERROR                        = 14;
+  ENCLAVE_ERROR_IO_ERROR                         = 15;
+  ENCLAVE_ERROR_ANYHOW_ERROR                     = 16;
+}
