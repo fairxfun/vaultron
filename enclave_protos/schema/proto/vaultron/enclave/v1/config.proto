@@ -4,7 +4,7 @@ package vaultron.enclave.v1;
 
 import "vaultron/enclave/v1/common.proto";
 
-message InitRequest {
+message InitKmstoolRequest {
   optional bool   enable_logging           = 1;
   optional uint32 proxy_port               = 2;
   string          aws_region               = 3;
@@ -15,7 +15,7 @@ message InitRequest {
   optional string kms_encryption_algorithm = 8;
 }
 
-message InitResponse{
+message InitKmstoolResponse{
   StatusCode code = 1;
 }
 

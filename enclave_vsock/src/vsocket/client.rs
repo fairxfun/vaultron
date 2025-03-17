@@ -37,8 +37,8 @@ impl VsockClient {
 impl VsockClientTrait for VsockClient {
     async fn send_request(&self, message: &[u8]) -> Result<Vec<u8>, VsockClientError> {
         let mut stream = self.stream.lock().map_err(|_| VsockClientError::LockError)?;
-        self.protocol.write_message(&mut stream, message)?;
-        let response = self.protocol.read_message(&mut stream)?;
+        self.protocol.write_message(&mut *stream, message)?;
+        let response = self.protocol.read_message(&mut *stream)?;
         Ok(response)
     }
 }

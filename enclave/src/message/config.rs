@@ -1,16 +1,19 @@
 use super::MessageHandler;
 use crate::common::EnclaveError;
 use enclave_protos::enclave::v1::{
-    InitRequest, InitResponse, UpdateAwsCredentialsRequest, UpdateAwsCredentialsResponse,
+    InitKmstoolRequest, InitKmstoolResponse, UpdateAwsCredentialsRequest, UpdateAwsCredentialsResponse,
 };
 use log::info;
 
 impl MessageHandler {
-    pub(crate) async fn handle_init_request(&self, request: InitRequest) -> Result<InitResponse, EnclaveError> {
-        info!("Received init request: {:?}", request);
+    pub(crate) async fn handle_kmstool_init_request(
+        &self,
+        request: InitKmstoolRequest,
+    ) -> Result<InitKmstoolResponse, EnclaveError> {
+        info!("Received init kmstool request: {:?}", request);
 
         self.context.kms_client.init(request.into())?;
-        Ok(InitResponse::success())
+        Ok(InitKmstoolResponse::success())
     }
 
     pub(crate) async fn handle_update_aws_credentials_request(

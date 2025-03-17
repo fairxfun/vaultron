@@ -1,7 +1,7 @@
 use crate::enclave::v1::status_code::Error;
 pub use crate::gen::vaultron::enclave::v1::*;
 
-impl InitResponse {
+impl InitKmstoolResponse {
     pub fn success() -> Self {
         Self::builder()
             .code(StatusCode::builder().success(true).build())

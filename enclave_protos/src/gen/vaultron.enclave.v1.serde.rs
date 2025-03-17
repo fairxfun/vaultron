@@ -185,10 +185,10 @@ impl serde::Serialize for CreateEnclaveWalletResponse {
         if !self.wallet_encrypted_data.is_empty() {
             len += 1;
         }
-        if !self.evm_public_key.is_empty() {
+        if !self.eth_public_key.is_empty() {
             len += 1;
         }
-        if !self.evm_encrypted_data.is_empty() {
+        if !self.eth_encrypted_data.is_empty() {
             len += 1;
         }
         if !self.solana_public_key.is_empty() {
@@ -210,11 +210,11 @@ impl serde::Serialize for CreateEnclaveWalletResponse {
         if !self.wallet_encrypted_data.is_empty() {
             struct_ser.serialize_field("walletEncryptedData", pbjson::private::base64::encode(&self.wallet_encrypted_data).as_str())?;
         }
-        if !self.evm_public_key.is_empty() {
-            struct_ser.serialize_field("evmPublicKey", pbjson::private::base64::encode(&self.evm_public_key).as_str())?;
+        if !self.eth_public_key.is_empty() {
+            struct_ser.serialize_field("ethPublicKey", pbjson::private::base64::encode(&self.eth_public_key).as_str())?;
         }
-        if !self.evm_encrypted_data.is_empty() {
-            struct_ser.serialize_field("evmEncryptedData", pbjson::private::base64::encode(&self.evm_encrypted_data).as_str())?;
+        if !self.eth_encrypted_data.is_empty() {
+            struct_ser.serialize_field("ethEncryptedData", pbjson::private::base64::encode(&self.eth_encrypted_data).as_str())?;
         }
         if !self.solana_public_key.is_empty() {
             struct_ser.serialize_field("solanaPublicKey", pbjson::private::base64::encode(&self.solana_public_key).as_str())?;
@@ -241,10 +241,10 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletResponse {
             "code",
             "wallet_encrypted_data",
             "walletEncryptedData",
-            "evm_public_key",
-            "evmPublicKey",
-            "evm_encrypted_data",
-            "evmEncryptedData",
+            "eth_public_key",
+            "ethPublicKey",
+            "eth_encrypted_data",
+            "ethEncryptedData",
             "solana_public_key",
             "solanaPublicKey",
             "solana_encrypted_data",
@@ -259,8 +259,8 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletResponse {
         enum GeneratedField {
             Code,
             WalletEncryptedData,
-            EvmPublicKey,
-            EvmEncryptedData,
+            EthPublicKey,
+            EthEncryptedData,
             SolanaPublicKey,
             SolanaEncryptedData,
             SuiPublicKey,
@@ -288,8 +288,8 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletResponse {
                         match value {
                             "code" => Ok(GeneratedField::Code),
                             "walletEncryptedData" | "wallet_encrypted_data" => Ok(GeneratedField::WalletEncryptedData),
-                            "evmPublicKey" | "evm_public_key" => Ok(GeneratedField::EvmPublicKey),
-                            "evmEncryptedData" | "evm_encrypted_data" => Ok(GeneratedField::EvmEncryptedData),
+                            "ethPublicKey" | "eth_public_key" => Ok(GeneratedField::EthPublicKey),
+                            "ethEncryptedData" | "eth_encrypted_data" => Ok(GeneratedField::EthEncryptedData),
                             "solanaPublicKey" | "solana_public_key" => Ok(GeneratedField::SolanaPublicKey),
                             "solanaEncryptedData" | "solana_encrypted_data" => Ok(GeneratedField::SolanaEncryptedData),
                             "suiPublicKey" | "sui_public_key" => Ok(GeneratedField::SuiPublicKey),
@@ -315,8 +315,8 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletResponse {
             {
                 let mut code__ = None;
                 let mut wallet_encrypted_data__ = None;
-                let mut evm_public_key__ = None;
-                let mut evm_encrypted_data__ = None;
+                let mut eth_public_key__ = None;
+                let mut eth_encrypted_data__ = None;
                 let mut solana_public_key__ = None;
                 let mut solana_encrypted_data__ = None;
                 let mut sui_public_key__ = None;
@@ -337,19 +337,19 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletResponse {
                                 Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
                             ;
                         }
-                        GeneratedField::EvmPublicKey => {
-                            if evm_public_key__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("evmPublicKey"));
+                        GeneratedField::EthPublicKey => {
+                            if eth_public_key__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("ethPublicKey"));
                             }
-                            evm_public_key__ = 
+                            eth_public_key__ = 
                                 Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
                             ;
                         }
-                        GeneratedField::EvmEncryptedData => {
-                            if evm_encrypted_data__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("evmEncryptedData"));
+                        GeneratedField::EthEncryptedData => {
+                            if eth_encrypted_data__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("ethEncryptedData"));
                             }
-                            evm_encrypted_data__ = 
+                            eth_encrypted_data__ = 
                                 Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
                             ;
                         }
@@ -390,8 +390,8 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletResponse {
                 Ok(CreateEnclaveWalletResponse {
                     code: code__,
                     wallet_encrypted_data: wallet_encrypted_data__.unwrap_or_default(),
-                    evm_public_key: evm_public_key__.unwrap_or_default(),
-                    evm_encrypted_data: evm_encrypted_data__.unwrap_or_default(),
+                    eth_public_key: eth_public_key__.unwrap_or_default(),
+                    eth_encrypted_data: eth_encrypted_data__.unwrap_or_default(),
                     solana_public_key: solana_public_key__.unwrap_or_default(),
                     solana_encrypted_data: solana_encrypted_data__.unwrap_or_default(),
                     sui_public_key: sui_public_key__.unwrap_or_default(),
@@ -534,11 +534,11 @@ impl serde::Serialize for EnclaveRequest {
         let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.EnclaveRequest", len)?;
         if let Some(v) = self.request.as_ref() {
             match v {
-                enclave_request::Request::InitRequest(v) => {
-                    struct_ser.serialize_field("initRequest", v)?;
+                enclave_request::Request::InitKmstoolRequest(v) => {
+                    struct_ser.serialize_field("initKmstoolRequest", v)?;
                 }
-                enclave_request::Request::UpdateCredentialsRequest(v) => {
-                    struct_ser.serialize_field("updateCredentialsRequest", v)?;
+                enclave_request::Request::UpdateAwsCredentialsRequest(v) => {
+                    struct_ser.serialize_field("updateAwsCredentialsRequest", v)?;
                 }
                 enclave_request::Request::CreateEnclaveWalletRequest(v) => {
                     struct_ser.serialize_field("createEnclaveWalletRequest", v)?;
@@ -555,18 +555,18 @@ impl<'de> serde::Deserialize<'de> for EnclaveRequest {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "init_request",
-            "initRequest",
-            "update_credentials_request",
-            "updateCredentialsRequest",
+            "init_kmstool_request",
+            "initKmstoolRequest",
+            "update_aws_credentials_request",
+            "updateAwsCredentialsRequest",
             "create_enclave_wallet_request",
             "createEnclaveWalletRequest",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
-            InitRequest,
-            UpdateCredentialsRequest,
+            InitKmstoolRequest,
+            UpdateAwsCredentialsRequest,
             CreateEnclaveWalletRequest,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
@@ -589,8 +589,8 @@ impl<'de> serde::Deserialize<'de> for EnclaveRequest {
                         E: serde::de::Error,
                     {
                         match value {
-                            "initRequest" | "init_request" => Ok(GeneratedField::InitRequest),
-                            "updateCredentialsRequest" | "update_credentials_request" => Ok(GeneratedField::UpdateCredentialsRequest),
+                            "initKmstoolRequest" | "init_kmstool_request" => Ok(GeneratedField::InitKmstoolRequest),
+                            "updateAwsCredentialsRequest" | "update_aws_credentials_request" => Ok(GeneratedField::UpdateAwsCredentialsRequest),
                             "createEnclaveWalletRequest" | "create_enclave_wallet_request" => Ok(GeneratedField::CreateEnclaveWalletRequest),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
@@ -614,18 +614,18 @@ impl<'de> serde::Deserialize<'de> for EnclaveRequest {
                 let mut request__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
-                        GeneratedField::InitRequest => {
+                        GeneratedField::InitKmstoolRequest => {
                             if request__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("initRequest"));
+                                return Err(serde::de::Error::duplicate_field("initKmstoolRequest"));
                             }
-                            request__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_request::Request::InitRequest)
+                            request__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_request::Request::InitKmstoolRequest)
 ;
                         }
-                        GeneratedField::UpdateCredentialsRequest => {
+                        GeneratedField::UpdateAwsCredentialsRequest => {
                             if request__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("updateCredentialsRequest"));
+                                return Err(serde::de::Error::duplicate_field("updateAwsCredentialsRequest"));
                             }
-                            request__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_request::Request::UpdateCredentialsRequest)
+                            request__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_request::Request::UpdateAwsCredentialsRequest)
 ;
                         }
                         GeneratedField::CreateEnclaveWalletRequest => {
@@ -659,11 +659,11 @@ impl serde::Serialize for EnclaveResponse {
         let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.EnclaveResponse", len)?;
         if let Some(v) = self.response.as_ref() {
             match v {
-                enclave_response::Response::InitResponse(v) => {
-                    struct_ser.serialize_field("initResponse", v)?;
+                enclave_response::Response::InitKmstoolResponse(v) => {
+                    struct_ser.serialize_field("initKmstoolResponse", v)?;
                 }
-                enclave_response::Response::UpdateCredentialsResponse(v) => {
-                    struct_ser.serialize_field("updateCredentialsResponse", v)?;
+                enclave_response::Response::UpdateAwsCredentialsResponse(v) => {
+                    struct_ser.serialize_field("updateAwsCredentialsResponse", v)?;
                 }
                 enclave_response::Response::CreateEnclaveWalletResponse(v) => {
                     struct_ser.serialize_field("createEnclaveWalletResponse", v)?;
@@ -680,18 +680,18 @@ impl<'de> serde::Deserialize<'de> for EnclaveResponse {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "init_response",
-            "initResponse",
-            "update_credentials_response",
-            "updateCredentialsResponse",
+            "init_kmstool_response",
+            "initKmstoolResponse",
+            "update_aws_credentials_response",
+            "updateAwsCredentialsResponse",
             "create_enclave_wallet_response",
             "createEnclaveWalletResponse",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
-            InitResponse,
-            UpdateCredentialsResponse,
+            InitKmstoolResponse,
+            UpdateAwsCredentialsResponse,
             CreateEnclaveWalletResponse,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
@@ -714,8 +714,8 @@ impl<'de> serde::Deserialize<'de> for EnclaveResponse {
                         E: serde::de::Error,
                     {
                         match value {
-                            "initResponse" | "init_response" => Ok(GeneratedField::InitResponse),
-                            "updateCredentialsResponse" | "update_credentials_response" => Ok(GeneratedField::UpdateCredentialsResponse),
+                            "initKmstoolResponse" | "init_kmstool_response" => Ok(GeneratedField::InitKmstoolResponse),
+                            "updateAwsCredentialsResponse" | "update_aws_credentials_response" => Ok(GeneratedField::UpdateAwsCredentialsResponse),
                             "createEnclaveWalletResponse" | "create_enclave_wallet_response" => Ok(GeneratedField::CreateEnclaveWalletResponse),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
@@ -739,18 +739,18 @@ impl<'de> serde::Deserialize<'de> for EnclaveResponse {
                 let mut response__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
-                        GeneratedField::InitResponse => {
+                        GeneratedField::InitKmstoolResponse => {
                             if response__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("initResponse"));
+                                return Err(serde::de::Error::duplicate_field("initKmstoolResponse"));
                             }
-                            response__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_response::Response::InitResponse)
+                            response__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_response::Response::InitKmstoolResponse)
 ;
                         }
-                        GeneratedField::UpdateCredentialsResponse => {
+                        GeneratedField::UpdateAwsCredentialsResponse => {
                             if response__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("updateCredentialsResponse"));
+                                return Err(serde::de::Error::duplicate_field("updateAwsCredentialsResponse"));
                             }
-                            response__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_response::Response::UpdateCredentialsResponse)
+                            response__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_response::Response::UpdateAwsCredentialsResponse)
 ;
                         }
                         GeneratedField::CreateEnclaveWalletResponse => {
@@ -770,7 +770,7 @@ impl<'de> serde::Deserialize<'de> for EnclaveResponse {
         deserializer.deserialize_struct("vaultron.enclave.v1.EnclaveResponse", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for InitRequest {
+impl serde::Serialize for InitKmstoolRequest {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -802,7 +802,7 @@ impl serde::Serialize for InitRequest {
         if self.kms_encryption_algorithm.is_some() {
             len += 1;
         }
-        let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.InitRequest", len)?;
+        let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.InitKmstoolRequest", len)?;
         if let Some(v) = self.enable_logging.as_ref() {
             struct_ser.serialize_field("enableLogging", v)?;
         }
@@ -830,7 +830,7 @@ impl serde::Serialize for InitRequest {
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for InitRequest {
+impl<'de> serde::Deserialize<'de> for InitKmstoolRequest {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -903,13 +903,13 @@ impl<'de> serde::Deserialize<'de> for InitRequest {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = InitRequest;
+            type Value = InitKmstoolRequest;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct vaultron.enclave.v1.InitRequest")
+                formatter.write_str("struct vaultron.enclave.v1.InitKmstoolRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<InitRequest, V::Error>
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<InitKmstoolRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -975,7 +975,7 @@ impl<'de> serde::Deserialize<'de> for InitRequest {
                         }
                     }
                 }
-                Ok(InitRequest {
+                Ok(InitKmstoolRequest {
                     enable_logging: enable_logging__,
                     proxy_port: proxy_port__,
                     aws_region: aws_region__.unwrap_or_default(),
@@ -987,10 +987,10 @@ impl<'de> serde::Deserialize<'de> for InitRequest {
                 })
             }
         }
-        deserializer.deserialize_struct("vaultron.enclave.v1.InitRequest", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("vaultron.enclave.v1.InitKmstoolRequest", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for InitResponse {
+impl serde::Serialize for InitKmstoolResponse {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -1001,14 +1001,14 @@ impl serde::Serialize for InitResponse {
         if self.code.is_some() {
             len += 1;
         }
-        let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.InitResponse", len)?;
+        let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.InitKmstoolResponse", len)?;
         if let Some(v) = self.code.as_ref() {
             struct_ser.serialize_field("code", v)?;
         }
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for InitResponse {
+impl<'de> serde::Deserialize<'de> for InitKmstoolResponse {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -1052,13 +1052,13 @@ impl<'de> serde::Deserialize<'de> for InitResponse {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = InitResponse;
+            type Value = InitKmstoolResponse;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct vaultron.enclave.v1.InitResponse")
+                formatter.write_str("struct vaultron.enclave.v1.InitKmstoolResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<InitResponse, V::Error>
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<InitKmstoolResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -1073,12 +1073,12 @@ impl<'de> serde::Deserialize<'de> for InitResponse {
                         }
                     }
                 }
-                Ok(InitResponse {
+                Ok(InitKmstoolResponse {
                     code: code__,
                 })
             }
         }
-        deserializer.deserialize_struct("vaultron.enclave.v1.InitResponse", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("vaultron.enclave.v1.InitKmstoolResponse", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for SignatureType {
@@ -1091,7 +1091,7 @@ impl serde::Serialize for SignatureType {
             Self::Unspecified => "SIGNATURE_TYPE_UNSPECIFIED",
             Self::Fairx => "SIGNATURE_TYPE_FAIRX",
             Self::WalletBitcoin => "SIGNATURE_TYPE_WALLET_BITCOIN",
-            Self::WalletEvm => "SIGNATURE_TYPE_WALLET_EVM",
+            Self::WalletEth => "SIGNATURE_TYPE_WALLET_ETH",
             Self::WalletSolana => "SIGNATURE_TYPE_WALLET_SOLANA",
             Self::WalletSui => "SIGNATURE_TYPE_WALLET_SUI",
         };
@@ -1108,7 +1108,7 @@ impl<'de> serde::Deserialize<'de> for SignatureType {
             "SIGNATURE_TYPE_UNSPECIFIED",
             "SIGNATURE_TYPE_FAIRX",
             "SIGNATURE_TYPE_WALLET_BITCOIN",
-            "SIGNATURE_TYPE_WALLET_EVM",
+            "SIGNATURE_TYPE_WALLET_ETH",
             "SIGNATURE_TYPE_WALLET_SOLANA",
             "SIGNATURE_TYPE_WALLET_SUI",
         ];
@@ -1156,7 +1156,7 @@ impl<'de> serde::Deserialize<'de> for SignatureType {
                     "SIGNATURE_TYPE_UNSPECIFIED" => Ok(SignatureType::Unspecified),
                     "SIGNATURE_TYPE_FAIRX" => Ok(SignatureType::Fairx),
                     "SIGNATURE_TYPE_WALLET_BITCOIN" => Ok(SignatureType::WalletBitcoin),
-                    "SIGNATURE_TYPE_WALLET_EVM" => Ok(SignatureType::WalletEvm),
+                    "SIGNATURE_TYPE_WALLET_ETH" => Ok(SignatureType::WalletEth),
                     "SIGNATURE_TYPE_WALLET_SOLANA" => Ok(SignatureType::WalletSolana),
                     "SIGNATURE_TYPE_WALLET_SUI" => Ok(SignatureType::WalletSui),
                     _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),

@@ -1,9 +1,9 @@
 use crate::EnclaveKmstoolError;
-use enclave_protos::enclave::v1::{InitRequest, UpdateAwsCredentialsRequest};
+use enclave_protos::enclave::v1::{InitKmstoolRequest, UpdateAwsCredentialsRequest};
 use std::fmt::Debug;
 use typed_builder::TypedBuilder;
 
-#[derive(Debug, Clone, TypedBuilder)]
+#[derive(Debug, Clone, TypedBuilder, PartialEq, Eq)]
 pub struct KmsInitRequest {
     pub enable_logging: bool,
     pub proxy_port: u32,
@@ -15,8 +15,8 @@ pub struct KmsInitRequest {
     pub kms_encryption_algorithm: String,
 }
 
-impl From<InitRequest> for KmsInitRequest {
-    fn from(request: InitRequest) -> Self {
+impl From<InitKmstoolRequest> for KmsInitRequest {
+    fn from(request: InitKmstoolRequest) -> Self {
         KmsInitRequest::builder()
             .enable_logging(request.enable_logging.unwrap_or(false))
             .proxy_port(request.proxy_port.unwrap_or(8000))
@@ -34,7 +34,7 @@ impl From<InitRequest> for KmsInitRequest {
     }
 }
 
-#[derive(Debug, Clone, TypedBuilder)]
+#[derive(Debug, Clone, TypedBuilder, PartialEq, Eq)]
 pub struct KmsUpdateAwsCredentialsRequest {
     pub aws_access_key_id: String,
     pub aws_secret_access_key: String,
@@ -51,7 +51,7 @@ impl From<UpdateAwsCredentialsRequest> for KmsUpdateAwsCredentialsRequest {
     }
 }
 
-#[derive(Debug, Clone, TypedBuilder)]
+#[derive(Debug, Clone, TypedBuilder, PartialEq, Eq)]
 pub struct KmsEncryptRequest {
     pub plaintext: Vec<u8>,
 }
@@ -61,7 +61,7 @@ pub struct KmsEncryptResponse {
     pub ciphertext: Vec<u8>,
 }
 
-#[derive(Debug, Clone, TypedBuilder)]
+#[derive(Debug, Clone, TypedBuilder, PartialEq, Eq)]
 pub struct KmsDecryptRequest {
     pub ciphertext: Vec<u8>,
 }

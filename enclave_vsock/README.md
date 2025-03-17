@@ -2,66 +2,66 @@
 
 This module provides socket communication functionality for the enclave system, with a focus on VSOCK communication that supports message chunking for large payloads.
 
-## VSOCK Message Chunking Protocol
+## VSOCK Message Protocol
 
-VSOCK is a stream-based protocol (like TCP) that doesn't preserve message boundaries. The VSOCK Message Chunking Protocol allows for sending messages larger than the maximum VSOCK message size (64KB) by splitting them into multiple chunks and reassembling them on the receiving end.
+VSOCK is a stream-based protocol (like TCP) that doesn't preserve message boundaries. The VSOCK Message Protocol allows for sending messages larger than the maximum VSOCK message size (64KB) by using a simple header and handling large messages with multiple writes.
 
 ### Message Format
 
 ```
-+------------------+----------------+----------------+------------------+
-| Total Data Length| Chunk Index    | Chunk Data Length| Payload        |
-| (4 bytes)        | (2 bytes)      | (2 bytes)      | (variable)       |
-+------------------+----------------+----------------+------------------+
++------------------+------------------+------------------+
+| Magic Bytes      | Total Data Length| Payload          |
+| (4 bytes)        | (4 bytes)        | (variable)       |
++------------------+------------------+------------------+
 ```
 
+#### Magic Bytes: 4 bytes
+- Fixed value "VSOK" (0x56, 0x53, 0x4F, 0x4B in hex)
+- Used to identify the start of a valid message header
+- Helps with protocol validation and error detection
+
 #### Total Data Length: 4 bytes (u32, big-endian)
-- Total length of the complete message payload after reassembly
-- This is the size of the final payload after all chunks are combined
+- Total length of the message payload
 - Does not include the header length
+- **Must be greater than 0** (empty messages are not allowed)
 
-#### Chunk Index: 2 bytes (u16, big-endian)
-- 0-based index of this chunk in the sequence
-- Indicates the position of this chunk in the complete message
-
-#### Chunk Data Length: 2 bytes (u16, big-endian)
-- Length of the payload data in this specific chunk
-- Allows for efficient buffer allocation when processing chunks
-- Does not include the header length
-
-#### Chunk Header is 8 bytes:
+#### Message Header is 8 bytes:
+- Magic Bytes: 4 bytes (fixed value "VSOK")
 - Total Data Length: 4 bytes (u32, big-endian)
-- Chunk Index: 2 bytes (u16, big-endian)
-- Chunk Data Length: 2 bytes (u16, big-endian)
 
 #### Payload: Variable length
 - Actual message data
-- Maximum size = MAX_VSOCK_MESSAGE_SIZE (65535) - CHUNK_HEADER_SIZE (8)
+- Maximum size = 1MB (defined by MAX_VSOCK_TOTAL_PAYLOAD_SIZE)
 
-### Chunking Process
+### Important Protocol Requirements
 
-For messages larger than MAX_VSOCK_MESSAGE_SIZE - CHUNK_HEADER_SIZE:
+1. **Magic Bytes Validation**: All valid messages must begin with the magic bytes "VSOK". This helps identify the start of a message and validate that the data conforms to the protocol.
 
-1. Split into multiple chunks
-2. First chunk has index 0
-3. Chunks are sent in sequence
-4. Receiver reassembles based on chunk index and total data length
+2. **No Empty Messages**: All messages must contain at least one byte of data. The protocol does not support empty messages, and the Total Data Length must always be greater than 0.
+
+### Large Message Handling
+
+For messages larger than MAX_VSOCK_MESSAGE_SIZE:
+
+1. The header is written once with the total message size
+2. The payload is written in multiple consecutive writes
+3. The receiver reads the entire payload based on the Total Data Length
 
 ### Communication Flow
 
-1. Sender writes 8-byte header (Total Data Length + Chunk Index + Chunk Data Length)
-2. Sender writes payload data
+1. Sender writes 8-byte header (Magic Bytes + Total Data Length)
+2. Sender writes payload data (in multiple writes if necessary)
 3. Receiver reads 8-byte header
-4. Receiver reads payload based on Chunk Data Length
-5. Receiver processes the chunk (either returns it directly or reassembles)
+4. Receiver validates the magic bytes
+5. Receiver reads payload based on Total Data Length (in multiple reads if necessary)
 
 ### Implementation Details
 
-- Maximum chunk size: 65535 bytes (64KB)
-- Maximum total message size: 1MB (16 chunks)
-- Chunking is handled automatically by the `EnclaveVSocket` class
-- The implementation is stateless - reassembly is handled within the read_message function
-- The `ChunkHeader` struct provides convenient methods for header serialization and deserialization
+- Maximum message size: 1MB (defined by MAX_VSOCK_TOTAL_PAYLOAD_SIZE)
+- Header size: 8 bytes
+- Chunking is handled automatically by the `VsockProtocol` class
+- The implementation is stateless - message handling is done within the read_message and write_message functions
+- The `MessageHeader` struct provides convenient methods for header serialization and deserialization
 
 ## Message Protocol Trait
 
@@ -82,11 +82,11 @@ pub trait MessageProtocol {
 
 ### Default Implementation
 
-The `VsockMessageProtocol` struct implements the `MessageProtocol` trait with `EnclaveSocketError` as its error type:
+The `VsockProtocol` struct implements the `MessageProtocol` trait with `VsockProtocolError` as its error type:
 
 ```rust
-impl MessageProtocol for VsockMessageProtocol {
-    type Error = EnclaveSocketError;
+impl MessageProtocol for VsockProtocol {
+    type Error = VsockProtocolError;
     
     // Implementation of read_message and write_message...
 }
@@ -121,16 +121,16 @@ impl MessageProtocol for MyCustomProtocol {
 
 ## Usage
 
-The `EnclaveVSocket` class provides methods for reading and writing messages with automatic chunking support:
+The `EnclaveVSocket` class provides methods for reading and writing messages:
 
 ```rust
 // Create a new socket handler
 let mut socket = create_enclave_vsocket();
 
-// Write a message (automatically chunks if necessary)
+// Write a message (handles large messages automatically)
 socket.write_message(&mut stream, &large_message)?;
 
-// Read a message (automatically reassembles chunks)
+// Read a message
 let complete_message = socket.read_message(&mut stream)?;
 ```
 
@@ -150,11 +150,9 @@ let received_message = custom_protocol.read_message(&mut stream)?;
 ## Error Handling
 
 The protocol includes validation for:
-- Chunk data length limits (`InvalidPayloadLengthError`)
+- Magic bytes validation (`InvalidMagicBytesError`)
 - Total message size limits (`MessageTooLargeError`)
-- Chunk sequence integrity (`InvalidChunkIndexError`)
-- Total data length consistency (`InvalidTotalLengthError`)
-- Data overflow protection
-- Reassembly state consistency 
+- Total data length validation (`InvalidTotalLengthError`)
+- I/O errors (`IoError`)
 
 Custom implementations can define their own error types and handling strategies. 

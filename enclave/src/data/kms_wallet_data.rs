@@ -23,10 +23,10 @@ pub struct KmsAccountMnemonicPair {
 }
 
 #[derive(Debug, TypedBuilder, Serialize, Deserialize)]
-pub struct KmsAccountEvmPair {
+pub struct KmsAccountEthPair {
     pub user_id: Vec<u8>,
     pub user_public_key: Vec<u8>,
-    pub evm_private_key: Vec<u8>,
+    pub eth_private_key: Vec<u8>,
 }
 
 #[derive(Debug, TypedBuilder, Serialize, Deserialize)]
@@ -44,6 +44,6 @@ pub struct KmsAccountSuiPair {
 }
 
 impl_serialization!(KmsAccountMnemonicPair);
-impl_serialization!(KmsAccountEvmPair);
+impl_serialization!(KmsAccountEthPair);
 impl_serialization!(KmsAccountSolanaPair);
 impl_serialization!(KmsAccountSuiPair);

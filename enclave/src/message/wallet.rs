@@ -1,7 +1,7 @@
 use super::MessageHandler;
 
 use crate::{
-    common::EnclaveError, data::KmsAccountEvmPair, data::KmsAccountMnemonicPair, data::KmsAccountSolanaPair,
+    common::EnclaveError, data::KmsAccountEthPair, data::KmsAccountMnemonicPair, data::KmsAccountSolanaPair,
     data::KmsAccountSuiPair,
 };
 use enclave_kmstool::KmsEncryptRequest;
@@ -13,14 +13,12 @@ use log::info;
 use std::convert::TryFrom;
 
 impl MessageHandler {
-    pub async fn handle_create_enclave_wallet_request(
+    pub(crate) async fn handle_create_enclave_wallet_request(
         &self,
         request: CreateEnclaveWalletRequest,
     ) -> Result<CreateEnclaveWalletResponse, EnclaveError> {
         info!("Received create enclave wallet request: {:?}", request);
-
         self.verify_signature(&request)?;
-
         let wallet: enclave_wallet::MultiChainWallet = generate_multi_chain_wallet()?;
         let response = self.kms_encrypt_wallet_data(&request, &wallet)?;
         Ok(response)
@@ -28,20 +26,21 @@ impl MessageHandler {
 
     fn verify_signature(&self, request: &CreateEnclaveWalletRequest) -> Result<(), EnclaveError> {
         match request.signature_type() {
-            SignatureType::WalletEvm => self.verify_evm_signature(request),
+            SignatureType::WalletEth => self.verify_evm_signature(request),
             // TODO: add other signature types
             _ => Err(EnclaveError::InvalidRequestError),
         }
     }
 
     fn verify_evm_signature(&self, request: &CreateEnclaveWalletRequest) -> Result<(), EnclaveError> {
+        let user_account =
+            ethers_address_from_bytes(&request.user_public_key).map_err(|_| EnclaveError::InvalidAccountError)?;
         let signature =
             Signature::try_from(request.signature.as_slice()).map_err(|_| EnclaveError::InvalidSignatureError)?;
         let request_message_hash = ethers_core::utils::hash_message(request.message.as_slice());
         let recovered_account = signature
             .recover(request_message_hash)
             .map_err(|_| EnclaveError::InvalidSignatureError)?;
-        let user_account = ethers_address_from_bytes(&request.user_public_key);
         if recovered_account != user_account {
             return Err(EnclaveError::InvalidAccountError);
         }
@@ -65,10 +64,10 @@ impl MessageHandler {
             .encrypt(KmsEncryptRequest::builder().plaintext(kms_mnemonic_bytes).build())?;
         let encrypted_kms_mnemonic = ksm_response.ciphertext;
 
-        let kms_evm = KmsAccountEvmPair::builder()
+        let kms_evm = KmsAccountEthPair::builder()
             .user_id(request.user_id.clone())
             .user_public_key(request.user_public_key.clone())
-            .evm_private_key(wallet.eth_keypair.private_key.clone())
+            .eth_private_key(wallet.eth_keypair.private_key.clone())
             .build();
         let kms_evm_bytes = kms_evm.to_bytes()?;
         let ksm_response = self
@@ -104,11 +103,11 @@ impl MessageHandler {
         let response = CreateEnclaveWalletResponse::builder()
             .code(StatusCode::success())
             .wallet_encrypted_data(encrypted_kms_mnemonic)
-            .evm_public_key(wallet.eth_keypair.public_key.clone())
-            .evm_encrypted_data(encrypted_kms_evm)
-            .solana_public_key(wallet.solana_keypair.public_key.clone())
+            .eth_public_key(wallet.eth_keypair.public_address.clone())
+            .eth_encrypted_data(encrypted_kms_evm)
+            .solana_public_key(wallet.solana_keypair.public_address.clone())
             .solana_encrypted_data(encrypted_kms_solana)
-            .sui_public_key(wallet.sui_keypair.public_key.clone())
+            .sui_public_key(wallet.sui_keypair.public_address.clone())
             .sui_encrypted_data(encrypted_kms_sui)
             .build();
         Ok(response)

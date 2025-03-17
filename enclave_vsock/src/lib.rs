@@ -2,8 +2,9 @@ mod error;
 mod vsocket;
 
 pub use error::*;
-use std::fmt::Debug;
 pub use vsocket::*;
+
+use std::fmt::Debug;
 
 #[async_trait::async_trait]
 pub trait VsockMessageHandlerTrait: Send + Sync + Debug {

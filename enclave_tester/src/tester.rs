@@ -1,6 +1,6 @@
 use anyhow::Result;
 use enclave_agent::{create_enclave_agent, EnclaveAgentCreateOptions};
-use enclave_protos::enclave::v1::{InitRequest, UpdateAwsCredentialsRequest};
+use enclave_protos::enclave::v1::{InitKmstoolRequest, UpdateAwsCredentialsRequest};
 
 use crate::EnclaveAgentTesterError;
 
@@ -9,7 +9,7 @@ pub async fn start_tester() -> Result<(), Box<dyn std::error::Error>> {
     let agent = create_enclave_agent(options)?;
 
     let (access_key_id, secret_access_key, session_token) = get_aws_credentials().await?;
-    let request = InitRequest::builder()
+    let request = InitKmstoolRequest::builder()
         .enable_logging(false)
         .aws_region("ap-southeast-1".to_string())
         .aws_access_key_id(access_key_id)
@@ -17,7 +17,7 @@ pub async fn start_tester() -> Result<(), Box<dyn std::error::Error>> {
         .aws_session_token(session_token)
         .kms_key_id("60b8ce3a-7466-42b7-96a7-a3868f0fd1bf".to_string())
         .build();
-    let response = agent.init(request).await?;
+    let response = agent.kmstool_init(request).await?;
     println!("Init response: {:?}", response);
     let request = UpdateAwsCredentialsRequest::builder().build();
     let response = agent.update_aws_credentials(request).await?;

@@ -15,19 +15,29 @@ pub enum VsockClientError {
     IoError(#[from] std::io::Error),
 
     #[error(transparent)]
-    VsockProtocolError(#[from] VsockProtocolHandlerError),
+    VsockProtocolError(#[from] VsockProtocolError),
 }
 
 #[derive(Error, Debug)]
-pub enum VsockProtocolHandlerError {
-    #[error("Invalid chunk data length")]
+pub enum VsockProtocolError {
+    #[error("Invalid magic bytes error")]
+    InvalidMagicBytesError,
+
+    #[error("Invalid chunk data length error")]
     InvalidPayloadLengthError,
-    #[error("Invalid total data length")]
+
+    #[error("Invalid total data length error")]
     InvalidTotalLengthError,
-    #[error("Invalid chunk index")]
+
+    #[error("Invalid chunk index error")]
     InvalidChunkIndexError,
-    #[error("message too large error")]
+
+    #[error("Message too large error")]
     MessageTooLargeError,
+
+    #[error("Invalid message data error")]
+    InvalidMessageDataError,
+
     #[error("IO error")]
     IoError(#[from] std::io::Error),
 }

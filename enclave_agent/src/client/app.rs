@@ -1,7 +1,9 @@
 use crate::EnclaveAgentCreateOptions;
 use crate::{error::EnclaveAgentError, EnclaveAgentTrait};
 use enclave_protos::enclave::v1::{
-    InitRequest, InitResponse, UpdateAwsCredentialsRequest, UpdateAwsCredentialsResponse,
+    enclave_request, enclave_response, CreateEnclaveWalletRequest, CreateEnclaveWalletResponse, EnclaveRequest,
+    EnclaveResponse, InitKmstoolRequest, InitKmstoolResponse, UpdateAwsCredentialsRequest,
+    UpdateAwsCredentialsResponse,
 };
 use enclave_vsock::{create_vsock_client, VsockClientCreateOptions, VsockClientTrait};
 use prost::Message;
@@ -11,7 +13,7 @@ use typed_builder::TypedBuilder;
 type EnclaveVsockClient = Box<dyn VsockClientTrait>;
 
 #[derive(Debug, TypedBuilder)]
-pub(crate) struct EnclaveAgent {
+pub struct EnclaveAgent {
     client: Arc<EnclaveVsockClient>,
 }
 
@@ -37,14 +39,42 @@ impl EnclaveAgent {
 
 #[async_trait::async_trait]
 impl EnclaveAgentTrait for EnclaveAgent {
-    async fn init(&self, request: InitRequest) -> Result<InitResponse, EnclaveAgentError> {
-        self.send_request(&request).await
+    async fn kmstool_init(&self, request: InitKmstoolRequest) -> Result<InitKmstoolResponse, EnclaveAgentError> {
+        let enclave_request = EnclaveRequest::builder()
+            .request(enclave_request::Request::InitKmstoolRequest(request))
+            .build();
+        let response: EnclaveResponse = self.send_request(&enclave_request).await?;
+        match response.response {
+            Some(enclave_response::Response::InitKmstoolResponse(response)) => Ok(response),
+            _ => Err(EnclaveAgentError::InvalidResponseError),
+        }
     }
 
     async fn update_aws_credentials(
         &self,
         request: UpdateAwsCredentialsRequest,
     ) -> Result<UpdateAwsCredentialsResponse, EnclaveAgentError> {
-        self.send_request(&request).await
+        let enclave_request = EnclaveRequest::builder()
+            .request(enclave_request::Request::UpdateAwsCredentialsRequest(request))
+            .build();
+        let response: EnclaveResponse = self.send_request(&enclave_request).await?;
+        match response.response {
+            Some(enclave_response::Response::UpdateAwsCredentialsResponse(response)) => Ok(response),
+            _ => Err(EnclaveAgentError::InvalidResponseError),
+        }
+    }
+
+    async fn create_enclave_wallet(
+        &self,
+        request: CreateEnclaveWalletRequest,
+    ) -> Result<CreateEnclaveWalletResponse, EnclaveAgentError> {
+        let enclave_request = EnclaveRequest::builder()
+            .request(enclave_request::Request::CreateEnclaveWalletRequest(request))
+            .build();
+        let response: EnclaveResponse = self.send_request(&enclave_request).await?;
+        match response.response {
+            Some(enclave_response::Response::CreateEnclaveWalletResponse(response)) => Ok(response),
+            _ => Err(EnclaveAgentError::InvalidResponseError),
+        }
     }
 }

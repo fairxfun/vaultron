@@ -3,9 +3,9 @@ mod client;
 mod error;
 
 pub use agent::*;
+pub use client::*;
 pub use error::*;
 
-use client::EnclaveAgent;
 use std::sync::Arc;
 
 pub fn create_enclave_agent(
