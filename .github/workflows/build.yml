@@ -47,7 +47,7 @@ jobs:
         run: cargo clippy --all-targets -j 4 -- -D warnings
 
       - name: Run Test
-        run: cargo llvm-cov test --no-report --timeout 90
+        run: cargo llvm-cov test --no-report -- --timeout 90
 
       - name: Generate Coverage
         run: cargo llvm-cov report --lcov --output-path=lcov.info
