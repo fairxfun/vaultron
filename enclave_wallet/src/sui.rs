@@ -1,5 +1,5 @@
+use crate::EnclaveKeyPair;
 use crate::EnclaveWalletError;
-use crate::KeyPair as EnclaveKeyPair;
 use anyhow::Result;
 use bip32::DerivationPath;
 use std::str::FromStr;

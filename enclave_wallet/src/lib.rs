@@ -16,13 +16,13 @@ use path::{get_eth_derivation_path, get_solana_derivation_path, get_sui_derivati
 #[derive(Debug, PartialEq, Eq)]
 pub struct MultiChainWallet {
     pub mnemonic: String,
-    pub eth_keypair: KeyPair,
-    pub solana_keypair: KeyPair,
-    pub sui_keypair: KeyPair,
+    pub eth_keypair: EnclaveKeyPair,
+    pub solana_keypair: EnclaveKeyPair,
+    pub sui_keypair: EnclaveKeyPair,
 }
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct KeyPair {
+pub struct EnclaveKeyPair {
     pub private_key: Vec<u8>,
     pub public_address: Vec<u8>,
 }

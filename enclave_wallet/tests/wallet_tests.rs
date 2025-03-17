@@ -5,7 +5,8 @@ use ethers_signers::{Signer, Wallet};
 use fastcrypto::ed25519::{Ed25519KeyPair, Ed25519PrivateKey, Ed25519PublicKey};
 use fastcrypto::hash::{Blake2b256, HashFunction};
 use fastcrypto::traits::{KeyPair as FastCryptoKeyPair, ToFromBytes};
-use solana_sdk::signature::{Keypair as SolanaKeypair, Signer as SolanaSigner};
+use solana_keypair::Keypair as SolanaKeypair;
+use solana_signer::Signer as SolanaSigner;
 use std::str;
 use sui_types::base_types::SuiAddress;
 
