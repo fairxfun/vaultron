@@ -10,7 +10,7 @@ pub struct EnclaveConfig {
 impl Default for EnclaveConfig {
     fn default() -> EnclaveConfig {
         EnclaveConfig::builder()
-            .log_level("warn".to_string())
+            .log_level("info".to_string())
             .port(DEFAULT_VSOCK_PORT)
             .build()
     }

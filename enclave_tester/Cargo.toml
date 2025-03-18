@@ -10,7 +10,10 @@ async-trait = {version = "0.1.64"}
 enclave_agent = {path = "../enclave_agent"}
 enclave_protos = {path = "../enclave_protos"}
 enclave_vsock = {path = "../enclave_vsock"}
+enclave_utils = {path = "../enclave_utils"}
 env_logger = {version = "0.11.7"}
+ethers-signers = {version = "2.0.14"}
+ethers-core = {version = "2.0.14"}
 log = {version = "0.4.26"}
 prost = {version = "0.13.5"}
 reqwest = {version = "0.12.12"}

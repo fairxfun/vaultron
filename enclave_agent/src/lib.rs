@@ -4,14 +4,16 @@ mod error;
 
 pub use agent::*;
 pub use client::*;
-use enclave_vsock::VsockClientCreateOptions;
+use enclave_vsock::{VsockClientCreateOptions, DEFAULT_VSOCK_CID, DEFAULT_VSOCK_PORT};
 pub use error::*;
 use std::sync::Arc;
 use typed_builder::TypedBuilder;
 
 #[derive(Debug, TypedBuilder)]
 pub struct EnclaveAgentCreateOptions {
+    #[builder(default = DEFAULT_VSOCK_CID)]
     pub server_cid: u32,
+    #[builder(default = DEFAULT_VSOCK_PORT)]
     pub server_port: u32,
 }
 

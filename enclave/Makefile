@@ -30,7 +30,6 @@ start:
 		--eif-path vaultron_enclave.eif \
 		--cpu-count 2 \
 		--memory 1024 \
-		--attach-console \
 		--debug-mode
 
 
