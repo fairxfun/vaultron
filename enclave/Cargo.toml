@@ -6,16 +6,34 @@ edition = "2018"
 
 [features]
 default = []
-# Mock KMS functionality for CI/CD workflows and testing
-workflow_build_feature = []
+kmstool_aws_clib_feature = ["enclave_kmstool/kmstool_aws_clib_feature"]
 
 [dependencies]
-anyhow = {version = "1.0"}
-log = {version = "0.4.25"}
-env_logger = {version = "0.11.6"}
-vsock = {version = "0.5.1"}
-thiserror = {version = "2.0.11"}
-serde_json = {version = "1.0.139"}
+anyhow = {version = "1.0.97"}
+async-trait = {version = "0.1.64"}
+enclave_kmstool = {path = "../enclave_kmstool"}
+enclave_protos = {path = "../enclave_protos"}
+enclave_utils = {path = "../enclave_utils"}
+enclave_vsock = {path = "../enclave_vsock"}
+enclave_wallet = {path = "../enclave_wallet"}
+env_logger = {version = "0.11.7"}
+ethers-core = {version = "2.0.14"}
+log = {version = "0.4.26"}
+postcard = {version = "1.1.1", features = ["alloc"]}
+prost = {version = "0.13.5"}
+serde = {version = "1.0.219"}
+serde_json = {version = "1.0.140"}
+thiserror = {version = "2.0.12"}
+tokio = {version = "1.44.0", features = ["full"]}
 typed-builder = {version = "0.20.0"}
 
-enclave_kmstool = { path = "../enclave_kmstool" }
+[[bin]]
+name="vaultron_enclave"
+path = "src/main.rs"
+
+[dev-dependencies]
+mockall = { version = "0.11.4" }
+tokio = { version = "1.26.0", features = ["macros", "rt", "test-util"] }
+ethers-signers = {version = "2.0.14"}
+ethers-core = {version = "2.0.14"}
+bs64 = {version = "0.1.2"}

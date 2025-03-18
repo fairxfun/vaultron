@@ -1,10 +1,14 @@
 [workspace]
 members = [
     "enclave",
-    "enclave_kmstool",
     "enclave_agent",
     "enclave_protos",
-    "enclave_protos_macros"
+    "enclave_protos_macros",
+    "enclave_utils",
+    "enclave_wallet",
+    "enclave_kmstool",
+    "enclave_vsock",
+    "enclave_tester"
 ]
 resolver = "2"
 

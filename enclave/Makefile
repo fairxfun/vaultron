@@ -4,8 +4,10 @@
 ARCH := $(shell uname -m)
 RUST_DIR := $(shell readlink -m $(shell dirname $(firstword $(MAKEFILE_LIST))))
 
-build:
+buildLib:
 	./scripts/build_kmstool_enclave_lib.sh
+
+build:
 	./scripts/build_vaultron_enclave.sh
 
 buildLibTest:
@@ -28,7 +30,6 @@ start:
 		--eif-path vaultron_enclave.eif \
 		--cpu-count 2 \
 		--memory 1024 \
-		--attach-console \
 		--debug-mode
 
 
@@ -41,7 +42,7 @@ console:
 stop:
 	nitro-cli terminate-enclave --all
 
-test: build docker eif stop start
+test: buildLib build docker eif stop start
 
 testLib: buildLibTest dockerLibTest eif stop start
 

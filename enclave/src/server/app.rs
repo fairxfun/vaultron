@@ -1,41 +1,52 @@
-use crate::{common::enclave_trace_init, common::EnclaveError, kms::create_kms_handler};
-use enclave_kmstool::KmsToolTrait;
-use log::info;
-use std::{
-    io::{Read, Write},
-    sync::Arc,
-};
-use vsock::{get_local_cid, VsockListener, VsockStream};
+use crate::common::{enclave_trace_init, EnclaveError};
+use crate::message::create_message_handler;
+use crate::server::EnclaveServerContext;
+use anyhow::{anyhow, Result};
+use enclave_vsock::{create_vsock_server, VsockMessageHandlerTrait, VsockServerCreateOptions, VsockServerTrait};
+use log::{error, info};
+use std::sync::Arc;
+use typed_builder::TypedBuilder;
 
-const ENCLAVE_PORT: u32 = 5001;
-const BUF_MAX_LEN: usize = 8192;
+type EnclaveVsockServer = Box<dyn VsockServerTrait<EnclaveError>>;
 
-pub struct EnclaveServer<K: KmsToolTrait> {
-    pub kms_client: Arc<K>,
+#[derive(Debug, TypedBuilder)]
+pub struct EnclaveServer {
+    pub context: Arc<EnclaveServerContext>,
+    pub vsock_server: Arc<EnclaveVsockServer>,
 }
 
-pub fn start_server() -> Result<(), EnclaveError> {
-    enclave_trace_init("info")?;
-    let cid = get_local_cid()?;
-    info!("start enclave with cid {} port {}", cid, ENCLAVE_PORT);
-    let _ = create_kms_handler();
-    let listener = VsockListener::bind_with_cid_port(cid, ENCLAVE_PORT)?;
-    loop {
-        let (stream, _) = listener.accept()?;
-        info!("Client connected!");
-        handle_client(stream)?;
+impl EnclaveServer {
+    pub fn new(context: Arc<EnclaveServerContext>) -> Result<Self, EnclaveError> {
+        enclave_trace_init(&context.config.log_level)?;
+        let message_handler = create_message_handler(context.clone());
+        let message_handler =
+            Arc::new(Box::new(message_handler) as Box<dyn VsockMessageHandlerTrait<Error = EnclaveError>>);
+        let vsock_server = create_vsock_server::<EnclaveError>(message_handler);
+        let vsock_server = Arc::new(Box::new(vsock_server) as EnclaveVsockServer);
+
+        Ok(EnclaveServer::builder()
+            .context(context)
+            .vsock_server(vsock_server)
+            .build())
+    }
+
+    pub async fn start(&self) -> Result<(), EnclaveError> {
+        let port = self.context.config.port;
+        info!("Starting enclave server on port {}", port);
+        let result = self
+            .vsock_server
+            .start(VsockServerCreateOptions::builder().port(port).build())
+            .await;
+        if let Err(e) = result {
+            error!("Failed to start vsock server: {}", e);
+            return Err(EnclaveError::AnyhowError(anyhow!("Failed to start vsock server")));
+        }
+        Ok(())
     }
 }
 
-fn handle_client(mut stream: VsockStream) -> std::io::Result<()> {
-    let mut buf = vec![0u8; BUF_MAX_LEN];
-
-    let size = stream.read(&mut buf)?;
-    info!("Received: {}", String::from_utf8_lossy(&buf[..size]));
-
-    let response = "Hello from Enclave!";
-    stream.write_all(response.as_bytes())?;
-    stream.flush()?;
-
-    Ok(())
+pub async fn start_server() -> Result<(), EnclaveError> {
+    let context = EnclaveServerContext::new()?;
+    let server = EnclaveServer::new(Arc::new(context))?;
+    server.start().await
 }

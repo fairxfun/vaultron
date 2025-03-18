@@ -2,6 +2,8 @@ use super::kmstool_enclave_lib::KMSTOOL_STATUS;
 use crate::c_lib::kmstool_enclave_lib::{
     kmstool_decrypt_params, kmstool_enclave_decrypt, kmstool_enclave_init, kmstool_encrypt_params, kmstool_init_params,
 };
+use crate::c_lib::kmstool_enclave_lib::{kmstool_enclave_update_aws_key, kmstool_update_aws_key_params};
+use crate::KmsUpdateAwsCredentialsRequest;
 use crate::{
     EnclaveKmstoolError, KmsDecryptRequest, KmsDecryptResponse, KmsEncryptRequest, KmsEncryptResponse, KmsInitRequest,
     KmsToolTrait,
@@ -9,16 +11,11 @@ use crate::{
 use anyhow::anyhow;
 use log::error;
 use std::ffi::CString;
-use std::sync::Arc;
 use std::{ptr, slice};
 use typed_builder::TypedBuilder;
 
-pub fn create_kmstool_clib_client() -> Arc<dyn KmsToolTrait> {
-    Arc::new(KmsToolCLibClient::default())
-}
-
 #[derive(Debug, TypedBuilder, Default)]
-struct KmsToolCLibClient {}
+pub(crate) struct KmsToolCLibClient {}
 
 impl KmsToolTrait for KmsToolCLibClient {
     fn init(&self, request: KmsInitRequest) -> anyhow::Result<(), EnclaveKmstoolError> {
@@ -46,6 +43,33 @@ impl KmsToolTrait for KmsToolCLibClient {
             error!("kms tool enclave init error rc: {}", rc);
             return Err(EnclaveKmstoolError::AnyhowError(anyhow!(
                 "kmstool init failed with error code {}",
+                rc
+            )));
+        }
+
+        Ok(())
+    }
+
+    fn update_aws_credentials(
+        &self,
+        request: KmsUpdateAwsCredentialsRequest,
+    ) -> anyhow::Result<(), EnclaveKmstoolError> {
+        let aws_access_key_id = create_cstring(request.aws_access_key_id.as_str())?;
+        let aws_secret_access_key = create_cstring(request.aws_secret_access_key.as_str())?;
+        let aws_session_token = create_cstring(request.aws_session_token.as_str())?;
+
+        let params = kmstool_update_aws_key_params {
+            aws_access_key_id: aws_access_key_id.as_ptr(),
+            aws_secret_access_key: aws_secret_access_key.as_ptr(),
+            aws_session_token: aws_session_token.as_ptr(),
+        };
+
+        let rc = unsafe { kmstool_enclave_update_aws_key(&params) };
+
+        if rc != KMSTOOL_STATUS::KMSTOOL_SUCCESS as i32 {
+            error!("kms tool enclave update aws credentials error rc: {}", rc);
+            return Err(EnclaveKmstoolError::AnyhowError(anyhow!(
+                "kmstool update aws credentials with error code {}",
                 rc
             )));
         }

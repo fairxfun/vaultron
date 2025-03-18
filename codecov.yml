@@ -7,6 +7,11 @@ coverage:
     patch:
       default:
         informational: true
+  ignore:
+    - "enclave_tester/**/*"
+    - "enclave_protos/**/*"
+    - "target/**/*"
+    - ".cargo/**/*"
 
 parsers:
   gcov:
@@ -19,7 +24,6 @@ parsers:
 comment:
   layout: "diff"
   require_changes: false
-
 
 github_checks:
   annotations: false

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package vaultron.enclave.v1;
+
+import "vaultron/enclave/v1/common.proto";
+import "vaultron/enclave/v1/ping.proto";
+import "vaultron/enclave/v1/config.proto";
+import "vaultron/enclave/v1/wallet.proto";
+
+message EnclaveRequest {
+  oneof request {
+    PingRequest                 ping_request                   = 1;
+    InitKmstoolRequest          init_kmstool_request           = 2;
+    UpdateAwsCredentialsRequest update_aws_credentials_request = 3;
+    CreateEnclaveWalletRequest  create_enclave_wallet_request  = 4;
+  }
+}
+
+message EnclaveResponse {
+  oneof response {
+    PingResponse                 ping_response                   = 1;
+    InitKmstoolResponse          init_kmstool_response           = 2;
+    UpdateAwsCredentialsResponse update_aws_credentials_response = 3;
+    CreateEnclaveWalletResponse  create_enclave_wallet_response  = 4; 
+  }
+}

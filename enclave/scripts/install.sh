@@ -13,5 +13,12 @@ sudo systemctl enable --now docker
 
 sudo yum install -y llvm clang
 
+sudo dnf install -y openssl-devel
+
+sudo rustup update stable
+
+sudo rustup toolchain install 1.85.0
+sudo rustup default 1.85.0
+
 sudo yum groupinstall "Development Tools" -y
 

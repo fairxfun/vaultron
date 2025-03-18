@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package vaultron.enclave.v1;
+
+import "vaultron/enclave/v1/common.proto";
+
+message PingRequest {}
+
+message PingResponse {
+    StatusCode code = 1;
+}

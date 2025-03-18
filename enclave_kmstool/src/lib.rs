@@ -4,8 +4,12 @@ mod kmstool;
 pub use error::*;
 pub use kmstool::*;
 
-#[cfg(not(feature = "workflow_build_feature"))]
+#[cfg(feature = "kmstool_aws_clib_feature")]
+use std::sync::Arc;
+#[cfg(feature = "kmstool_aws_clib_feature")]
 mod c_lib;
 
-#[cfg(not(feature = "workflow_build_feature"))]
-pub use c_lib::*;
+#[cfg(feature = "kmstool_aws_clib_feature")]
+pub fn create_kmstool_clib_client() -> Arc<Box<dyn KmsToolTrait>> {
+    Arc::new(Box::new(c_lib::KmsToolCLibClient::default()) as Box<dyn KmsToolTrait>)
+}

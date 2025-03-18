@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package vaultron.enclave.v1;
+
+import "vaultron/enclave/v1/common.proto";
+
+enum SignatureType {
+    SIGNATURE_TYPE_UNSPECIFIED    = 0;
+    SIGNATURE_TYPE_FAIRX          = 1;
+    SIGNATURE_TYPE_WALLET_BITCOIN = 2;
+    SIGNATURE_TYPE_WALLET_ETH     = 3;
+    SIGNATURE_TYPE_WALLET_SOLANA  = 4;
+    SIGNATURE_TYPE_WALLET_SUI     = 5;
+}
+
+message CreateEnclaveWalletRequest {
+    bytes         user_id          = 1;
+    bytes         user_public_key  = 2;
+    SignatureType signature_type   = 3;
+    bytes         message          = 4;
+    bytes         signature        = 5;
+}
+
+message CreateEnclaveWalletResponse {
+    StatusCode code                  = 1;
+    bytes      wallet_encrypted_data = 2;
+    bytes      eth_public_key        = 3;
+    bytes      eth_encrypted_data    = 4; 
+    bytes      solana_public_key     = 5;
+    bytes      solana_encrypted_data = 6;
+    bytes      sui_public_key        = 7;
+    bytes      sui_encrypted_data    = 8;
+}

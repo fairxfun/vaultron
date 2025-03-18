@@ -1,4 +1,4 @@
 mod kmstool_clib_client;
 mod kmstool_enclave_lib;
 
-pub use kmstool_clib_client::*;
+pub(crate) use kmstool_clib_client::*;

@@ -2,12 +2,20 @@
 name = "enclave_agent"
 version = "0.1.0"
 authors = ["mikerfrr"]
-edition = "2018"
+edition = "2021"
 
 [dependencies]
-anyhow = {version = "1.0"}
+anyhow = {version = "1.0.97"}
+async-trait = {version = "0.1.64"}
+enclave_protos = {path = "../enclave_protos"}
+enclave_vsock = {path = "../enclave_vsock"}
+env_logger = {version = "0.11.7"}
+log = {version = "0.4.26"}
+prost = {version = "0.13.5"}
+thiserror = {version = "2.0.12"}
+tokio = {version = "1.44.0", features = ["full"]}
 typed-builder = {version = "0.20.0"}
-log = {version = "0.4"}
-env_logger = {version = "0.11.6"}
-vsock = {version = "0.5.1"}
-thiserror = {version = "2.0.11"}
+
+[dev-dependencies]
+mockall = { version = "0.11.4" }
+tokio = { version = "1.26.0", features = ["macros", "rt", "test-util"] }
