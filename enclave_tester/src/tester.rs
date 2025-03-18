@@ -1,11 +1,15 @@
 use anyhow::Result;
 use enclave_agent::{create_enclave_agent, EnclaveAgentCreateOptions};
 use enclave_protos::enclave::v1::{InitKmstoolRequest, UpdateAwsCredentialsRequest};
+use enclave_vsock::DEFAULT_VSOCK_PORT;
 
 use crate::EnclaveAgentTesterError;
 
 pub async fn start_tester() -> Result<(), Box<dyn std::error::Error>> {
-    let options = EnclaveAgentCreateOptions::builder().cid(1000).port(1000).build();
+    let options = EnclaveAgentCreateOptions::builder()
+        .server_cid(1000)
+        .server_port(DEFAULT_VSOCK_PORT)
+        .build();
     let agent = create_enclave_agent(options)?;
 
     let (access_key_id, secret_access_key, session_token) = get_aws_credentials().await?;

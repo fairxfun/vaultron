@@ -2,7 +2,7 @@ use crate::common::{enclave_trace_init, EnclaveError};
 use crate::message::create_message_handler;
 use crate::server::EnclaveServerContext;
 use anyhow::{anyhow, Result};
-use enclave_vsock::{create_vsock_server, VsockMessageHandlerTrait, VsockServerTrait};
+use enclave_vsock::{create_vsock_server, VsockMessageHandlerTrait, VsockServerCreateOptions, VsockServerTrait};
 use log::{error, info};
 use std::sync::Arc;
 use typed_builder::TypedBuilder;
@@ -33,7 +33,10 @@ impl EnclaveServer {
     pub async fn start(&self) -> Result<(), EnclaveError> {
         let port = self.context.config.port;
         info!("Starting enclave server on port {}", port);
-        let result = self.vsock_server.start(port).await;
+        let result = self
+            .vsock_server
+            .start(VsockServerCreateOptions::builder().port(port).build())
+            .await;
         if let Err(e) = result {
             error!("Failed to start vsock server: {}", e);
             return Err(EnclaveError::AnyhowError(anyhow!("Failed to start vsock server")));

@@ -8,8 +8,8 @@ pub enum VsockServerError {
 
 #[derive(Error, Debug)]
 pub enum VsockClientError {
-    #[error("Lock error")]
-    LockError,
+    #[error("Stream lock error")]
+    StreamLockError,
 
     #[error("IO error")]
     IoError(#[from] std::io::Error),

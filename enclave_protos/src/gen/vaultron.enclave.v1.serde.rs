@@ -534,6 +534,9 @@ impl serde::Serialize for EnclaveRequest {
         let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.EnclaveRequest", len)?;
         if let Some(v) = self.request.as_ref() {
             match v {
+                enclave_request::Request::PingRequest(v) => {
+                    struct_ser.serialize_field("pingRequest", v)?;
+                }
                 enclave_request::Request::InitKmstoolRequest(v) => {
                     struct_ser.serialize_field("initKmstoolRequest", v)?;
                 }
@@ -555,6 +558,8 @@ impl<'de> serde::Deserialize<'de> for EnclaveRequest {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
+            "ping_request",
+            "pingRequest",
             "init_kmstool_request",
             "initKmstoolRequest",
             "update_aws_credentials_request",
@@ -565,6 +570,7 @@ impl<'de> serde::Deserialize<'de> for EnclaveRequest {
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
+            PingRequest,
             InitKmstoolRequest,
             UpdateAwsCredentialsRequest,
             CreateEnclaveWalletRequest,
@@ -589,6 +595,7 @@ impl<'de> serde::Deserialize<'de> for EnclaveRequest {
                         E: serde::de::Error,
                     {
                         match value {
+                            "pingRequest" | "ping_request" => Ok(GeneratedField::PingRequest),
                             "initKmstoolRequest" | "init_kmstool_request" => Ok(GeneratedField::InitKmstoolRequest),
                             "updateAwsCredentialsRequest" | "update_aws_credentials_request" => Ok(GeneratedField::UpdateAwsCredentialsRequest),
                             "createEnclaveWalletRequest" | "create_enclave_wallet_request" => Ok(GeneratedField::CreateEnclaveWalletRequest),
@@ -614,6 +621,13 @@ impl<'de> serde::Deserialize<'de> for EnclaveRequest {
                 let mut request__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
+                        GeneratedField::PingRequest => {
+                            if request__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("pingRequest"));
+                            }
+                            request__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_request::Request::PingRequest)
+;
+                        }
                         GeneratedField::InitKmstoolRequest => {
                             if request__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("initKmstoolRequest"));
@@ -659,6 +673,9 @@ impl serde::Serialize for EnclaveResponse {
         let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.EnclaveResponse", len)?;
         if let Some(v) = self.response.as_ref() {
             match v {
+                enclave_response::Response::PingResponse(v) => {
+                    struct_ser.serialize_field("pingResponse", v)?;
+                }
                 enclave_response::Response::InitKmstoolResponse(v) => {
                     struct_ser.serialize_field("initKmstoolResponse", v)?;
                 }
@@ -680,6 +697,8 @@ impl<'de> serde::Deserialize<'de> for EnclaveResponse {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
+            "ping_response",
+            "pingResponse",
             "init_kmstool_response",
             "initKmstoolResponse",
             "update_aws_credentials_response",
@@ -690,6 +709,7 @@ impl<'de> serde::Deserialize<'de> for EnclaveResponse {
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
+            PingResponse,
             InitKmstoolResponse,
             UpdateAwsCredentialsResponse,
             CreateEnclaveWalletResponse,
@@ -714,6 +734,7 @@ impl<'de> serde::Deserialize<'de> for EnclaveResponse {
                         E: serde::de::Error,
                     {
                         match value {
+                            "pingResponse" | "ping_response" => Ok(GeneratedField::PingResponse),
                             "initKmstoolResponse" | "init_kmstool_response" => Ok(GeneratedField::InitKmstoolResponse),
                             "updateAwsCredentialsResponse" | "update_aws_credentials_response" => Ok(GeneratedField::UpdateAwsCredentialsResponse),
                             "createEnclaveWalletResponse" | "create_enclave_wallet_response" => Ok(GeneratedField::CreateEnclaveWalletResponse),
@@ -739,6 +760,13 @@ impl<'de> serde::Deserialize<'de> for EnclaveResponse {
                 let mut response__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
+                        GeneratedField::PingResponse => {
+                            if response__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("pingResponse"));
+                            }
+                            response__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_response::Response::PingResponse)
+;
+                        }
                         GeneratedField::InitKmstoolResponse => {
                             if response__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("initKmstoolResponse"));
@@ -1079,6 +1107,168 @@ impl<'de> serde::Deserialize<'de> for InitKmstoolResponse {
             }
         }
         deserializer.deserialize_struct("vaultron.enclave.v1.InitKmstoolResponse", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for PingRequest {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let len = 0;
+        let struct_ser = serializer.serialize_struct("vaultron.enclave.v1.PingRequest", len)?;
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for PingRequest {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                            Err(serde::de::Error::unknown_field(value, FIELDS))
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = PingRequest;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct vaultron.enclave.v1.PingRequest")
+            }
+
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<PingRequest, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                while map.next_key::<GeneratedField>()?.is_some() {
+                    let _ = map.next_value::<serde::de::IgnoredAny>()?;
+                }
+                Ok(PingRequest {
+                })
+            }
+        }
+        deserializer.deserialize_struct("vaultron.enclave.v1.PingRequest", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for PingResponse {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.code.is_some() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.PingResponse", len)?;
+        if let Some(v) = self.code.as_ref() {
+            struct_ser.serialize_field("code", v)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for PingResponse {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "code",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Code,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "code" => Ok(GeneratedField::Code),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = PingResponse;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct vaultron.enclave.v1.PingResponse")
+            }
+
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<PingResponse, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut code__ = None;
+                while let Some(k) = map.next_key()? {
+                    match k {
+                        GeneratedField::Code => {
+                            if code__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("code"));
+                            }
+                            code__ = map.next_value()?;
+                        }
+                    }
+                }
+                Ok(PingResponse {
+                    code: code__,
+                })
+            }
+        }
+        deserializer.deserialize_struct("vaultron.enclave.v1.PingResponse", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for SignatureType {

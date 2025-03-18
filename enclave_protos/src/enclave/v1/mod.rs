@@ -1,4 +1,5 @@
 mod config;
+mod ping;
 mod wallet;
 
 pub use config::*;

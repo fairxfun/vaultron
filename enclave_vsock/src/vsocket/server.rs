@@ -1,4 +1,4 @@
-use super::{create_vsock_protocol, VsockProtocol};
+use super::{create_vsock_protocol, VsockProtocol, VsockServerCreateOptions};
 use crate::{VsockMessageHandlerTrait, VsockServerError, VsockServerTrait};
 use anyhow::Result;
 use log::{error, info};
@@ -54,10 +54,10 @@ impl<E: Debug + Send + Sync + 'static> VsockServer<E> {
 
 #[async_trait::async_trait]
 impl<E: Debug + Send + Sync + 'static> VsockServerTrait<E> for VsockServer<E> {
-    async fn start(&self, port: u32) -> Result<(), VsockServerError> {
+    async fn start(&self, options: VsockServerCreateOptions) -> Result<(), VsockServerError> {
         let cid = get_local_cid()?;
-        info!("Starting vsock server with cid {} port {}", cid, port);
-        let listener = VsockListener::bind_with_cid_port(cid, port)?;
+        info!("Starting vsock server with cid {} port {}", cid, options.port);
+        let listener = VsockListener::bind_with_cid_port(cid, options.port)?;
 
         loop {
             match listener.accept() {

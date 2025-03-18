@@ -3,7 +3,7 @@ use std::sync::Arc;
 use crate::{common::EnclaveError, server::EnclaveServerContext};
 use enclave_protos::enclave::v1::{
     enclave_request, enclave_response, CreateEnclaveWalletResponse, EnclaveRequest, EnclaveResponse,
-    InitKmstoolResponse, UpdateAwsCredentialsResponse,
+    InitKmstoolResponse, PingResponse, UpdateAwsCredentialsResponse,
 };
 use enclave_vsock::VsockMessageHandlerTrait;
 use log::warn;
@@ -28,6 +28,17 @@ impl VsockMessageHandlerTrait for MessageHandler {
     async fn process_message(&self, message: &[u8]) -> Result<Vec<u8>, EnclaveError> {
         let mr = EnclaveRequest::decode(message)?;
         match mr.request {
+            Some(enclave_request::Request::PingRequest(r)) => {
+                let result = self.handle_ping_request(r).await;
+                let response = match result {
+                    Ok(r) => r,
+                    Err(e) => PingResponse::error(e),
+                };
+                let response = EnclaveResponse::builder()
+                    .response(enclave_response::Response::PingResponse(response))
+                    .build();
+                Ok(response.encode_to_vec())
+            }
             Some(enclave_request::Request::InitKmstoolRequest(r)) => {
                 let result = self.handle_kmstool_init_request(r).await;
                 let response = match result {

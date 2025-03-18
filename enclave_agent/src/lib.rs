@@ -4,9 +4,25 @@ mod error;
 
 pub use agent::*;
 pub use client::*;
+use enclave_vsock::VsockClientCreateOptions;
 pub use error::*;
-
 use std::sync::Arc;
+use typed_builder::TypedBuilder;
+
+#[derive(Debug, TypedBuilder)]
+pub struct EnclaveAgentCreateOptions {
+    pub server_cid: u32,
+    pub server_port: u32,
+}
+
+impl From<EnclaveAgentCreateOptions> for VsockClientCreateOptions {
+    fn from(options: EnclaveAgentCreateOptions) -> Self {
+        VsockClientCreateOptions::builder()
+            .server_cid(options.server_cid)
+            .server_port(options.server_port)
+            .build()
+    }
+}
 
 pub fn create_enclave_agent(
     options: EnclaveAgentCreateOptions,

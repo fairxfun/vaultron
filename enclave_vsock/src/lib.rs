@@ -14,10 +14,11 @@ pub trait VsockMessageHandlerTrait: Send + Sync + Debug {
 
 #[async_trait::async_trait]
 pub trait VsockServerTrait<E: Debug + Send + Sync + 'static>: Send + Sync + Debug {
-    async fn start(&self, port: u32) -> Result<(), VsockServerError>;
+    async fn start(&self, options: VsockServerCreateOptions) -> Result<(), VsockServerError>;
 }
 
 #[async_trait::async_trait]
 pub trait VsockClientTrait: Send + Sync + Debug {
+    async fn reconnect(&self) -> Result<(), VsockClientError>;
     async fn send_request(&self, message: &[u8]) -> Result<Vec<u8>, VsockClientError>;
 }
