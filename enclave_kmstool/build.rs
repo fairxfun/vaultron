@@ -12,7 +12,7 @@ fn main() {
         .use_core()
         .sort_semantically(true)
         .rustfmt_configuration_file(None)
-        .header("./src/c_lib/kmstool_enclave_lib.h")
+        .header("./lib/aws-nitro-enclaves-sdk-c/lib/kmstool-enclave-lib/kmstool_enclave_lib.h")
         .raw_line("#![allow(dead_code)]")
         .raw_line("#![allow(non_upper_case_globals)]")
         .raw_line("#![allow(non_camel_case_types)]")
@@ -25,8 +25,8 @@ fn main() {
         .generate()
         .expect("Unable to generate bindings");
 
-    let out_path = PathBuf::from("./src/c_lib");
+    let out_path = PathBuf::from("./src/gen");
     bindings
-        .write_to_file(out_path.join("kmstool_enclave_lib.rs"))
+        .write_to_file(out_path.join("kmstool_enclave_lib_gen.rs"))
         .expect("Couldn't write bindings!");
 }

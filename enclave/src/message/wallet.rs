@@ -17,7 +17,7 @@ impl MessageHandler {
         &self,
         request: CreateEnclaveWalletRequest,
     ) -> Result<CreateEnclaveWalletResponse, EnclaveError> {
-        info!("Received create enclave wallet request: {:?}", request);
+        info!("Received create enclave wallet request");
         self.verify_signature(&request)?;
         let wallet: enclave_wallet::MultiChainWallet = generate_multi_chain_wallet()?;
         let response = self.kms_encrypt_wallet_data(&request, &wallet)?;

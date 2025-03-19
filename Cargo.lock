@@ -1968,28 +1968,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "enclave_tester"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "enclave_agent",
- "enclave_protos",
- "enclave_utils",
- "enclave_vsock",
- "env_logger",
- "ethers-core",
- "ethers-signers",
- "log",
- "prost 0.13.5",
- "reqwest",
- "serde_json",
- "thiserror 2.0.12",
- "tokio",
- "typed-builder",
-]
-
-[[package]]
 name = "enclave_utils"
 version = "0.1.0"
 dependencies = [
@@ -3467,6 +3445,28 @@ dependencies = [
  "pin-project",
  "serde",
  "similar",
+]
+
+[[package]]
+name = "integration_tests"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "enclave_agent",
+ "enclave_protos",
+ "enclave_utils",
+ "enclave_vsock",
+ "env_logger",
+ "ethers-core",
+ "ethers-signers",
+ "log",
+ "prost 0.13.5",
+ "reqwest",
+ "serde_json",
+ "thiserror 2.0.12",
+ "tokio",
+ "typed-builder",
 ]
 
 [[package]]

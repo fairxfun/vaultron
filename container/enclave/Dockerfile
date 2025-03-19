@@ -9,9 +9,9 @@ FROM $BASE_IMAGE as VAULTRON_ENCLAVE
 RUN mkdir /fairx
 
 #RUN rpm -e python python-libs python-urlgrabber python2-rpm pygpgme pyliblzma python-iniparse pyxattr python-pycurl amazon-linux-extras yum yum-metadata-parser yum-plugin-ovl yum-plugin-priorities
-COPY libnsm.so /usr/lib64/libnsm.so
-COPY libkmstool-enclave-lib.so /usr/lib64/libkmstool-enclave-lib.so
-COPY vaultron_enclave /fairx/vaultron_enclave
+COPY ./target/kmstool-enclave-lib/libnsm.so /usr/lib64/libnsm.so
+COPY ./target/kmstool-enclave-lib/libkmstool-enclave-lib.so /usr/lib64/libkmstool-enclave-lib.so
+COPY ./target/release/vaultron_enclave /fairx/vaultron_enclave
 
 WORKDIR /fairx
 CMD ["/fairx/vaultron_enclave"]

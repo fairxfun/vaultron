@@ -73,7 +73,7 @@ impl VsockMessageHandlerTrait for MessageHandler {
                 Ok(response.encode_to_vec())
             }
             _ => {
-                warn!("Unknown message type: {:?}", message);
+                warn!("Unknown message type");
                 Err(EnclaveError::InvalidRequestError)
             }
         }

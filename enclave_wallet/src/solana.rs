@@ -4,6 +4,7 @@ use crate::EnclaveWalletError;
 use anyhow::anyhow;
 use solana_keypair::keypair_from_seed;
 use solana_signer::Signer;
+use std::str;
 
 pub fn derive_solana_keypair(seed: &[u8], path: &str) -> Result<EnclaveKeyPair, EnclaveWalletError> {
     let seed_arr = derive_key_from_path(seed, path)?;

@@ -1,8 +1,8 @@
-use super::kmstool_enclave_lib::KMSTOOL_STATUS;
-use crate::c_lib::kmstool_enclave_lib::{
-    kmstool_decrypt_params, kmstool_enclave_decrypt, kmstool_enclave_init, kmstool_encrypt_params, kmstool_init_params,
+use crate::gen::{
+    kmstool_decrypt_params, kmstool_enclave_decrypt, kmstool_enclave_encrypt, kmstool_enclave_init,
+    kmstool_encrypt_params, kmstool_init_params, KMSTOOL_STATUS,
 };
-use crate::c_lib::kmstool_enclave_lib::{kmstool_enclave_update_aws_key, kmstool_update_aws_key_params};
+use crate::gen::{kmstool_enclave_update_aws_key, kmstool_update_aws_key_params};
 use crate::KmsUpdateAwsCredentialsRequest;
 use crate::{
     EnclaveKmstoolError, KmsDecryptRequest, KmsDecryptResponse, KmsEncryptRequest, KmsEncryptResponse, KmsInitRequest,
@@ -84,9 +84,7 @@ impl KmsToolTrait for KmsToolCLibClient {
         };
         let mut ciphertext_out: *mut u8 = ptr::null_mut();
         let mut ciphertext_out_len: u32 = 0;
-        let rc = unsafe {
-            super::kmstool_enclave_lib::kmstool_enclave_encrypt(&params, &mut ciphertext_out, &mut ciphertext_out_len)
-        };
+        let rc = unsafe { kmstool_enclave_encrypt(&params, &mut ciphertext_out, &mut ciphertext_out_len) };
 
         if rc != KMSTOOL_STATUS::KMSTOOL_SUCCESS as i32 {
             error!("kms tool enclave encrypt error rc: {}", rc);

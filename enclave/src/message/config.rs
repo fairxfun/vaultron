@@ -10,7 +10,7 @@ impl MessageHandler {
         &self,
         request: InitKmstoolRequest,
     ) -> Result<InitKmstoolResponse, EnclaveError> {
-        info!("Received init kmstool request: {:?}", request);
+        info!("Received init kmstool request");
 
         self.context.kms_client.init(request.into())?;
         Ok(InitKmstoolResponse::success())
@@ -20,7 +20,7 @@ impl MessageHandler {
         &self,
         request: UpdateAwsCredentialsRequest,
     ) -> Result<UpdateAwsCredentialsResponse, EnclaveError> {
-        info!("Received update AWS credentials request: {:?}", request);
+        info!("Received update AWS credentials request");
         self.context.kms_client.update_aws_credentials(request.into())?;
         Ok(UpdateAwsCredentialsResponse::success())
     }
