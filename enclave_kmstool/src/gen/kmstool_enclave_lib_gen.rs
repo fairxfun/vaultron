@@ -14,14 +14,9 @@ unsafe extern "C" {}
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct kmstool_init_params {
+    pub aws_region: *const ::core::ffi::c_char,
     pub enable_logging: ::core::ffi::c_uint,
     pub proxy_port: ::core::ffi::c_uint,
-    pub aws_region: *const ::core::ffi::c_char,
-    pub aws_access_key_id: *const ::core::ffi::c_char,
-    pub aws_secret_access_key: *const ::core::ffi::c_char,
-    pub aws_session_token: *const ::core::ffi::c_char,
-    pub kms_key_id: *const ::core::ffi::c_char,
-    pub kms_encryption_algorithm: *const ::core::ffi::c_char,
 }
 #[doc = " @brief Parameters for updating AWS credentials\n\n This structure contains the parameters needed to update the AWS credentials\n for an already initialized KMS Tool enclave."]
 #[repr(C)]
@@ -35,6 +30,7 @@ pub struct kmstool_update_aws_key_params {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct kmstool_encrypt_params {
+    pub kms_key_id: *const ::core::ffi::c_char,
     pub plaintext: *const ::core::ffi::c_uchar,
     pub plaintext_len: ::core::ffi::c_uint,
 }
@@ -42,6 +38,8 @@ pub struct kmstool_encrypt_params {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct kmstool_decrypt_params {
+    pub kms_key_id: *const ::core::ffi::c_char,
+    pub kms_algorithm: *const ::core::ffi::c_char,
     pub ciphertext: *const ::core::ffi::c_uchar,
     pub ciphertext_len: ::core::ffi::c_uint,
 }

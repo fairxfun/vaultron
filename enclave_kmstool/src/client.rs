@@ -1,12 +1,11 @@
-use super::kmstool_enclave_lib::KMSTOOL_STATUS;
-use crate::c_lib::kmstool_enclave_lib::{
-    kmstool_decrypt_params, kmstool_enclave_decrypt, kmstool_enclave_init, kmstool_encrypt_params, kmstool_init_params,
+use crate::gen::{
+    kmstool_decrypt_params, kmstool_enclave_decrypt, kmstool_enclave_encrypt, kmstool_enclave_init,
+    kmstool_encrypt_params, kmstool_init_params, KMSTOOL_STATUS,
 };
-use crate::c_lib::kmstool_enclave_lib::{kmstool_enclave_update_aws_key, kmstool_update_aws_key_params};
-use crate::KmsUpdateAwsCredentialsRequest;
+use crate::gen::{kmstool_enclave_update_aws_key, kmstool_update_aws_key_params};
 use crate::{
-    EnclaveKmstoolError, KmsDecryptRequest, KmsDecryptResponse, KmsEncryptRequest, KmsEncryptResponse, KmsInitRequest,
-    KmsToolTrait,
+    EnclaveKmstoolError, KmsToolTrait, KmstoolDecryptParams, KmstoolDecryptResult, KmstoolEncryptParams,
+    KmstoolEncryptResult, KmstoolInitParams, KmstoolUpdateAwsCredentialsParams,
 };
 use anyhow::anyhow;
 use log::error;
@@ -18,23 +17,13 @@ use typed_builder::TypedBuilder;
 pub(crate) struct KmsToolCLibClient {}
 
 impl KmsToolTrait for KmsToolCLibClient {
-    fn init(&self, request: KmsInitRequest) -> anyhow::Result<(), EnclaveKmstoolError> {
-        let aws_region = create_cstring(request.aws_region.as_str())?;
-        let aws_access_key_id = create_cstring(request.aws_access_key_id.as_str())?;
-        let aws_secret_access_key = create_cstring(request.aws_secret_access_key.as_str())?;
-        let aws_session_token = create_cstring(request.aws_session_token.as_str())?;
-        let kms_key_id = create_cstring(request.kms_key_id.as_str())?;
-        let kms_encryption_algorithm = create_cstring("SYMMETRIC_DEFAULT")?;
+    fn init(&self, params: KmstoolInitParams) -> anyhow::Result<(), EnclaveKmstoolError> {
+        let aws_region = create_cstring(params.aws_region.as_str())?;
 
         let params = kmstool_init_params {
             aws_region: aws_region.as_ptr(),
-            proxy_port: request.proxy_port,
-            aws_access_key_id: aws_access_key_id.as_ptr(),
-            aws_secret_access_key: aws_secret_access_key.as_ptr(),
-            aws_session_token: aws_session_token.as_ptr(),
-            kms_key_id: kms_key_id.as_ptr(),
-            kms_encryption_algorithm: kms_encryption_algorithm.as_ptr(),
-            enable_logging: if request.enable_logging { 1 } else { 0 },
+            proxy_port: params.proxy_port,
+            enable_logging: if params.enable_logging { 1 } else { 0 },
         };
 
         let rc = unsafe { kmstool_enclave_init(&params) };
@@ -52,7 +41,7 @@ impl KmsToolTrait for KmsToolCLibClient {
 
     fn update_aws_credentials(
         &self,
-        request: KmsUpdateAwsCredentialsRequest,
+        request: KmstoolUpdateAwsCredentialsParams,
     ) -> anyhow::Result<(), EnclaveKmstoolError> {
         let aws_access_key_id = create_cstring(request.aws_access_key_id.as_str())?;
         let aws_secret_access_key = create_cstring(request.aws_secret_access_key.as_str())?;
@@ -77,16 +66,16 @@ impl KmsToolTrait for KmsToolCLibClient {
         Ok(())
     }
 
-    fn encrypt(&self, request: KmsEncryptRequest) -> anyhow::Result<KmsEncryptResponse, EnclaveKmstoolError> {
+    fn encrypt(&self, request: KmstoolEncryptParams) -> anyhow::Result<KmstoolEncryptResult, EnclaveKmstoolError> {
+        let kms_key_id = create_cstring(request.kms_key_id.as_str())?;
         let params = kmstool_encrypt_params {
+            kms_key_id: kms_key_id.as_ptr(),
             plaintext: request.plaintext.as_ptr(),
             plaintext_len: request.plaintext.len() as u32,
         };
         let mut ciphertext_out: *mut u8 = ptr::null_mut();
         let mut ciphertext_out_len: u32 = 0;
-        let rc = unsafe {
-            super::kmstool_enclave_lib::kmstool_enclave_encrypt(&params, &mut ciphertext_out, &mut ciphertext_out_len)
-        };
+        let rc = unsafe { kmstool_enclave_encrypt(&params, &mut ciphertext_out, &mut ciphertext_out_len) };
 
         if rc != KMSTOOL_STATUS::KMSTOOL_SUCCESS as i32 {
             error!("kms tool enclave encrypt error rc: {}", rc);
@@ -105,11 +94,15 @@ impl KmsToolTrait for KmsToolCLibClient {
             libc::free(ciphertext_out as *mut libc::c_void);
         }
 
-        Ok(KmsEncryptResponse::builder().ciphertext(ciphertext).build())
+        Ok(KmstoolEncryptResult::builder().ciphertext(ciphertext).build())
     }
 
-    fn decrypt(&self, request: KmsDecryptRequest) -> anyhow::Result<KmsDecryptResponse, EnclaveKmstoolError> {
+    fn decrypt(&self, request: KmstoolDecryptParams) -> anyhow::Result<KmstoolDecryptResult, EnclaveKmstoolError> {
+        let kms_key_id = create_cstring(request.kms_key_id.as_str())?;
+        let kms_algorithm = create_cstring(request.kms_algorithm.as_str())?;
         let params = kmstool_decrypt_params {
+            kms_key_id: kms_key_id.as_ptr(),
+            kms_algorithm: kms_algorithm.as_ptr(),
             ciphertext: request.ciphertext.as_ptr(),
             ciphertext_len: request.ciphertext.len() as u32,
         };
@@ -132,7 +125,7 @@ impl KmsToolTrait for KmsToolCLibClient {
         }
         let plaintext = unsafe { slice::from_raw_parts(plaintext_out, plaintext_out_len as usize).to_vec() };
         unsafe { libc::free(plaintext_out as *mut libc::c_void) };
-        Ok(KmsDecryptResponse::builder().plaintext(plaintext).build())
+        Ok(KmstoolDecryptResult::builder().plaintext(plaintext).build())
     }
 }
 

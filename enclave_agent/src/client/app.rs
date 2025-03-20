@@ -1,9 +1,9 @@
 use crate::EnclaveAgentCreateOptions;
 use crate::{error::EnclaveAgentError, EnclaveAgentTrait};
 use enclave_protos::enclave::v1::{
-    enclave_request, enclave_response, CreateEnclaveWalletRequest, CreateEnclaveWalletResponse, EnclaveRequest,
-    EnclaveResponse, InitKmstoolRequest, InitKmstoolResponse, PingRequest, PingResponse, UpdateAwsCredentialsRequest,
-    UpdateAwsCredentialsResponse,
+    enclave_request, enclave_response, AddKmsKeyRequest, AddKmsKeyResponse, CreateEnclaveWalletRequest,
+    CreateEnclaveWalletResponse, EnclaveRequest, EnclaveResponse, InitEnclaveRequest, InitEnclaveResponse, PingRequest,
+    PingResponse, UpdateAwsCredentialsRequest, UpdateAwsCredentialsResponse,
 };
 use enclave_vsock::{create_vsock_client, VsockClientTrait};
 use prost::Message;
@@ -41,6 +41,28 @@ impl EnclaveAgentTrait for EnclaveAgent {
             .map_err(EnclaveAgentError::VsockClientError)
     }
 
+    async fn init_enclave(&self, request: InitEnclaveRequest) -> Result<InitEnclaveResponse, EnclaveAgentError> {
+        let enclave_request = EnclaveRequest::builder()
+            .request(enclave_request::Request::InitEnclaveRequest(request))
+            .build();
+        let response: EnclaveResponse = self.send_request(&enclave_request).await?;
+        match response.response {
+            Some(enclave_response::Response::InitEnclaveResponse(response)) => Ok(response),
+            _ => Err(EnclaveAgentError::InvalidResponseError),
+        }
+    }
+
+    async fn add_kms_key(&self, request: AddKmsKeyRequest) -> Result<AddKmsKeyResponse, EnclaveAgentError> {
+        let enclave_request = EnclaveRequest::builder()
+            .request(enclave_request::Request::AddKmsKeyRequest(request))
+            .build();
+        let response: EnclaveResponse = self.send_request(&enclave_request).await?;
+        match response.response {
+            Some(enclave_response::Response::AddKmsKeyResponse(response)) => Ok(response),
+            _ => Err(EnclaveAgentError::InvalidResponseError),
+        }
+    }
+
     async fn ping(&self, request: PingRequest) -> Result<PingResponse, EnclaveAgentError> {
         let enclave_request = EnclaveRequest::builder()
             .request(enclave_request::Request::PingRequest(request))
@@ -48,17 +70,6 @@ impl EnclaveAgentTrait for EnclaveAgent {
         let response: EnclaveResponse = self.send_request(&enclave_request).await?;
         match response.response {
             Some(enclave_response::Response::PingResponse(response)) => Ok(response),
-            _ => Err(EnclaveAgentError::InvalidResponseError),
-        }
-    }
-
-    async fn kmstool_init(&self, request: InitKmstoolRequest) -> Result<InitKmstoolResponse, EnclaveAgentError> {
-        let enclave_request = EnclaveRequest::builder()
-            .request(enclave_request::Request::InitKmstoolRequest(request))
-            .build();
-        let response: EnclaveResponse = self.send_request(&enclave_request).await?;
-        match response.response {
-            Some(enclave_response::Response::InitKmstoolResponse(response)) => Ok(response),
             _ => Err(EnclaveAgentError::InvalidResponseError),
         }
     }
