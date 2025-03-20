@@ -3,7 +3,8 @@ use std::{str, sync::Arc};
 use anyhow::Result;
 use enclave_agent::{create_enclave_agent, EnclaveAgentCreateOptions, EnclaveAgentTrait};
 use enclave_protos::enclave::v1::{
-    CreateEnclaveWalletRequest, InitKmstoolRequest, PingRequest, SignatureType, StatusCode, UpdateAwsCredentialsRequest,
+    AddKmsKeyRequest, CreateEnclaveWalletRequest, InitEnclaveRequest, KmsData, PingRequest, SignatureType, StatusCode,
+    UpdateAwsCredentialsRequest,
 };
 use enclave_utils::{
     address::{ethers_address_to_bytes, string_address_from_bytes},
@@ -19,8 +20,9 @@ pub async fn start_test() -> Result<(), Box<dyn std::error::Error>> {
     let agent = create_enclave_agent(options)?;
 
     test_init_kmstool(agent.clone()).await;
-    test_ping(agent.clone()).await;
+    test_add_kms_key(agent.clone()).await;
     test_update_aws_credentials(agent.clone()).await;
+    test_ping(agent.clone()).await;
     for i in 0..100000 {
         let iteration_start = Instant::now();
         test_create_enclave_wallet(agent.clone()).await;
@@ -38,16 +40,19 @@ pub async fn start_test() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 async fn test_init_kmstool(agent: Arc<Box<dyn EnclaveAgentTrait>>) {
-    let (access_key_id, secret_access_key, session_token) = get_aws_credentials().await;
-    let request = InitKmstoolRequest::builder()
+    let request = InitEnclaveRequest::builder()
         .enable_logging(true)
         .aws_region("ap-southeast-1".to_string())
-        .aws_access_key_id(access_key_id)
-        .aws_secret_access_key(secret_access_key)
-        .aws_session_token(session_token)
+        .build();
+    let response = agent.init_enclave(request).await.expect("Init kmstool failed");
+    assert_eq!(response.code, Some(StatusCode::success()));
+}
+
+async fn test_add_kms_key(agent: Arc<Box<dyn EnclaveAgentTrait>>) {
+    let request = AddKmsKeyRequest::builder()
         .kms_key_id("60b8ce3a-7466-42b7-96a7-a3868f0fd1bf".to_string())
         .build();
-    let response = agent.kmstool_init(request).await.expect("Init kmstool failed");
+    let response = agent.add_kms_key(request).await.expect("Add kms key failed");
     assert_eq!(response.code, Some(StatusCode::success()));
 }
 
@@ -85,6 +90,11 @@ async fn test_create_enclave_wallet(agent: Arc<Box<dyn EnclaveAgentTrait>>) {
         .signature_type(SignatureType::WalletEth)
         .message(create_message)
         .signature(signature.to_vec())
+        .kms_data(
+            KmsData::builder()
+                .kms_key_id("60b8ce3a-7466-42b7-96a7-a3868f0fd1bf".to_string())
+                .build(),
+        )
         .build();
     let response = agent
         .create_enclave_wallet(request)

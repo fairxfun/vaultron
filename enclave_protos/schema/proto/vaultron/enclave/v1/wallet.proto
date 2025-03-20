@@ -13,21 +13,27 @@ enum SignatureType {
     SIGNATURE_TYPE_WALLET_SUI     = 5;
 }
 
+message KmsData {
+    string kms_key_id = 1;
+}
+
 message CreateEnclaveWalletRequest {
-    bytes         user_id          = 1;
-    bytes         user_public_key  = 2;
-    SignatureType signature_type   = 3;
-    bytes         message          = 4;
-    bytes         signature        = 5;
+    KmsData       kms_data         = 1;
+    bytes         user_id          = 2;
+    bytes         user_public_key  = 3;
+    SignatureType signature_type   = 4;
+    bytes         message          = 5;
+    bytes         signature        = 6;
 }
 
 message CreateEnclaveWalletResponse {
     StatusCode code                  = 1;
-    bytes      wallet_encrypted_data = 2;
-    bytes      eth_public_key        = 3;
-    bytes      eth_encrypted_data    = 4; 
-    bytes      solana_public_key     = 5;
-    bytes      solana_encrypted_data = 6;
-    bytes      sui_public_key        = 7;
-    bytes      sui_encrypted_data    = 8;
+    KmsData    kms_data              = 2;
+    bytes      wallet_encrypted_data = 3;
+    bytes      eth_public_key        = 4;
+    bytes      eth_encrypted_data    = 5; 
+    bytes      solana_public_key     = 6;
+    bytes      solana_encrypted_data = 7;
+    bytes      sui_public_key        = 8;
+    bytes      sui_encrypted_data    = 9;
 }
