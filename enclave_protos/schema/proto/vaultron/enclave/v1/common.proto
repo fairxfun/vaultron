@@ -6,11 +6,11 @@ message StatusCode {
   bool            success       = 1;
   optional string error_message = 2; 
   oneof error {
-    EnclaveError  enclave       = 3;
+    EnclaveProtoError  enclave  = 3;
   }
 }
 
-enum EnclaveError {
+enum EnclaveProtoError {
   ENCLAVE_ERROR_UNSPECIFIED                      = 0;
   ENCLAVE_ERROR_UNKNOWN_ERROR                    = 1;
   ENCLAVE_ERROR_KMS_DECRYPT_ERROR                = 2;
@@ -28,4 +28,5 @@ enum EnclaveError {
   ENCLAVE_ERROR_LOG_ERROR                        = 14;
   ENCLAVE_ERROR_IO_ERROR                         = 15;
   ENCLAVE_ERROR_ANYHOW_ERROR                     = 16;
+  ENCLAVE_ERROR_INVALID_KMS_KEY_ID_ERROR         = 17;
 }

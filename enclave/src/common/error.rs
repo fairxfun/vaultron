@@ -1,10 +1,13 @@
-use enclave_protos::enclave::v1::{EnclaveError as EnclaveProtoError, StatusCode};
+use enclave_protos::enclave::v1::{EnclaveProtoError, StatusCode};
 use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum EnclaveError {
     #[error("Failed to call kms decrypt error: {0}")]
     KmsDecryptError(String),
+
+    #[error("Invalid kms key id error")]
+    InvalidKmsKeyIdError,
 
     #[error("Invalid request format error")]
     InvalidRequestError,
@@ -57,20 +60,23 @@ impl From<EnclaveError> for StatusCode {
 
 fn parse_enclave_error(err: &EnclaveError) -> StatusCode {
     match err {
-        EnclaveError::KmsDecryptError(_) => EnclaveProtoError::KmsDecryptError.into(),
-        EnclaveError::InvalidRequestError => EnclaveProtoError::InvalidRequestError.into(),
-        EnclaveError::InvalidSignatureError => EnclaveProtoError::InvalidSignatureError.into(),
-        EnclaveError::InvalidAccountError => EnclaveProtoError::InvalidAccountError.into(),
-        EnclaveError::WalletGenerationError => EnclaveProtoError::WalletGenerationError.into(),
-        EnclaveError::InvalidParameterError => EnclaveProtoError::InvalidParameterError.into(),
-        EnclaveError::InvalidKmsEncryptedDataError => EnclaveProtoError::InvalidKmsEncryptedDataError.into(),
-        EnclaveError::ProtobufEncodeError(_) => EnclaveProtoError::ProtobufEncodeError.into(),
-        EnclaveError::ProtobufDecodeError(_) => EnclaveProtoError::ProtobufDecodeError.into(),
-        EnclaveError::EnclaveKmstoolError(_) => EnclaveProtoError::EnclaveKmstoolError.into(),
-        EnclaveError::EnclaveWalletError(_) => EnclaveProtoError::EnclaveWalletError.into(),
-        EnclaveError::PostcardError(_) => EnclaveProtoError::PostcardError.into(),
-        EnclaveError::LogError(_) => EnclaveProtoError::LogError.into(),
-        EnclaveError::IoError(_) => EnclaveProtoError::IoError.into(),
-        EnclaveError::AnyhowError(_) => EnclaveProtoError::AnyhowError.into(),
+        EnclaveError::KmsDecryptError(_) => EnclaveProtoError::EnclaveErrorKmsDecryptError.into(),
+        EnclaveError::InvalidKmsKeyIdError => EnclaveProtoError::EnclaveErrorInvalidKmsKeyIdError.into(),
+        EnclaveError::InvalidRequestError => EnclaveProtoError::EnclaveErrorInvalidRequestError.into(),
+        EnclaveError::InvalidSignatureError => EnclaveProtoError::EnclaveErrorInvalidSignatureError.into(),
+        EnclaveError::InvalidAccountError => EnclaveProtoError::EnclaveErrorInvalidAccountError.into(),
+        EnclaveError::WalletGenerationError => EnclaveProtoError::EnclaveErrorWalletGenerationError.into(),
+        EnclaveError::InvalidParameterError => EnclaveProtoError::EnclaveErrorInvalidParameterError.into(),
+        EnclaveError::InvalidKmsEncryptedDataError => {
+            EnclaveProtoError::EnclaveErrorInvalidKmsEncryptedDataError.into()
+        }
+        EnclaveError::ProtobufEncodeError(_) => EnclaveProtoError::EnclaveErrorProtobufEncodeError.into(),
+        EnclaveError::ProtobufDecodeError(_) => EnclaveProtoError::EnclaveErrorProtobufDecodeError.into(),
+        EnclaveError::EnclaveKmstoolError(_) => EnclaveProtoError::EnclaveErrorEnclaveKmstoolError.into(),
+        EnclaveError::EnclaveWalletError(_) => EnclaveProtoError::EnclaveErrorEnclaveWalletError.into(),
+        EnclaveError::PostcardError(_) => EnclaveProtoError::EnclaveErrorPostcardError.into(),
+        EnclaveError::LogError(_) => EnclaveProtoError::EnclaveErrorLogError.into(),
+        EnclaveError::IoError(_) => EnclaveProtoError::EnclaveErrorIoError.into(),
+        EnclaveError::AnyhowError(_) => EnclaveProtoError::EnclaveErrorAnyhowError.into(),
     }
 }

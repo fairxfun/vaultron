@@ -8,7 +8,7 @@ members = [
     "enclave_wallet",
     "enclave_kmstool",
     "enclave_vsock",
-    "enclave_tester"
+    "integration_tests"
 ]
 resolver = "2"
 

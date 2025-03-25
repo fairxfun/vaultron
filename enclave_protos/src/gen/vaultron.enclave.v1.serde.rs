@@ -1,4 +1,205 @@
 // @generated
+impl serde::Serialize for AddKmsKeyRequest {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.kms_key_id.is_empty() {
+            len += 1;
+        }
+        if self.kms_algorithm.is_some() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.AddKmsKeyRequest", len)?;
+        if !self.kms_key_id.is_empty() {
+            struct_ser.serialize_field("kmsKeyId", &self.kms_key_id)?;
+        }
+        if let Some(v) = self.kms_algorithm.as_ref() {
+            struct_ser.serialize_field("kmsAlgorithm", v)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for AddKmsKeyRequest {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "kms_key_id",
+            "kmsKeyId",
+            "kms_algorithm",
+            "kmsAlgorithm",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            KmsKeyId,
+            KmsAlgorithm,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "kmsKeyId" | "kms_key_id" => Ok(GeneratedField::KmsKeyId),
+                            "kmsAlgorithm" | "kms_algorithm" => Ok(GeneratedField::KmsAlgorithm),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = AddKmsKeyRequest;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct vaultron.enclave.v1.AddKmsKeyRequest")
+            }
+
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<AddKmsKeyRequest, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut kms_key_id__ = None;
+                let mut kms_algorithm__ = None;
+                while let Some(k) = map.next_key()? {
+                    match k {
+                        GeneratedField::KmsKeyId => {
+                            if kms_key_id__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("kmsKeyId"));
+                            }
+                            kms_key_id__ = Some(map.next_value()?);
+                        }
+                        GeneratedField::KmsAlgorithm => {
+                            if kms_algorithm__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("kmsAlgorithm"));
+                            }
+                            kms_algorithm__ = map.next_value()?;
+                        }
+                    }
+                }
+                Ok(AddKmsKeyRequest {
+                    kms_key_id: kms_key_id__.unwrap_or_default(),
+                    kms_algorithm: kms_algorithm__,
+                })
+            }
+        }
+        deserializer.deserialize_struct("vaultron.enclave.v1.AddKmsKeyRequest", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for AddKmsKeyResponse {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.code.is_some() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.AddKmsKeyResponse", len)?;
+        if let Some(v) = self.code.as_ref() {
+            struct_ser.serialize_field("code", v)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for AddKmsKeyResponse {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "code",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Code,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "code" => Ok(GeneratedField::Code),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = AddKmsKeyResponse;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct vaultron.enclave.v1.AddKmsKeyResponse")
+            }
+
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<AddKmsKeyResponse, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut code__ = None;
+                while let Some(k) = map.next_key()? {
+                    match k {
+                        GeneratedField::Code => {
+                            if code__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("code"));
+                            }
+                            code__ = map.next_value()?;
+                        }
+                    }
+                }
+                Ok(AddKmsKeyResponse {
+                    code: code__,
+                })
+            }
+        }
+        deserializer.deserialize_struct("vaultron.enclave.v1.AddKmsKeyResponse", FIELDS, GeneratedVisitor)
+    }
+}
 impl serde::Serialize for CreateEnclaveWalletRequest {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -7,6 +208,9 @@ impl serde::Serialize for CreateEnclaveWalletRequest {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
+        if self.kms_data.is_some() {
+            len += 1;
+        }
         if !self.user_id.is_empty() {
             len += 1;
         }
@@ -23,6 +227,9 @@ impl serde::Serialize for CreateEnclaveWalletRequest {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.CreateEnclaveWalletRequest", len)?;
+        if let Some(v) = self.kms_data.as_ref() {
+            struct_ser.serialize_field("kmsData", v)?;
+        }
         if !self.user_id.is_empty() {
             struct_ser.serialize_field("userId", pbjson::private::base64::encode(&self.user_id).as_str())?;
         }
@@ -50,6 +257,8 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletRequest {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
+            "kms_data",
+            "kmsData",
             "user_id",
             "userId",
             "user_public_key",
@@ -62,6 +271,7 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletRequest {
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
+            KmsData,
             UserId,
             UserPublicKey,
             SignatureType,
@@ -88,6 +298,7 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletRequest {
                         E: serde::de::Error,
                     {
                         match value {
+                            "kmsData" | "kms_data" => Ok(GeneratedField::KmsData),
                             "userId" | "user_id" => Ok(GeneratedField::UserId),
                             "userPublicKey" | "user_public_key" => Ok(GeneratedField::UserPublicKey),
                             "signatureType" | "signature_type" => Ok(GeneratedField::SignatureType),
@@ -112,6 +323,7 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletRequest {
                 where
                     V: serde::de::MapAccess<'de>,
             {
+                let mut kms_data__ = None;
                 let mut user_id__ = None;
                 let mut user_public_key__ = None;
                 let mut signature_type__ = None;
@@ -119,6 +331,12 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletRequest {
                 let mut signature__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
+                        GeneratedField::KmsData => {
+                            if kms_data__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("kmsData"));
+                            }
+                            kms_data__ = map.next_value()?;
+                        }
                         GeneratedField::UserId => {
                             if user_id__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("userId"));
@@ -160,6 +378,7 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletRequest {
                     }
                 }
                 Ok(CreateEnclaveWalletRequest {
+                    kms_data: kms_data__,
                     user_id: user_id__.unwrap_or_default(),
                     user_public_key: user_public_key__.unwrap_or_default(),
                     signature_type: signature_type__.unwrap_or_default(),
@@ -180,6 +399,9 @@ impl serde::Serialize for CreateEnclaveWalletResponse {
         use serde::ser::SerializeStruct;
         let mut len = 0;
         if self.code.is_some() {
+            len += 1;
+        }
+        if self.kms_data.is_some() {
             len += 1;
         }
         if !self.wallet_encrypted_data.is_empty() {
@@ -206,6 +428,9 @@ impl serde::Serialize for CreateEnclaveWalletResponse {
         let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.CreateEnclaveWalletResponse", len)?;
         if let Some(v) = self.code.as_ref() {
             struct_ser.serialize_field("code", v)?;
+        }
+        if let Some(v) = self.kms_data.as_ref() {
+            struct_ser.serialize_field("kmsData", v)?;
         }
         if !self.wallet_encrypted_data.is_empty() {
             struct_ser.serialize_field("walletEncryptedData", pbjson::private::base64::encode(&self.wallet_encrypted_data).as_str())?;
@@ -239,6 +464,8 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletResponse {
     {
         const FIELDS: &[&str] = &[
             "code",
+            "kms_data",
+            "kmsData",
             "wallet_encrypted_data",
             "walletEncryptedData",
             "eth_public_key",
@@ -258,6 +485,7 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletResponse {
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             Code,
+            KmsData,
             WalletEncryptedData,
             EthPublicKey,
             EthEncryptedData,
@@ -287,6 +515,7 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletResponse {
                     {
                         match value {
                             "code" => Ok(GeneratedField::Code),
+                            "kmsData" | "kms_data" => Ok(GeneratedField::KmsData),
                             "walletEncryptedData" | "wallet_encrypted_data" => Ok(GeneratedField::WalletEncryptedData),
                             "ethPublicKey" | "eth_public_key" => Ok(GeneratedField::EthPublicKey),
                             "ethEncryptedData" | "eth_encrypted_data" => Ok(GeneratedField::EthEncryptedData),
@@ -314,6 +543,7 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletResponse {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut code__ = None;
+                let mut kms_data__ = None;
                 let mut wallet_encrypted_data__ = None;
                 let mut eth_public_key__ = None;
                 let mut eth_encrypted_data__ = None;
@@ -328,6 +558,12 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletResponse {
                                 return Err(serde::de::Error::duplicate_field("code"));
                             }
                             code__ = map.next_value()?;
+                        }
+                        GeneratedField::KmsData => {
+                            if kms_data__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("kmsData"));
+                            }
+                            kms_data__ = map.next_value()?;
                         }
                         GeneratedField::WalletEncryptedData => {
                             if wallet_encrypted_data__.is_some() {
@@ -389,6 +625,7 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletResponse {
                 }
                 Ok(CreateEnclaveWalletResponse {
                     code: code__,
+                    kms_data: kms_data__,
                     wallet_encrypted_data: wallet_encrypted_data__.unwrap_or_default(),
                     eth_public_key: eth_public_key__.unwrap_or_default(),
                     eth_encrypted_data: eth_encrypted_data__.unwrap_or_default(),
@@ -402,35 +639,36 @@ impl<'de> serde::Deserialize<'de> for CreateEnclaveWalletResponse {
         deserializer.deserialize_struct("vaultron.enclave.v1.CreateEnclaveWalletResponse", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for EnclaveError {
+impl serde::Serialize for EnclaveProtoError {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
     {
         let variant = match self {
-            Self::Unspecified => "ENCLAVE_ERROR_UNSPECIFIED",
-            Self::UnknownError => "ENCLAVE_ERROR_UNKNOWN_ERROR",
-            Self::KmsDecryptError => "ENCLAVE_ERROR_KMS_DECRYPT_ERROR",
-            Self::InvalidRequestError => "ENCLAVE_ERROR_INVALID_REQUEST_ERROR",
-            Self::InvalidSignatureError => "ENCLAVE_ERROR_INVALID_SIGNATURE_ERROR",
-            Self::InvalidAccountError => "ENCLAVE_ERROR_INVALID_ACCOUNT_ERROR",
-            Self::WalletGenerationError => "ENCLAVE_ERROR_WALLET_GENERATION_ERROR",
-            Self::InvalidParameterError => "ENCLAVE_ERROR_INVALID_PARAMETER_ERROR",
-            Self::InvalidKmsEncryptedDataError => "ENCLAVE_ERROR_INVALID_KMS_ENCRYPTED_DATA_ERROR",
-            Self::ProtobufEncodeError => "ENCLAVE_ERROR_PROTOBUF_ENCODE_ERROR",
-            Self::ProtobufDecodeError => "ENCLAVE_ERROR_PROTOBUF_DECODE_ERROR",
-            Self::EnclaveKmstoolError => "ENCLAVE_ERROR_ENCLAVE_KMSTOOL_ERROR",
-            Self::EnclaveWalletError => "ENCLAVE_ERROR_ENCLAVE_WALLET_ERROR",
-            Self::PostcardError => "ENCLAVE_ERROR_POSTCARD_ERROR",
-            Self::LogError => "ENCLAVE_ERROR_LOG_ERROR",
-            Self::IoError => "ENCLAVE_ERROR_IO_ERROR",
-            Self::AnyhowError => "ENCLAVE_ERROR_ANYHOW_ERROR",
+            Self::EnclaveErrorUnspecified => "ENCLAVE_ERROR_UNSPECIFIED",
+            Self::EnclaveErrorUnknownError => "ENCLAVE_ERROR_UNKNOWN_ERROR",
+            Self::EnclaveErrorKmsDecryptError => "ENCLAVE_ERROR_KMS_DECRYPT_ERROR",
+            Self::EnclaveErrorInvalidRequestError => "ENCLAVE_ERROR_INVALID_REQUEST_ERROR",
+            Self::EnclaveErrorInvalidSignatureError => "ENCLAVE_ERROR_INVALID_SIGNATURE_ERROR",
+            Self::EnclaveErrorInvalidAccountError => "ENCLAVE_ERROR_INVALID_ACCOUNT_ERROR",
+            Self::EnclaveErrorWalletGenerationError => "ENCLAVE_ERROR_WALLET_GENERATION_ERROR",
+            Self::EnclaveErrorInvalidParameterError => "ENCLAVE_ERROR_INVALID_PARAMETER_ERROR",
+            Self::EnclaveErrorInvalidKmsEncryptedDataError => "ENCLAVE_ERROR_INVALID_KMS_ENCRYPTED_DATA_ERROR",
+            Self::EnclaveErrorProtobufEncodeError => "ENCLAVE_ERROR_PROTOBUF_ENCODE_ERROR",
+            Self::EnclaveErrorProtobufDecodeError => "ENCLAVE_ERROR_PROTOBUF_DECODE_ERROR",
+            Self::EnclaveErrorEnclaveKmstoolError => "ENCLAVE_ERROR_ENCLAVE_KMSTOOL_ERROR",
+            Self::EnclaveErrorEnclaveWalletError => "ENCLAVE_ERROR_ENCLAVE_WALLET_ERROR",
+            Self::EnclaveErrorPostcardError => "ENCLAVE_ERROR_POSTCARD_ERROR",
+            Self::EnclaveErrorLogError => "ENCLAVE_ERROR_LOG_ERROR",
+            Self::EnclaveErrorIoError => "ENCLAVE_ERROR_IO_ERROR",
+            Self::EnclaveErrorAnyhowError => "ENCLAVE_ERROR_ANYHOW_ERROR",
+            Self::EnclaveErrorInvalidKmsKeyIdError => "ENCLAVE_ERROR_INVALID_KMS_KEY_ID_ERROR",
         };
         serializer.serialize_str(variant)
     }
 }
-impl<'de> serde::Deserialize<'de> for EnclaveError {
+impl<'de> serde::Deserialize<'de> for EnclaveProtoError {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -454,12 +692,13 @@ impl<'de> serde::Deserialize<'de> for EnclaveError {
             "ENCLAVE_ERROR_LOG_ERROR",
             "ENCLAVE_ERROR_IO_ERROR",
             "ENCLAVE_ERROR_ANYHOW_ERROR",
+            "ENCLAVE_ERROR_INVALID_KMS_KEY_ID_ERROR",
         ];
 
         struct GeneratedVisitor;
 
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = EnclaveError;
+            type Value = EnclaveProtoError;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 write!(formatter, "expected one of: {:?}", &FIELDS)
@@ -472,7 +711,7 @@ impl<'de> serde::Deserialize<'de> for EnclaveError {
                 use std::convert::TryFrom;
                 i32::try_from(v)
                     .ok()
-                    .and_then(EnclaveError::from_i32)
+                    .and_then(EnclaveProtoError::from_i32)
                     .ok_or_else(|| {
                         serde::de::Error::invalid_value(serde::de::Unexpected::Signed(v), &self)
                     })
@@ -485,7 +724,7 @@ impl<'de> serde::Deserialize<'de> for EnclaveError {
                 use std::convert::TryFrom;
                 i32::try_from(v)
                     .ok()
-                    .and_then(EnclaveError::from_i32)
+                    .and_then(EnclaveProtoError::from_i32)
                     .ok_or_else(|| {
                         serde::de::Error::invalid_value(serde::de::Unexpected::Unsigned(v), &self)
                     })
@@ -496,23 +735,24 @@ impl<'de> serde::Deserialize<'de> for EnclaveError {
                 E: serde::de::Error,
             {
                 match value {
-                    "ENCLAVE_ERROR_UNSPECIFIED" => Ok(EnclaveError::Unspecified),
-                    "ENCLAVE_ERROR_UNKNOWN_ERROR" => Ok(EnclaveError::UnknownError),
-                    "ENCLAVE_ERROR_KMS_DECRYPT_ERROR" => Ok(EnclaveError::KmsDecryptError),
-                    "ENCLAVE_ERROR_INVALID_REQUEST_ERROR" => Ok(EnclaveError::InvalidRequestError),
-                    "ENCLAVE_ERROR_INVALID_SIGNATURE_ERROR" => Ok(EnclaveError::InvalidSignatureError),
-                    "ENCLAVE_ERROR_INVALID_ACCOUNT_ERROR" => Ok(EnclaveError::InvalidAccountError),
-                    "ENCLAVE_ERROR_WALLET_GENERATION_ERROR" => Ok(EnclaveError::WalletGenerationError),
-                    "ENCLAVE_ERROR_INVALID_PARAMETER_ERROR" => Ok(EnclaveError::InvalidParameterError),
-                    "ENCLAVE_ERROR_INVALID_KMS_ENCRYPTED_DATA_ERROR" => Ok(EnclaveError::InvalidKmsEncryptedDataError),
-                    "ENCLAVE_ERROR_PROTOBUF_ENCODE_ERROR" => Ok(EnclaveError::ProtobufEncodeError),
-                    "ENCLAVE_ERROR_PROTOBUF_DECODE_ERROR" => Ok(EnclaveError::ProtobufDecodeError),
-                    "ENCLAVE_ERROR_ENCLAVE_KMSTOOL_ERROR" => Ok(EnclaveError::EnclaveKmstoolError),
-                    "ENCLAVE_ERROR_ENCLAVE_WALLET_ERROR" => Ok(EnclaveError::EnclaveWalletError),
-                    "ENCLAVE_ERROR_POSTCARD_ERROR" => Ok(EnclaveError::PostcardError),
-                    "ENCLAVE_ERROR_LOG_ERROR" => Ok(EnclaveError::LogError),
-                    "ENCLAVE_ERROR_IO_ERROR" => Ok(EnclaveError::IoError),
-                    "ENCLAVE_ERROR_ANYHOW_ERROR" => Ok(EnclaveError::AnyhowError),
+                    "ENCLAVE_ERROR_UNSPECIFIED" => Ok(EnclaveProtoError::EnclaveErrorUnspecified),
+                    "ENCLAVE_ERROR_UNKNOWN_ERROR" => Ok(EnclaveProtoError::EnclaveErrorUnknownError),
+                    "ENCLAVE_ERROR_KMS_DECRYPT_ERROR" => Ok(EnclaveProtoError::EnclaveErrorKmsDecryptError),
+                    "ENCLAVE_ERROR_INVALID_REQUEST_ERROR" => Ok(EnclaveProtoError::EnclaveErrorInvalidRequestError),
+                    "ENCLAVE_ERROR_INVALID_SIGNATURE_ERROR" => Ok(EnclaveProtoError::EnclaveErrorInvalidSignatureError),
+                    "ENCLAVE_ERROR_INVALID_ACCOUNT_ERROR" => Ok(EnclaveProtoError::EnclaveErrorInvalidAccountError),
+                    "ENCLAVE_ERROR_WALLET_GENERATION_ERROR" => Ok(EnclaveProtoError::EnclaveErrorWalletGenerationError),
+                    "ENCLAVE_ERROR_INVALID_PARAMETER_ERROR" => Ok(EnclaveProtoError::EnclaveErrorInvalidParameterError),
+                    "ENCLAVE_ERROR_INVALID_KMS_ENCRYPTED_DATA_ERROR" => Ok(EnclaveProtoError::EnclaveErrorInvalidKmsEncryptedDataError),
+                    "ENCLAVE_ERROR_PROTOBUF_ENCODE_ERROR" => Ok(EnclaveProtoError::EnclaveErrorProtobufEncodeError),
+                    "ENCLAVE_ERROR_PROTOBUF_DECODE_ERROR" => Ok(EnclaveProtoError::EnclaveErrorProtobufDecodeError),
+                    "ENCLAVE_ERROR_ENCLAVE_KMSTOOL_ERROR" => Ok(EnclaveProtoError::EnclaveErrorEnclaveKmstoolError),
+                    "ENCLAVE_ERROR_ENCLAVE_WALLET_ERROR" => Ok(EnclaveProtoError::EnclaveErrorEnclaveWalletError),
+                    "ENCLAVE_ERROR_POSTCARD_ERROR" => Ok(EnclaveProtoError::EnclaveErrorPostcardError),
+                    "ENCLAVE_ERROR_LOG_ERROR" => Ok(EnclaveProtoError::EnclaveErrorLogError),
+                    "ENCLAVE_ERROR_IO_ERROR" => Ok(EnclaveProtoError::EnclaveErrorIoError),
+                    "ENCLAVE_ERROR_ANYHOW_ERROR" => Ok(EnclaveProtoError::EnclaveErrorAnyhowError),
+                    "ENCLAVE_ERROR_INVALID_KMS_KEY_ID_ERROR" => Ok(EnclaveProtoError::EnclaveErrorInvalidKmsKeyIdError),
                     _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),
                 }
             }
@@ -534,11 +774,14 @@ impl serde::Serialize for EnclaveRequest {
         let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.EnclaveRequest", len)?;
         if let Some(v) = self.request.as_ref() {
             match v {
+                enclave_request::Request::InitEnclaveRequest(v) => {
+                    struct_ser.serialize_field("initEnclaveRequest", v)?;
+                }
+                enclave_request::Request::AddKmsKeyRequest(v) => {
+                    struct_ser.serialize_field("addKmsKeyRequest", v)?;
+                }
                 enclave_request::Request::PingRequest(v) => {
                     struct_ser.serialize_field("pingRequest", v)?;
-                }
-                enclave_request::Request::InitKmstoolRequest(v) => {
-                    struct_ser.serialize_field("initKmstoolRequest", v)?;
                 }
                 enclave_request::Request::UpdateAwsCredentialsRequest(v) => {
                     struct_ser.serialize_field("updateAwsCredentialsRequest", v)?;
@@ -558,10 +801,12 @@ impl<'de> serde::Deserialize<'de> for EnclaveRequest {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
+            "init_enclave_request",
+            "initEnclaveRequest",
+            "add_kms_key_request",
+            "addKmsKeyRequest",
             "ping_request",
             "pingRequest",
-            "init_kmstool_request",
-            "initKmstoolRequest",
             "update_aws_credentials_request",
             "updateAwsCredentialsRequest",
             "create_enclave_wallet_request",
@@ -570,8 +815,9 @@ impl<'de> serde::Deserialize<'de> for EnclaveRequest {
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
+            InitEnclaveRequest,
+            AddKmsKeyRequest,
             PingRequest,
-            InitKmstoolRequest,
             UpdateAwsCredentialsRequest,
             CreateEnclaveWalletRequest,
         }
@@ -595,8 +841,9 @@ impl<'de> serde::Deserialize<'de> for EnclaveRequest {
                         E: serde::de::Error,
                     {
                         match value {
+                            "initEnclaveRequest" | "init_enclave_request" => Ok(GeneratedField::InitEnclaveRequest),
+                            "addKmsKeyRequest" | "add_kms_key_request" => Ok(GeneratedField::AddKmsKeyRequest),
                             "pingRequest" | "ping_request" => Ok(GeneratedField::PingRequest),
-                            "initKmstoolRequest" | "init_kmstool_request" => Ok(GeneratedField::InitKmstoolRequest),
                             "updateAwsCredentialsRequest" | "update_aws_credentials_request" => Ok(GeneratedField::UpdateAwsCredentialsRequest),
                             "createEnclaveWalletRequest" | "create_enclave_wallet_request" => Ok(GeneratedField::CreateEnclaveWalletRequest),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
@@ -621,18 +868,25 @@ impl<'de> serde::Deserialize<'de> for EnclaveRequest {
                 let mut request__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
+                        GeneratedField::InitEnclaveRequest => {
+                            if request__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("initEnclaveRequest"));
+                            }
+                            request__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_request::Request::InitEnclaveRequest)
+;
+                        }
+                        GeneratedField::AddKmsKeyRequest => {
+                            if request__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("addKmsKeyRequest"));
+                            }
+                            request__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_request::Request::AddKmsKeyRequest)
+;
+                        }
                         GeneratedField::PingRequest => {
                             if request__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("pingRequest"));
                             }
                             request__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_request::Request::PingRequest)
-;
-                        }
-                        GeneratedField::InitKmstoolRequest => {
-                            if request__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("initKmstoolRequest"));
-                            }
-                            request__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_request::Request::InitKmstoolRequest)
 ;
                         }
                         GeneratedField::UpdateAwsCredentialsRequest => {
@@ -673,11 +927,14 @@ impl serde::Serialize for EnclaveResponse {
         let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.EnclaveResponse", len)?;
         if let Some(v) = self.response.as_ref() {
             match v {
+                enclave_response::Response::InitEnclaveResponse(v) => {
+                    struct_ser.serialize_field("initEnclaveResponse", v)?;
+                }
+                enclave_response::Response::AddKmsKeyResponse(v) => {
+                    struct_ser.serialize_field("addKmsKeyResponse", v)?;
+                }
                 enclave_response::Response::PingResponse(v) => {
                     struct_ser.serialize_field("pingResponse", v)?;
-                }
-                enclave_response::Response::InitKmstoolResponse(v) => {
-                    struct_ser.serialize_field("initKmstoolResponse", v)?;
                 }
                 enclave_response::Response::UpdateAwsCredentialsResponse(v) => {
                     struct_ser.serialize_field("updateAwsCredentialsResponse", v)?;
@@ -697,10 +954,12 @@ impl<'de> serde::Deserialize<'de> for EnclaveResponse {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
+            "init_enclave_response",
+            "initEnclaveResponse",
+            "add_kms_key_response",
+            "addKmsKeyResponse",
             "ping_response",
             "pingResponse",
-            "init_kmstool_response",
-            "initKmstoolResponse",
             "update_aws_credentials_response",
             "updateAwsCredentialsResponse",
             "create_enclave_wallet_response",
@@ -709,8 +968,9 @@ impl<'de> serde::Deserialize<'de> for EnclaveResponse {
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
+            InitEnclaveResponse,
+            AddKmsKeyResponse,
             PingResponse,
-            InitKmstoolResponse,
             UpdateAwsCredentialsResponse,
             CreateEnclaveWalletResponse,
         }
@@ -734,8 +994,9 @@ impl<'de> serde::Deserialize<'de> for EnclaveResponse {
                         E: serde::de::Error,
                     {
                         match value {
+                            "initEnclaveResponse" | "init_enclave_response" => Ok(GeneratedField::InitEnclaveResponse),
+                            "addKmsKeyResponse" | "add_kms_key_response" => Ok(GeneratedField::AddKmsKeyResponse),
                             "pingResponse" | "ping_response" => Ok(GeneratedField::PingResponse),
-                            "initKmstoolResponse" | "init_kmstool_response" => Ok(GeneratedField::InitKmstoolResponse),
                             "updateAwsCredentialsResponse" | "update_aws_credentials_response" => Ok(GeneratedField::UpdateAwsCredentialsResponse),
                             "createEnclaveWalletResponse" | "create_enclave_wallet_response" => Ok(GeneratedField::CreateEnclaveWalletResponse),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
@@ -760,18 +1021,25 @@ impl<'de> serde::Deserialize<'de> for EnclaveResponse {
                 let mut response__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
+                        GeneratedField::InitEnclaveResponse => {
+                            if response__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("initEnclaveResponse"));
+                            }
+                            response__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_response::Response::InitEnclaveResponse)
+;
+                        }
+                        GeneratedField::AddKmsKeyResponse => {
+                            if response__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("addKmsKeyResponse"));
+                            }
+                            response__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_response::Response::AddKmsKeyResponse)
+;
+                        }
                         GeneratedField::PingResponse => {
                             if response__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("pingResponse"));
                             }
                             response__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_response::Response::PingResponse)
-;
-                        }
-                        GeneratedField::InitKmstoolResponse => {
-                            if response__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("initKmstoolResponse"));
-                            }
-                            response__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_response::Response::InitKmstoolResponse)
 ;
                         }
                         GeneratedField::UpdateAwsCredentialsResponse => {
@@ -798,7 +1066,7 @@ impl<'de> serde::Deserialize<'de> for EnclaveResponse {
         deserializer.deserialize_struct("vaultron.enclave.v1.EnclaveResponse", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for InitKmstoolRequest {
+impl serde::Serialize for InitEnclaveRequest {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -806,93 +1074,48 @@ impl serde::Serialize for InitKmstoolRequest {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
+        if !self.aws_region.is_empty() {
+            len += 1;
+        }
         if self.enable_logging.is_some() {
             len += 1;
         }
         if self.proxy_port.is_some() {
             len += 1;
         }
+        let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.InitEnclaveRequest", len)?;
         if !self.aws_region.is_empty() {
-            len += 1;
+            struct_ser.serialize_field("awsRegion", &self.aws_region)?;
         }
-        if !self.aws_access_key_id.is_empty() {
-            len += 1;
-        }
-        if !self.aws_secret_access_key.is_empty() {
-            len += 1;
-        }
-        if !self.aws_session_token.is_empty() {
-            len += 1;
-        }
-        if !self.kms_key_id.is_empty() {
-            len += 1;
-        }
-        if self.kms_encryption_algorithm.is_some() {
-            len += 1;
-        }
-        let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.InitKmstoolRequest", len)?;
         if let Some(v) = self.enable_logging.as_ref() {
             struct_ser.serialize_field("enableLogging", v)?;
         }
         if let Some(v) = self.proxy_port.as_ref() {
             struct_ser.serialize_field("proxyPort", v)?;
         }
-        if !self.aws_region.is_empty() {
-            struct_ser.serialize_field("awsRegion", &self.aws_region)?;
-        }
-        if !self.aws_access_key_id.is_empty() {
-            struct_ser.serialize_field("awsAccessKeyId", &self.aws_access_key_id)?;
-        }
-        if !self.aws_secret_access_key.is_empty() {
-            struct_ser.serialize_field("awsSecretAccessKey", &self.aws_secret_access_key)?;
-        }
-        if !self.aws_session_token.is_empty() {
-            struct_ser.serialize_field("awsSessionToken", &self.aws_session_token)?;
-        }
-        if !self.kms_key_id.is_empty() {
-            struct_ser.serialize_field("kmsKeyId", &self.kms_key_id)?;
-        }
-        if let Some(v) = self.kms_encryption_algorithm.as_ref() {
-            struct_ser.serialize_field("kmsEncryptionAlgorithm", v)?;
-        }
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for InitKmstoolRequest {
+impl<'de> serde::Deserialize<'de> for InitEnclaveRequest {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
+            "aws_region",
+            "awsRegion",
             "enable_logging",
             "enableLogging",
             "proxy_port",
             "proxyPort",
-            "aws_region",
-            "awsRegion",
-            "aws_access_key_id",
-            "awsAccessKeyId",
-            "aws_secret_access_key",
-            "awsSecretAccessKey",
-            "aws_session_token",
-            "awsSessionToken",
-            "kms_key_id",
-            "kmsKeyId",
-            "kms_encryption_algorithm",
-            "kmsEncryptionAlgorithm",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
+            AwsRegion,
             EnableLogging,
             ProxyPort,
-            AwsRegion,
-            AwsAccessKeyId,
-            AwsSecretAccessKey,
-            AwsSessionToken,
-            KmsKeyId,
-            KmsEncryptionAlgorithm,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -914,14 +1137,9 @@ impl<'de> serde::Deserialize<'de> for InitKmstoolRequest {
                         E: serde::de::Error,
                     {
                         match value {
+                            "awsRegion" | "aws_region" => Ok(GeneratedField::AwsRegion),
                             "enableLogging" | "enable_logging" => Ok(GeneratedField::EnableLogging),
                             "proxyPort" | "proxy_port" => Ok(GeneratedField::ProxyPort),
-                            "awsRegion" | "aws_region" => Ok(GeneratedField::AwsRegion),
-                            "awsAccessKeyId" | "aws_access_key_id" => Ok(GeneratedField::AwsAccessKeyId),
-                            "awsSecretAccessKey" | "aws_secret_access_key" => Ok(GeneratedField::AwsSecretAccessKey),
-                            "awsSessionToken" | "aws_session_token" => Ok(GeneratedField::AwsSessionToken),
-                            "kmsKeyId" | "kms_key_id" => Ok(GeneratedField::KmsKeyId),
-                            "kmsEncryptionAlgorithm" | "kms_encryption_algorithm" => Ok(GeneratedField::KmsEncryptionAlgorithm),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -931,26 +1149,27 @@ impl<'de> serde::Deserialize<'de> for InitKmstoolRequest {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = InitKmstoolRequest;
+            type Value = InitEnclaveRequest;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct vaultron.enclave.v1.InitKmstoolRequest")
+                formatter.write_str("struct vaultron.enclave.v1.InitEnclaveRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<InitKmstoolRequest, V::Error>
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<InitEnclaveRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
+                let mut aws_region__ = None;
                 let mut enable_logging__ = None;
                 let mut proxy_port__ = None;
-                let mut aws_region__ = None;
-                let mut aws_access_key_id__ = None;
-                let mut aws_secret_access_key__ = None;
-                let mut aws_session_token__ = None;
-                let mut kms_key_id__ = None;
-                let mut kms_encryption_algorithm__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
+                        GeneratedField::AwsRegion => {
+                            if aws_region__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("awsRegion"));
+                            }
+                            aws_region__ = Some(map.next_value()?);
+                        }
                         GeneratedField::EnableLogging => {
                             if enable_logging__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("enableLogging"));
@@ -965,60 +1184,19 @@ impl<'de> serde::Deserialize<'de> for InitKmstoolRequest {
                                 map.next_value::<::std::option::Option<::pbjson::private::NumberDeserialize<_>>>()?.map(|x| x.0)
                             ;
                         }
-                        GeneratedField::AwsRegion => {
-                            if aws_region__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("awsRegion"));
-                            }
-                            aws_region__ = Some(map.next_value()?);
-                        }
-                        GeneratedField::AwsAccessKeyId => {
-                            if aws_access_key_id__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("awsAccessKeyId"));
-                            }
-                            aws_access_key_id__ = Some(map.next_value()?);
-                        }
-                        GeneratedField::AwsSecretAccessKey => {
-                            if aws_secret_access_key__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("awsSecretAccessKey"));
-                            }
-                            aws_secret_access_key__ = Some(map.next_value()?);
-                        }
-                        GeneratedField::AwsSessionToken => {
-                            if aws_session_token__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("awsSessionToken"));
-                            }
-                            aws_session_token__ = Some(map.next_value()?);
-                        }
-                        GeneratedField::KmsKeyId => {
-                            if kms_key_id__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("kmsKeyId"));
-                            }
-                            kms_key_id__ = Some(map.next_value()?);
-                        }
-                        GeneratedField::KmsEncryptionAlgorithm => {
-                            if kms_encryption_algorithm__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("kmsEncryptionAlgorithm"));
-                            }
-                            kms_encryption_algorithm__ = map.next_value()?;
-                        }
                     }
                 }
-                Ok(InitKmstoolRequest {
+                Ok(InitEnclaveRequest {
+                    aws_region: aws_region__.unwrap_or_default(),
                     enable_logging: enable_logging__,
                     proxy_port: proxy_port__,
-                    aws_region: aws_region__.unwrap_or_default(),
-                    aws_access_key_id: aws_access_key_id__.unwrap_or_default(),
-                    aws_secret_access_key: aws_secret_access_key__.unwrap_or_default(),
-                    aws_session_token: aws_session_token__.unwrap_or_default(),
-                    kms_key_id: kms_key_id__.unwrap_or_default(),
-                    kms_encryption_algorithm: kms_encryption_algorithm__,
                 })
             }
         }
-        deserializer.deserialize_struct("vaultron.enclave.v1.InitKmstoolRequest", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("vaultron.enclave.v1.InitEnclaveRequest", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for InitKmstoolResponse {
+impl serde::Serialize for InitEnclaveResponse {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -1029,14 +1207,14 @@ impl serde::Serialize for InitKmstoolResponse {
         if self.code.is_some() {
             len += 1;
         }
-        let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.InitKmstoolResponse", len)?;
+        let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.InitEnclaveResponse", len)?;
         if let Some(v) = self.code.as_ref() {
             struct_ser.serialize_field("code", v)?;
         }
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for InitKmstoolResponse {
+impl<'de> serde::Deserialize<'de> for InitEnclaveResponse {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -1080,13 +1258,13 @@ impl<'de> serde::Deserialize<'de> for InitKmstoolResponse {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = InitKmstoolResponse;
+            type Value = InitEnclaveResponse;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct vaultron.enclave.v1.InitKmstoolResponse")
+                formatter.write_str("struct vaultron.enclave.v1.InitEnclaveResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<InitKmstoolResponse, V::Error>
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<InitEnclaveResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -1101,12 +1279,104 @@ impl<'de> serde::Deserialize<'de> for InitKmstoolResponse {
                         }
                     }
                 }
-                Ok(InitKmstoolResponse {
+                Ok(InitEnclaveResponse {
                     code: code__,
                 })
             }
         }
-        deserializer.deserialize_struct("vaultron.enclave.v1.InitKmstoolResponse", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("vaultron.enclave.v1.InitEnclaveResponse", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for KmsData {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.kms_key_id.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.KmsData", len)?;
+        if !self.kms_key_id.is_empty() {
+            struct_ser.serialize_field("kmsKeyId", &self.kms_key_id)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for KmsData {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "kms_key_id",
+            "kmsKeyId",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            KmsKeyId,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "kmsKeyId" | "kms_key_id" => Ok(GeneratedField::KmsKeyId),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = KmsData;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct vaultron.enclave.v1.KmsData")
+            }
+
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<KmsData, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut kms_key_id__ = None;
+                while let Some(k) = map.next_key()? {
+                    match k {
+                        GeneratedField::KmsKeyId => {
+                            if kms_key_id__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("kmsKeyId"));
+                            }
+                            kms_key_id__ = Some(map.next_value()?);
+                        }
+                    }
+                }
+                Ok(KmsData {
+                    kms_key_id: kms_key_id__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("vaultron.enclave.v1.KmsData", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for PingRequest {
@@ -1383,7 +1653,7 @@ impl serde::Serialize for StatusCode {
         if let Some(v) = self.error.as_ref() {
             match v {
                 status_code::Error::Enclave(v) => {
-                    let v = EnclaveError::from_i32(*v)
+                    let v = EnclaveProtoError::from_i32(*v)
                         .ok_or_else(|| serde::ser::Error::custom(format!("Invalid variant {}", *v)))?;
                     struct_ser.serialize_field("enclave", &v)?;
                 }
@@ -1474,7 +1744,7 @@ impl<'de> serde::Deserialize<'de> for StatusCode {
                             if error__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("enclave"));
                             }
-                            error__ = map.next_value::<::std::option::Option<EnclaveError>>()?.map(|x| status_code::Error::Enclave(x as i32));
+                            error__ = map.next_value::<::std::option::Option<EnclaveProtoError>>()?.map(|x| status_code::Error::Enclave(x as i32));
                         }
                     }
                 }

@@ -12,8 +12,8 @@ impl StatusCode {
     }
 }
 
-impl From<EnclaveError> for StatusCode {
-    fn from(value: EnclaveError) -> Self {
+impl From<EnclaveProtoError> for StatusCode {
+    fn from(value: EnclaveProtoError) -> Self {
         StatusCode::builder()
             .success(false)
             .error(Error::Enclave(value as i32))
