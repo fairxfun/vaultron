@@ -8,7 +8,7 @@ coverage:
       default:
         informational: true
   ignore:
-    - "enclave_tester/**/*"
+    - "integration_tests/**/*"
     - "enclave_protos/**/*"
     - "target/**/*"
     - ".cargo/**/*"

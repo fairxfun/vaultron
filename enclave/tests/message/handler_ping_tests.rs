@@ -7,6 +7,7 @@ use enclave_vsock::VsockMessageHandlerTrait;
 use prost::Message;
 use std::sync::Arc;
 use vaultron_enclave::common::EnclaveConfig;
+use vaultron_enclave::data::{EnclaveData, EnclaveKmsData};
 use vaultron_enclave::message::MessageHandler;
 use vaultron_enclave::server::EnclaveServerContext;
 
@@ -19,6 +20,8 @@ pub async fn test_enclave_ping_request() {
         EnclaveServerContext::builder()
             .config(config)
             .kms_client(kmstool_client)
+            .kms_keys(Arc::new(EnclaveKmsData::new()))
+            .enclave_data(Arc::new(EnclaveData::new()))
             .build(),
     );
     let handler = MessageHandler::builder().context(context).build();

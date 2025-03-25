@@ -2,8 +2,8 @@ use std::sync::Arc;
 
 use crate::{common::EnclaveError, server::EnclaveServerContext};
 use enclave_protos::enclave::v1::{
-    enclave_request, enclave_response, CreateEnclaveWalletResponse, EnclaveRequest, EnclaveResponse,
-    InitKmstoolResponse, PingResponse, UpdateAwsCredentialsResponse,
+    enclave_request, enclave_response, AddKmsKeyResponse, CreateEnclaveWalletResponse, EnclaveRequest, EnclaveResponse,
+    GetEnclavePcrResponse, InitEnclaveResponse, PingResponse, UpdateAwsCredentialsResponse,
 };
 use enclave_vsock::VsockMessageHandlerTrait;
 use log::warn;
@@ -28,28 +28,29 @@ impl VsockMessageHandlerTrait for MessageHandler {
     async fn process_message(&self, message: &[u8]) -> Result<Vec<u8>, EnclaveError> {
         let mr = EnclaveRequest::decode(message)?;
         match mr.request {
-            Some(enclave_request::Request::PingRequest(r)) => {
-                let result = self.handle_ping_request(r).await;
+            Some(enclave_request::Request::InitEnclaveRequest(r)) => {
+                let result = self.handle_init_enclave_request(r).await;
                 let response = match result {
                     Ok(r) => r,
-                    Err(e) => PingResponse::error(e),
+                    Err(e) => InitEnclaveResponse::error(e),
                 };
                 let response = EnclaveResponse::builder()
-                    .response(enclave_response::Response::PingResponse(response))
+                    .response(enclave_response::Response::InitEnclaveResponse(response))
                     .build();
                 Ok(response.encode_to_vec())
             }
-            Some(enclave_request::Request::InitKmstoolRequest(r)) => {
-                let result = self.handle_kmstool_init_request(r).await;
+            Some(enclave_request::Request::AddKmsKeyRequest(r)) => {
+                let result = self.handle_add_kms_key_request(r).await;
                 let response = match result {
                     Ok(r) => r,
-                    Err(e) => InitKmstoolResponse::error(e),
+                    Err(e) => AddKmsKeyResponse::error(e),
                 };
                 let response = EnclaveResponse::builder()
-                    .response(enclave_response::Response::InitKmstoolResponse(response))
+                    .response(enclave_response::Response::AddKmsKeyResponse(response))
                     .build();
                 Ok(response.encode_to_vec())
             }
+
             Some(enclave_request::Request::UpdateAwsCredentialsRequest(r)) => {
                 let result = self.handle_update_aws_credentials_request(r).await;
                 let response = match result {
@@ -58,6 +59,28 @@ impl VsockMessageHandlerTrait for MessageHandler {
                 };
                 let response = EnclaveResponse::builder()
                     .response(enclave_response::Response::UpdateAwsCredentialsResponse(response))
+                    .build();
+                Ok(response.encode_to_vec())
+            }
+            Some(enclave_request::Request::GetEnclavePcrRequest(r)) => {
+                let result = self.handle_get_enclave_pcr_request(r).await;
+                let response = match result {
+                    Ok(r) => r,
+                    Err(e) => GetEnclavePcrResponse::error(e),
+                };
+                let response = EnclaveResponse::builder()
+                    .response(enclave_response::Response::GetEnclavePcrResponse(response))
+                    .build();
+                Ok(response.encode_to_vec())
+            }
+            Some(enclave_request::Request::PingRequest(r)) => {
+                let result = self.handle_ping_request(r).await;
+                let response = match result {
+                    Ok(r) => r,
+                    Err(e) => PingResponse::error(e),
+                };
+                let response = EnclaveResponse::builder()
+                    .response(enclave_response::Response::PingResponse(response))
                     .build();
                 Ok(response.encode_to_vec())
             }
@@ -73,7 +96,7 @@ impl VsockMessageHandlerTrait for MessageHandler {
                 Ok(response.encode_to_vec())
             }
             _ => {
-                warn!("Unknown message type: {:?}", message);
+                warn!("Unknown message type");
                 Err(EnclaveError::InvalidRequestError)
             }
         }

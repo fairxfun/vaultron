@@ -1,7 +1,7 @@
-use enclave_tester::start_tester;
+use integration_tests::start_test;
 
 #[tokio::main]
 async fn main() {
-    let result = start_tester().await;
+    let result = start_test().await;
     println!("Tester exit: {:?}", result);
 }

@@ -17,7 +17,7 @@ impl CreateEnclaveWalletResponse {
             .code(
                 StatusCode::builder()
                     .success(false)
-                    .error(Error::Enclave(EnclaveError::UnknownError as i32))
+                    .error(Error::Enclave(EnclaveProtoError::EnclaveErrorUnknownError as i32))
                     .error_message(error_message.to_string())
                     .build(),
             )

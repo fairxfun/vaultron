@@ -4,8 +4,10 @@ use crate::{
     common::EnclaveError, data::KmsAccountEthPair, data::KmsAccountMnemonicPair, data::KmsAccountSolanaPair,
     data::KmsAccountSuiPair,
 };
-use enclave_kmstool::KmsEncryptRequest;
-use enclave_protos::enclave::v1::{CreateEnclaveWalletRequest, CreateEnclaveWalletResponse, SignatureType, StatusCode};
+use enclave_kmstool::KmstoolEncryptParams;
+use enclave_protos::enclave::v1::{
+    CreateEnclaveWalletRequest, CreateEnclaveWalletResponse, KmsData, SignatureType, StatusCode,
+};
 use enclave_utils::address::ethers_address_from_bytes;
 use enclave_wallet::generate_multi_chain_wallet;
 use ethers_core::types::Signature;
@@ -17,11 +19,25 @@ impl MessageHandler {
         &self,
         request: CreateEnclaveWalletRequest,
     ) -> Result<CreateEnclaveWalletResponse, EnclaveError> {
-        info!("Received create enclave wallet request: {:?}", request);
+        info!("Received create enclave wallet request");
+        let kms_key_id = self.verify_kms_data(&request).await?;
         self.verify_signature(&request)?;
         let wallet: enclave_wallet::MultiChainWallet = generate_multi_chain_wallet()?;
-        let response = self.kms_encrypt_wallet_data(&request, &wallet)?;
+        let response = self.kms_encrypt_wallet_data(&request, kms_key_id, &wallet)?;
         Ok(response)
+    }
+
+    async fn verify_kms_data(&self, request: &CreateEnclaveWalletRequest) -> Result<String, EnclaveError> {
+        match &request.kms_data {
+            Some(kms_data) => {
+                if self.context.kms_keys.has_key(&kms_data.kms_key_id).await {
+                    Ok(kms_data.kms_key_id.clone())
+                } else {
+                    Err(EnclaveError::InvalidKmsKeyIdError)
+                }
+            }
+            None => Err(EnclaveError::InvalidKmsKeyIdError),
+        }
     }
 
     fn verify_signature(&self, request: &CreateEnclaveWalletRequest) -> Result<(), EnclaveError> {
@@ -50,6 +66,7 @@ impl MessageHandler {
     fn kms_encrypt_wallet_data(
         &self,
         request: &CreateEnclaveWalletRequest,
+        kms_key_id: String,
         wallet: &enclave_wallet::MultiChainWallet,
     ) -> Result<CreateEnclaveWalletResponse, EnclaveError> {
         let kms_mnemonic = KmsAccountMnemonicPair::builder()
@@ -58,10 +75,12 @@ impl MessageHandler {
             .mnemonic(wallet.mnemonic.clone())
             .build();
         let kms_mnemonic_bytes = kms_mnemonic.to_bytes()?;
-        let ksm_response = self
-            .context
-            .kms_client
-            .encrypt(KmsEncryptRequest::builder().plaintext(kms_mnemonic_bytes).build())?;
+        let ksm_response = self.context.kms_client.encrypt(
+            KmstoolEncryptParams::builder()
+                .plaintext(kms_mnemonic_bytes)
+                .kms_key_id(kms_key_id.clone())
+                .build(),
+        )?;
         let encrypted_kms_mnemonic = ksm_response.ciphertext;
 
         let kms_evm = KmsAccountEthPair::builder()
@@ -70,10 +89,12 @@ impl MessageHandler {
             .eth_private_key(wallet.eth_keypair.private_key.clone())
             .build();
         let kms_evm_bytes = kms_evm.to_bytes()?;
-        let ksm_response = self
-            .context
-            .kms_client
-            .encrypt(KmsEncryptRequest::builder().plaintext(kms_evm_bytes).build())?;
+        let ksm_response = self.context.kms_client.encrypt(
+            KmstoolEncryptParams::builder()
+                .plaintext(kms_evm_bytes)
+                .kms_key_id(kms_key_id.clone())
+                .build(),
+        )?;
         let encrypted_kms_evm = ksm_response.ciphertext;
 
         let kms_solana = KmsAccountSolanaPair::builder()
@@ -82,10 +103,12 @@ impl MessageHandler {
             .solana_private_key(wallet.solana_keypair.private_key.clone())
             .build();
         let kms_solana_bytes = kms_solana.to_bytes()?;
-        let ksm_response = self
-            .context
-            .kms_client
-            .encrypt(KmsEncryptRequest::builder().plaintext(kms_solana_bytes).build())?;
+        let ksm_response = self.context.kms_client.encrypt(
+            KmstoolEncryptParams::builder()
+                .plaintext(kms_solana_bytes)
+                .kms_key_id(kms_key_id.clone())
+                .build(),
+        )?;
         let encrypted_kms_solana = ksm_response.ciphertext;
 
         let kms_sui = KmsAccountSuiPair::builder()
@@ -94,14 +117,17 @@ impl MessageHandler {
             .sui_private_key(wallet.sui_keypair.private_key.clone())
             .build();
         let kms_sui_bytes = kms_sui.to_bytes()?;
-        let ksm_response = self
-            .context
-            .kms_client
-            .encrypt(KmsEncryptRequest::builder().plaintext(kms_sui_bytes).build())?;
+        let ksm_response = self.context.kms_client.encrypt(
+            KmstoolEncryptParams::builder()
+                .plaintext(kms_sui_bytes)
+                .kms_key_id(kms_key_id.clone())
+                .build(),
+        )?;
         let encrypted_kms_sui = ksm_response.ciphertext;
 
         let response = CreateEnclaveWalletResponse::builder()
             .code(StatusCode::success())
+            .kms_data(KmsData::builder().kms_key_id(kms_key_id).build())
             .wallet_encrypted_data(encrypted_kms_mnemonic)
             .eth_public_key(wallet.eth_keypair.public_address.clone())
             .eth_encrypted_data(encrypted_kms_evm)

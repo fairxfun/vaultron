@@ -3,7 +3,7 @@ use std::sync::Arc;
 use enclave_agent::{create_enclave_agent, EnclaveAgent, EnclaveAgentCreateOptions, EnclaveAgentTrait};
 use enclave_protos::enclave::v1::{
     enclave_request, enclave_response, CreateEnclaveWalletRequest, CreateEnclaveWalletResponse, EnclaveRequest,
-    EnclaveResponse, InitKmstoolResponse, StatusCode, UpdateAwsCredentialsRequest, UpdateAwsCredentialsResponse,
+    EnclaveResponse, InitEnclaveResponse, StatusCode, UpdateAwsCredentialsRequest, UpdateAwsCredentialsResponse,
 };
 use enclave_protos::enclave::v1::{PingRequest, PingResponse, SignatureType};
 use enclave_vsock::{VsockClientError, VsockClientTrait, DEFAULT_VSOCK_PORT};
@@ -56,9 +56,9 @@ pub async fn test_enclave_agent_send_init_request() {
         .expect_send_request()
         .with(predicate::eq(encoded_request.encode_to_vec()))
         .returning(|_| {
-            let response = InitKmstoolResponse::builder().code(StatusCode::success()).build();
+            let response = InitEnclaveResponse::builder().code(StatusCode::success()).build();
             let response = EnclaveResponse::builder()
-                .response(enclave_response::Response::InitKmstoolResponse(response))
+                .response(enclave_response::Response::InitEnclaveResponse(response))
                 .build();
             let buffer = response.encode_to_vec();
             Ok(buffer)

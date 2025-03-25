@@ -1,4 +1,7 @@
-use crate::common::{EnclaveConfig, EnclaveError};
+use crate::{
+    common::{EnclaveConfig, EnclaveError},
+    data::{EnclaveData, EnclaveKmsData},
+};
 use anyhow::Result;
 use enclave_kmstool::KmsToolTrait;
 use std::sync::Arc;
@@ -11,15 +14,21 @@ use enclave_kmstool::create_kmstool_clib_client;
 pub struct EnclaveServerContext {
     pub config: Arc<EnclaveConfig>,
     pub kms_client: Arc<Box<dyn KmsToolTrait>>,
+    pub kms_keys: Arc<EnclaveKmsData>,
+    pub enclave_data: Arc<EnclaveData>,
 }
 
 impl EnclaveServerContext {
     pub fn new() -> Result<Self, EnclaveError> {
         let config = Arc::new(EnclaveConfig::default());
         let kms_client = create_kms_client()?;
+        let kms_keys = Arc::new(EnclaveKmsData::new());
+        let enclave_data = Arc::new(EnclaveData::new());
         Ok(EnclaveServerContext::builder()
             .config(config)
             .kms_client(kms_client)
+            .kms_keys(kms_keys)
+            .enclave_data(enclave_data)
             .build())
     }
 }
