@@ -1,19 +1,19 @@
 use tokio::sync::RwLock;
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 struct RawEnclaveData {
     pub pcrs: Vec<String>,
-}
-
-impl Default for RawEnclaveData {
-    fn default() -> Self {
-        Self { pcrs: vec![] }
-    }
 }
 
 #[derive(Debug)]
 pub struct EnclaveData {
     raw: RwLock<RawEnclaveData>,
+}
+
+impl Default for EnclaveData {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl EnclaveData {
@@ -31,6 +31,11 @@ impl EnclaveData {
     pub async fn get_pcrs(&self) -> Vec<String> {
         let raw = self.raw.read().await;
         raw.pcrs.clone()
+    }
+
+    pub async fn get_pcr0(&self) -> String {
+        let pcrs = self.get_pcrs().await;
+        pcrs.first().unwrap_or(&"".to_string()).clone()
     }
 
     pub async fn is_initialized(&self) -> bool {

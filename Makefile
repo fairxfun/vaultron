@@ -40,10 +40,10 @@ sleep:
 	sleep 3
 
 stop-proxy:
-	kill -9 $(shell pgrep -f "vsock-proxy")
+	pkill -x "vsock-proxy" || true
 
 stop-tester:
-	kill -9 $(shell pgrep -f "integration_tester")
+	pkill -x "integration_tester" || true
 
 stop-enclave:
 	nitro-cli terminate-enclave --all

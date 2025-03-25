@@ -7594,6 +7594,7 @@ dependencies = [
  "anyhow",
  "async-trait",
  "bs64",
+ "ciborium",
  "enclave_kmstool",
  "enclave_protos",
  "enclave_utils",

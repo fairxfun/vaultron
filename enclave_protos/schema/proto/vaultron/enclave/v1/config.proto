@@ -33,3 +33,10 @@ message UpdateAwsCredentialsResponse{
   StatusCode code = 1;
 }
 
+message GetEnclavePcrRequest {
+}
+
+message GetEnclavePcrResponse {
+  StatusCode      code = 1;
+  repeated string pcrs = 2;
+}

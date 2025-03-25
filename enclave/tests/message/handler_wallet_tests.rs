@@ -1,6 +1,8 @@
 use crate::enclave_mock::MockKmstoolClient;
 use enclave_kmstool::KmsToolTrait;
 use enclave_kmstool::KmstoolEncryptResult;
+use enclave_kmstool::KmstoolGetKeyPolicyResult;
+use enclave_kmstool::KmstoolListKeyPoliciesResult;
 use enclave_protos::enclave::v1::status_code;
 use enclave_protos::enclave::v1::AddKmsKeyRequest;
 use enclave_protos::enclave::v1::AddKmsKeyResponse;
@@ -19,6 +21,7 @@ use ethers_signers::{Signer, Wallet};
 use prost::Message;
 use std::sync::Arc;
 use vaultron_enclave::common::EnclaveConfig;
+use vaultron_enclave::data::EnclaveData;
 use vaultron_enclave::data::EnclaveKmsData;
 use vaultron_enclave::data::KmsAccountMnemonicPair;
 use vaultron_enclave::data::{KmsAccountEthPair, KmsAccountSolanaPair, KmsAccountSuiPair};
@@ -49,6 +52,21 @@ pub async fn test_enclave_eth_user_create_enclave_wallet_request() {
             .build();
         Ok(response)
     });
+    let key_policies_data = include_str!("../test_files/kms_key/key_policies.json");
+    let key_policy_data = include_str!("../test_files/kms_key/key_policy.json");
+    kmstool_client.expect_list_key_policies().times(1).returning(move |_| {
+        let response = KmstoolListKeyPoliciesResult::builder()
+            .policies(key_policies_data.as_bytes().to_vec())
+            .build();
+        Ok(response)
+    });
+    kmstool_client.expect_get_key_policy().times(1).returning(move |_| {
+        let response = KmstoolGetKeyPolicyResult::builder()
+            .policy(key_policy_data.as_bytes().to_vec())
+            .build();
+        Ok(response)
+    });
+
     let kmstool_client = Arc::new(Box::new(kmstool_client) as Box<dyn KmsToolTrait>);
     let config = Arc::new(EnclaveConfig::default());
     let context = Arc::new(
@@ -56,6 +74,7 @@ pub async fn test_enclave_eth_user_create_enclave_wallet_request() {
             .config(config)
             .kms_client(kmstool_client)
             .kms_keys(Arc::new(EnclaveKmsData::new()))
+            .enclave_data(Arc::new(EnclaveData::new()))
             .build(),
     );
     let handler = MessageHandler::builder().context(context).build();

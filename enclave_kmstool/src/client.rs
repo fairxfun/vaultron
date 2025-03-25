@@ -1,11 +1,15 @@
 use crate::gen::{
-    kmstool_decrypt_params, kmstool_enclave_decrypt, kmstool_enclave_encrypt, kmstool_enclave_init,
-    kmstool_encrypt_params, kmstool_init_params, KMSTOOL_STATUS,
+    kmstool_decrypt_params, kmstool_enclave_decrypt, kmstool_enclave_encrypt, kmstool_enclave_get_attestation_document,
+    kmstool_enclave_get_key_policy, kmstool_enclave_init, kmstool_encrypt_params, kmstool_init_params, KMSTOOL_STATUS,
 };
-use crate::gen::{kmstool_enclave_update_aws_key, kmstool_update_aws_key_params};
+use crate::gen::{
+    kmstool_enclave_list_key_policies, kmstool_enclave_update_aws_key, kmstool_get_key_policy_params,
+    kmstool_list_key_policies_params, kmstool_update_aws_key_params,
+};
 use crate::{
     EnclaveKmstoolError, KmsToolTrait, KmstoolDecryptParams, KmstoolDecryptResult, KmstoolEncryptParams,
-    KmstoolEncryptResult, KmstoolInitParams, KmstoolUpdateAwsCredentialsParams,
+    KmstoolEncryptResult, KmstoolGetAttestationDocumentResult, KmstoolGetKeyPolicyParams, KmstoolGetKeyPolicyResult,
+    KmstoolInitParams, KmstoolListKeyPoliciesParams, KmstoolListKeyPoliciesResult, KmstoolUpdateAwsCredentialsParams,
 };
 use anyhow::anyhow;
 use log::error;
@@ -66,6 +70,98 @@ impl KmsToolTrait for KmsToolCLibClient {
         Ok(())
     }
 
+    fn get_attestation_document(&self) -> anyhow::Result<KmstoolGetAttestationDocumentResult, EnclaveKmstoolError> {
+        let mut out: *mut u8 = ptr::null_mut();
+        let mut out_len: u32 = 0;
+
+        let rc = unsafe { kmstool_enclave_get_attestation_document(&mut out_len, &mut out) };
+        if rc != KMSTOOL_STATUS::KMSTOOL_SUCCESS as i32 {
+            error!("kms tool enclave get attestation document error rc: {}", rc);
+            return Err(EnclaveKmstoolError::AnyhowError(anyhow!(
+                "kmstool get attestation document with error code {}",
+                rc
+            )));
+        }
+
+        let attestation_document = unsafe { slice::from_raw_parts(out, out_len as usize).to_vec() };
+        unsafe { libc::free(out as *mut libc::c_void) };
+
+        Ok(KmstoolGetAttestationDocumentResult::builder()
+            .attestation_document(attestation_document)
+            .build())
+    }
+
+    fn list_key_policies(
+        &self,
+        request: KmstoolListKeyPoliciesParams,
+    ) -> anyhow::Result<KmstoolListKeyPoliciesResult, EnclaveKmstoolError> {
+        let key_id = create_cstring(request.key_id.as_str())?;
+        let limit = request.limit.unwrap_or(100);
+
+        let (_marker_cstring, marker_ptr) = match request.marker {
+            Some(ref marker) => {
+                let cstring = create_cstring(marker.as_str())?;
+                let ptr = cstring.as_ptr();
+                (Some(cstring), ptr)
+            }
+            None => (None, ptr::null()),
+        };
+        let params = kmstool_list_key_policies_params {
+            key_id: key_id.as_ptr(),
+            limit,
+            marker: marker_ptr,
+        };
+
+        let mut policies_out: *mut u8 = ptr::null_mut();
+        let mut policies_out_len: u32 = 0;
+
+        let rc = unsafe { kmstool_enclave_list_key_policies(&params, &mut policies_out_len, &mut policies_out) };
+
+        if rc != KMSTOOL_STATUS::KMSTOOL_SUCCESS as i32 {
+            error!("kms tool enclave list key policies error rc: {}", rc);
+            return Err(EnclaveKmstoolError::AnyhowError(anyhow!(
+                "kmstool list key policies with error code {}",
+                rc
+            )));
+        }
+
+        let policies = unsafe { slice::from_raw_parts(policies_out, policies_out_len as usize).to_vec() };
+        unsafe { libc::free(policies_out as *mut libc::c_void) };
+
+        Ok(KmstoolListKeyPoliciesResult::builder().policies(policies).build())
+    }
+
+    fn get_key_policy(
+        &self,
+        request: KmstoolGetKeyPolicyParams,
+    ) -> anyhow::Result<KmstoolGetKeyPolicyResult, EnclaveKmstoolError> {
+        let key_id = create_cstring(request.key_id.as_str())?;
+        let policy_name = create_cstring(request.policy_name.as_str())?;
+
+        let params = kmstool_get_key_policy_params {
+            key_id: key_id.as_ptr(),
+            policy_name: policy_name.as_ptr(),
+        };
+
+        let mut policy_out: *mut u8 = ptr::null_mut();
+        let mut policy_out_len: u32 = 0;
+
+        let rc = unsafe { kmstool_enclave_get_key_policy(&params, &mut policy_out_len, &mut policy_out) };
+
+        if rc != KMSTOOL_STATUS::KMSTOOL_SUCCESS as i32 {
+            error!("kms tool enclave get key policy error rc: {}", rc);
+            return Err(EnclaveKmstoolError::AnyhowError(anyhow!(
+                "kmstool get key policy with error code {}",
+                rc
+            )));
+        }
+
+        let policy = unsafe { slice::from_raw_parts(policy_out, policy_out_len as usize).to_vec() };
+        unsafe { libc::free(policy_out as *mut libc::c_void) };
+
+        Ok(KmstoolGetKeyPolicyResult::builder().policy(policy).build())
+    }
+
     fn encrypt(&self, request: KmstoolEncryptParams) -> anyhow::Result<KmstoolEncryptResult, EnclaveKmstoolError> {
         let kms_key_id = create_cstring(request.kms_key_id.as_str())?;
         let params = kmstool_encrypt_params {
@@ -75,7 +171,7 @@ impl KmsToolTrait for KmsToolCLibClient {
         };
         let mut ciphertext_out: *mut u8 = ptr::null_mut();
         let mut ciphertext_out_len: u32 = 0;
-        let rc = unsafe { kmstool_enclave_encrypt(&params, &mut ciphertext_out, &mut ciphertext_out_len) };
+        let rc = unsafe { kmstool_enclave_encrypt(&params, &mut ciphertext_out_len, &mut ciphertext_out) };
 
         if rc != KMSTOOL_STATUS::KMSTOOL_SUCCESS as i32 {
             error!("kms tool enclave encrypt error rc: {}", rc);
@@ -110,7 +206,7 @@ impl KmsToolTrait for KmsToolCLibClient {
         let mut plaintext_out: *mut u8 = ptr::null_mut();
         let mut plaintext_out_len: u32 = 0;
 
-        let rc = unsafe { kmstool_enclave_decrypt(&params, &mut plaintext_out, &mut plaintext_out_len) };
+        let rc = unsafe { kmstool_enclave_decrypt(&params, &mut plaintext_out_len, &mut plaintext_out) };
 
         if rc != KMSTOOL_STATUS::KMSTOOL_SUCCESS as i32 {
             error!("kms tool enclave decrypt error rc: {}", rc);

@@ -11,6 +11,7 @@ kmstool_aws_clib_feature = ["enclave_kmstool/kmstool_aws_clib_feature"]
 [dependencies]
 anyhow = {version = "1.0.97"}
 async-trait = {version = "0.1.64"}
+ciborium = {version = "0.2.2"}
 enclave_kmstool = {path = "../enclave_kmstool"}
 enclave_protos = {path = "../enclave_protos"}
 enclave_utils = {path = "../enclave_utils"}

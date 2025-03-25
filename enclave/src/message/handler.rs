@@ -3,7 +3,7 @@ use std::sync::Arc;
 use crate::{common::EnclaveError, server::EnclaveServerContext};
 use enclave_protos::enclave::v1::{
     enclave_request, enclave_response, AddKmsKeyResponse, CreateEnclaveWalletResponse, EnclaveRequest, EnclaveResponse,
-    InitEnclaveResponse, PingResponse, UpdateAwsCredentialsResponse,
+    GetEnclavePcrResponse, InitEnclaveResponse, PingResponse, UpdateAwsCredentialsResponse,
 };
 use enclave_vsock::VsockMessageHandlerTrait;
 use log::warn;
@@ -59,6 +59,17 @@ impl VsockMessageHandlerTrait for MessageHandler {
                 };
                 let response = EnclaveResponse::builder()
                     .response(enclave_response::Response::UpdateAwsCredentialsResponse(response))
+                    .build();
+                Ok(response.encode_to_vec())
+            }
+            Some(enclave_request::Request::GetEnclavePcrRequest(r)) => {
+                let result = self.handle_get_enclave_pcr_request(r).await;
+                let response = match result {
+                    Ok(r) => r,
+                    Err(e) => GetEnclavePcrResponse::error(e),
+                };
+                let response = EnclaveResponse::builder()
+                    .response(enclave_response::Response::GetEnclavePcrResponse(response))
                     .build();
                 Ok(response.encode_to_vec())
             }

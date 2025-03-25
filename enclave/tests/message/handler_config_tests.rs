@@ -1,16 +1,17 @@
 use crate::enclave_mock::MockKmstoolClient;
-use enclave_kmstool::KmstoolUpdateAwsCredentialsParams;
 use enclave_kmstool::{KmsToolTrait, KmstoolInitParams};
+use enclave_kmstool::{KmstoolGetAttestationDocumentResult, KmstoolUpdateAwsCredentialsParams};
 use enclave_protos::enclave::v1::{
     enclave_request, enclave_response, EnclaveRequest, EnclaveResponse, InitEnclaveRequest, InitEnclaveResponse,
     StatusCode, UpdateAwsCredentialsRequest, UpdateAwsCredentialsResponse,
 };
+use enclave_utils::hex::decode_hex;
 use enclave_vsock::VsockMessageHandlerTrait;
 use mockall::predicate;
 use prost::Message;
 use std::sync::Arc;
 use vaultron_enclave::common::EnclaveConfig;
-use vaultron_enclave::data::EnclaveKmsData;
+use vaultron_enclave::data::{EnclaveData, EnclaveKmsData};
 use vaultron_enclave::message::MessageHandler;
 use vaultron_enclave::server::EnclaveServerContext;
 
@@ -34,6 +35,7 @@ pub async fn test_enclave_init_enclave_request() {
             .config(config)
             .kms_client(kmstool_client)
             .kms_keys(Arc::new(EnclaveKmsData::new()))
+            .enclave_data(Arc::new(EnclaveData::new()))
             .build(),
     );
     let handler = MessageHandler::builder().context(context).build();
@@ -66,6 +68,14 @@ pub async fn test_enclave_update_aws_credentials_request() {
         .expect_update_aws_credentials()
         .with(predicate::eq(kms_update_aws_credentials_request))
         .returning(|_| Ok(()));
+    let attestation_data = include_bytes!("../test_files/enclave/attestation_doc");
+    let attestation_data = String::from_utf8(attestation_data.to_vec()).unwrap();
+    let attestation_doc = decode_hex(&attestation_data).unwrap();
+    kmstool_client.expect_get_attestation_document().returning(move || {
+        Ok(KmstoolGetAttestationDocumentResult::builder()
+            .attestation_document(attestation_doc.clone())
+            .build())
+    });
     let kmstool_client = Arc::new(Box::new(kmstool_client) as Box<dyn KmsToolTrait>);
     let config = Arc::new(EnclaveConfig::default());
     let context = Arc::new(
@@ -73,6 +83,7 @@ pub async fn test_enclave_update_aws_credentials_request() {
             .config(config)
             .kms_client(kmstool_client)
             .kms_keys(Arc::new(EnclaveKmsData::new()))
+            .enclave_data(Arc::new(EnclaveData::new()))
             .build(),
     );
     let handler = MessageHandler::builder().context(context).build();

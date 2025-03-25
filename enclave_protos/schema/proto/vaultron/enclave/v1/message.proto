@@ -10,19 +10,21 @@ import "vaultron/enclave/v1/wallet.proto";
 message EnclaveRequest {
   oneof request {
     InitEnclaveRequest          init_enclave_request           = 1;
-    AddKmsKeyRequest            add_kms_key_request            = 2;
-    PingRequest                 ping_request                   = 3;
-    UpdateAwsCredentialsRequest update_aws_credentials_request = 4;
-    CreateEnclaveWalletRequest  create_enclave_wallet_request  = 5;
+    UpdateAwsCredentialsRequest update_aws_credentials_request = 2;
+    GetEnclavePcrRequest        get_enclave_pcr_request        = 3;
+    AddKmsKeyRequest            add_kms_key_request            = 4;
+    PingRequest                 ping_request                   = 5;
+    CreateEnclaveWalletRequest  create_enclave_wallet_request  = 6;
   }
 }
 
 message EnclaveResponse {
   oneof response {
     InitEnclaveResponse          init_enclave_response           = 1;
-    AddKmsKeyResponse            add_kms_key_response            = 2;
-    PingResponse                 ping_response                   = 3;
-    UpdateAwsCredentialsResponse update_aws_credentials_response = 4;
-    CreateEnclaveWalletResponse  create_enclave_wallet_response  = 5; 
+    UpdateAwsCredentialsResponse update_aws_credentials_response = 2;
+    GetEnclavePcrResponse        get_enclave_pcr_response        = 3; 
+    AddKmsKeyResponse            add_kms_key_response            = 4;
+    PingResponse                 ping_response                   = 5;
+    CreateEnclaveWalletResponse  create_enclave_wallet_response  = 6; 
   }
 }

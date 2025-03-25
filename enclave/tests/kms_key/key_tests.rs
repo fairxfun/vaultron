@@ -1,5 +1,4 @@
 use enclave_kmstool::{KmstoolGetKeyPolicyResult, KmstoolListKeyPoliciesResult};
-use serde::Deserialize;
 use std::convert::TryFrom;
 use vaultron_enclave::kms_key::{KmsKeyPolicies, KmsKeyPolicy};
 
@@ -12,7 +11,7 @@ pub async fn test_key_policies() {
     let key_policies = KmsKeyPolicies::try_from(key_policies).unwrap();
     assert_eq!(key_policies.policy_names.len(), 1);
     assert_eq!(key_policies.policy_names[0], "default");
-    assert_eq!(key_policies.truncated, false);
+    assert!(!key_policies.truncated);
     assert!(key_policies.verify());
 
     let mut key_policies1 = key_policies.clone();
@@ -39,7 +38,7 @@ pub async fn test_key_policies_from_raw_bytes() {
     let key_policies = KmsKeyPolicies::try_from(key_policies).unwrap();
     assert_eq!(key_policies.policy_names.len(), 1);
     assert_eq!(key_policies.policy_names[0], "default");
-    assert_eq!(key_policies.truncated, false);
+    assert!(!key_policies.truncated);
     assert!(key_policies.verify());
 }
 

@@ -38,6 +38,34 @@ impl From<UpdateAwsCredentialsRequest> for KmstoolUpdateAwsCredentialsParams {
 }
 
 #[derive(Debug, Clone, TypedBuilder, PartialEq, Eq)]
+pub struct KmstoolGetAttestationDocumentResult {
+    pub attestation_document: Vec<u8>,
+}
+
+#[derive(Debug, Clone, TypedBuilder, PartialEq, Eq)]
+pub struct KmstoolListKeyPoliciesParams {
+    pub key_id: String,
+    pub limit: Option<u32>,
+    pub marker: Option<String>,
+}
+
+#[derive(Debug, Clone, TypedBuilder, PartialEq, Eq)]
+pub struct KmstoolListKeyPoliciesResult {
+    pub policies: Vec<u8>,
+}
+
+#[derive(Debug, Clone, TypedBuilder, PartialEq, Eq)]
+pub struct KmstoolGetKeyPolicyParams {
+    pub key_id: String,
+    pub policy_name: String,
+}
+
+#[derive(Debug, Clone, TypedBuilder, PartialEq, Eq)]
+pub struct KmstoolGetKeyPolicyResult {
+    pub policy: Vec<u8>,
+}
+
+#[derive(Debug, Clone, TypedBuilder, PartialEq, Eq)]
 pub struct KmstoolEncryptParams {
     pub kms_key_id: String,
     pub plaintext: Vec<u8>,
@@ -66,6 +94,15 @@ pub trait KmsToolTrait: Send + Sync + Debug {
         &self,
         params: KmstoolUpdateAwsCredentialsParams,
     ) -> anyhow::Result<(), EnclaveKmstoolError>;
+    fn get_attestation_document(&self) -> anyhow::Result<KmstoolGetAttestationDocumentResult, EnclaveKmstoolError>;
+    fn list_key_policies(
+        &self,
+        params: KmstoolListKeyPoliciesParams,
+    ) -> anyhow::Result<KmstoolListKeyPoliciesResult, EnclaveKmstoolError>;
+    fn get_key_policy(
+        &self,
+        params: KmstoolGetKeyPolicyParams,
+    ) -> anyhow::Result<KmstoolGetKeyPolicyResult, EnclaveKmstoolError>;
     fn encrypt(&self, params: KmstoolEncryptParams) -> anyhow::Result<KmstoolEncryptResult, EnclaveKmstoolError>;
     fn decrypt(&self, params: KmstoolDecryptParams) -> anyhow::Result<KmstoolDecryptResult, EnclaveKmstoolError>;
 }
@@ -80,6 +117,24 @@ impl KmsToolTrait for Box<dyn KmsToolTrait> {
         params: KmstoolUpdateAwsCredentialsParams,
     ) -> anyhow::Result<(), EnclaveKmstoolError> {
         self.as_ref().update_aws_credentials(params)
+    }
+
+    fn get_attestation_document(&self) -> anyhow::Result<KmstoolGetAttestationDocumentResult, EnclaveKmstoolError> {
+        self.as_ref().get_attestation_document()
+    }
+
+    fn list_key_policies(
+        &self,
+        params: KmstoolListKeyPoliciesParams,
+    ) -> anyhow::Result<KmstoolListKeyPoliciesResult, EnclaveKmstoolError> {
+        self.as_ref().list_key_policies(params)
+    }
+
+    fn get_key_policy(
+        &self,
+        params: KmstoolGetKeyPolicyParams,
+    ) -> anyhow::Result<KmstoolGetKeyPolicyResult, EnclaveKmstoolError> {
+        self.as_ref().get_key_policy(params)
     }
 
     fn encrypt(&self, params: KmstoolEncryptParams) -> anyhow::Result<KmstoolEncryptResult, EnclaveKmstoolError> {

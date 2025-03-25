@@ -3,7 +3,7 @@ use enclave_kmstool::KmsToolTrait;
 use std::sync::Arc;
 use vaultron_enclave::{
     common::EnclaveConfig,
-    data::EnclaveKmsData,
+    data::{EnclaveData, EnclaveKmsData},
     server::{EnclaveServer, EnclaveServerContext},
 };
 
@@ -17,6 +17,7 @@ pub async fn test_enclave_start() {
             .config(config)
             .kms_client(kmstool_client)
             .kms_keys(Arc::new(EnclaveKmsData::new()))
+            .enclave_data(Arc::new(EnclaveData::new()))
             .build(),
     );
     let _ = EnclaveServer::new(context).unwrap();

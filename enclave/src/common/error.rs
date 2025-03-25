@@ -33,6 +33,15 @@ pub enum EnclaveError {
     #[error("Protocol buffer decoding error")]
     ProtobufDecodeError(#[from] prost::DecodeError),
 
+    #[error("Invalid key policies error")]
+    InvalidKeyPoliciesError,
+
+    #[error("Invalid key policy error")]
+    InvalidKeyPolicyError,
+
+    #[error("Invalid attestation document error")]
+    InvalidAttestationDocumentError,
+
     #[error(transparent)]
     EnclaveKmstoolError(#[from] enclave_kmstool::EnclaveKmstoolError),
 
@@ -50,6 +59,9 @@ pub enum EnclaveError {
 
     #[error(transparent)]
     AnyhowError(#[from] anyhow::Error),
+
+    #[error(transparent)]
+    SerdeJsonError(#[from] serde_json::Error),
 }
 
 impl From<EnclaveError> for StatusCode {
@@ -72,11 +84,17 @@ fn parse_enclave_error(err: &EnclaveError) -> StatusCode {
         }
         EnclaveError::ProtobufEncodeError(_) => EnclaveProtoError::EnclaveErrorProtobufEncodeError.into(),
         EnclaveError::ProtobufDecodeError(_) => EnclaveProtoError::EnclaveErrorProtobufDecodeError.into(),
+        EnclaveError::InvalidKeyPoliciesError => EnclaveProtoError::EnclaveErrorInvalidKeyPoliciesError.into(),
+        EnclaveError::InvalidKeyPolicyError => EnclaveProtoError::EnclaveErrorInvalidKeyPolicyError.into(),
+        EnclaveError::InvalidAttestationDocumentError => {
+            EnclaveProtoError::EnclaveErrorInvalidAttestationDocumentError.into()
+        }
         EnclaveError::EnclaveKmstoolError(_) => EnclaveProtoError::EnclaveErrorEnclaveKmstoolError.into(),
         EnclaveError::EnclaveWalletError(_) => EnclaveProtoError::EnclaveErrorEnclaveWalletError.into(),
         EnclaveError::PostcardError(_) => EnclaveProtoError::EnclaveErrorPostcardError.into(),
         EnclaveError::LogError(_) => EnclaveProtoError::EnclaveErrorLogError.into(),
         EnclaveError::IoError(_) => EnclaveProtoError::EnclaveErrorIoError.into(),
         EnclaveError::AnyhowError(_) => EnclaveProtoError::EnclaveErrorAnyhowError.into(),
+        EnclaveError::SerdeJsonError(_) => EnclaveProtoError::EnclaveErrorSerdeJsonError.into(),
     }
 }

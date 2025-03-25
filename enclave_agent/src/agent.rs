@@ -1,7 +1,8 @@
 use crate::EnclaveAgentError;
 use enclave_protos::enclave::v1::{
-    AddKmsKeyRequest, AddKmsKeyResponse, CreateEnclaveWalletRequest, CreateEnclaveWalletResponse, InitEnclaveRequest,
-    InitEnclaveResponse, PingRequest, PingResponse, UpdateAwsCredentialsRequest, UpdateAwsCredentialsResponse,
+    AddKmsKeyRequest, AddKmsKeyResponse, CreateEnclaveWalletRequest, CreateEnclaveWalletResponse, GetEnclavePcrRequest,
+    GetEnclavePcrResponse, InitEnclaveRequest, InitEnclaveResponse, PingRequest, PingResponse,
+    UpdateAwsCredentialsRequest, UpdateAwsCredentialsResponse,
 };
 use std::fmt::Debug;
 
@@ -15,6 +16,7 @@ pub trait EnclaveAgentTrait: Send + Sync + Debug {
         &self,
         request: UpdateAwsCredentialsRequest,
     ) -> Result<UpdateAwsCredentialsResponse, EnclaveAgentError>;
+    async fn get_enclave_pcr(&self, request: GetEnclavePcrRequest) -> Result<GetEnclavePcrResponse, EnclaveAgentError>;
     async fn create_enclave_wallet(
         &self,
         request: CreateEnclaveWalletRequest,
@@ -44,6 +46,10 @@ impl EnclaveAgentTrait for Box<dyn EnclaveAgentTrait> {
         request: UpdateAwsCredentialsRequest,
     ) -> Result<UpdateAwsCredentialsResponse, EnclaveAgentError> {
         self.as_ref().update_aws_credentials(request).await
+    }
+
+    async fn get_enclave_pcr(&self, request: GetEnclavePcrRequest) -> Result<GetEnclavePcrResponse, EnclaveAgentError> {
+        self.as_ref().get_enclave_pcr(request).await
     }
 
     async fn create_enclave_wallet(

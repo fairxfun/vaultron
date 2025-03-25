@@ -1,6 +1,5 @@
-use std::collections::HashMap;
-
 use enclave_protos::enclave::v1::AddKmsKeyRequest;
+use std::collections::HashMap;
 use tokio::sync::RwLock;
 use typed_builder::TypedBuilder;
 

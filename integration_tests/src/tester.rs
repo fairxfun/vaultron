@@ -3,8 +3,8 @@ use std::{str, sync::Arc};
 use anyhow::Result;
 use enclave_agent::{create_enclave_agent, EnclaveAgentCreateOptions, EnclaveAgentTrait};
 use enclave_protos::enclave::v1::{
-    AddKmsKeyRequest, CreateEnclaveWalletRequest, InitEnclaveRequest, KmsData, PingRequest, SignatureType, StatusCode,
-    UpdateAwsCredentialsRequest,
+    AddKmsKeyRequest, CreateEnclaveWalletRequest, GetEnclavePcrRequest, InitEnclaveRequest, KmsData, PingRequest,
+    SignatureType, StatusCode, UpdateAwsCredentialsRequest,
 };
 use enclave_utils::{
     address::{ethers_address_to_bytes, string_address_from_bytes},
@@ -20,8 +20,9 @@ pub async fn start_test() -> Result<(), Box<dyn std::error::Error>> {
     let agent = create_enclave_agent(options)?;
 
     test_init_kmstool(agent.clone()).await;
-    test_add_kms_key(agent.clone()).await;
     test_update_aws_credentials(agent.clone()).await;
+    test_get_enclave_pcr(agent.clone()).await;
+    test_add_kms_key(agent.clone()).await;
     test_ping(agent.clone()).await;
     for i in 0..100000 {
         let iteration_start = Instant::now();
@@ -69,6 +70,15 @@ async fn test_update_aws_credentials(agent: Arc<Box<dyn EnclaveAgentTrait>>) {
         .expect("Update aws credentials failed");
     assert_eq!(response.code, Some(StatusCode::success()));
     println!("Update aws credentials success");
+}
+
+async fn test_get_enclave_pcr(agent: Arc<Box<dyn EnclaveAgentTrait>>) {
+    let request = GetEnclavePcrRequest::builder().build();
+    let response = agent.get_enclave_pcr(request).await.expect("Get enclave pcr failed");
+    assert_eq!(response.code, Some(StatusCode::success()));
+    for (index, pcr) in response.pcrs.iter().enumerate() {
+        println!("index {} pcr: {}", index, pcr);
+    }
 }
 
 async fn test_ping(agent: Arc<Box<dyn EnclaveAgentTrait>>) {

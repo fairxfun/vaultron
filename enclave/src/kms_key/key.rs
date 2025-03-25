@@ -128,7 +128,7 @@ impl KmsKeyPolicies {
 }
 
 impl KmsKeyPolicy {
-    pub fn verify(&self, enclave_pcr: String) -> bool {
+    pub fn verify(&self, _enclave_pcr: String) -> bool {
         if self.policy_name != DEFAULT_POLICY_NAME {
             return false;
         }

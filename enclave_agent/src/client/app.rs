@@ -2,8 +2,9 @@ use crate::EnclaveAgentCreateOptions;
 use crate::{error::EnclaveAgentError, EnclaveAgentTrait};
 use enclave_protos::enclave::v1::{
     enclave_request, enclave_response, AddKmsKeyRequest, AddKmsKeyResponse, CreateEnclaveWalletRequest,
-    CreateEnclaveWalletResponse, EnclaveRequest, EnclaveResponse, InitEnclaveRequest, InitEnclaveResponse, PingRequest,
-    PingResponse, UpdateAwsCredentialsRequest, UpdateAwsCredentialsResponse,
+    CreateEnclaveWalletResponse, EnclaveRequest, EnclaveResponse, GetEnclavePcrRequest, GetEnclavePcrResponse,
+    InitEnclaveRequest, InitEnclaveResponse, PingRequest, PingResponse, UpdateAwsCredentialsRequest,
+    UpdateAwsCredentialsResponse,
 };
 use enclave_vsock::{create_vsock_client, VsockClientTrait};
 use prost::Message;
@@ -84,6 +85,17 @@ impl EnclaveAgentTrait for EnclaveAgent {
         let response: EnclaveResponse = self.send_request(&enclave_request).await?;
         match response.response {
             Some(enclave_response::Response::UpdateAwsCredentialsResponse(response)) => Ok(response),
+            _ => Err(EnclaveAgentError::InvalidResponseError),
+        }
+    }
+
+    async fn get_enclave_pcr(&self, request: GetEnclavePcrRequest) -> Result<GetEnclavePcrResponse, EnclaveAgentError> {
+        let enclave_request = EnclaveRequest::builder()
+            .request(enclave_request::Request::GetEnclavePcrRequest(request))
+            .build();
+        let response: EnclaveResponse = self.send_request(&enclave_request).await?;
+        match response.response {
+            Some(enclave_response::Response::GetEnclavePcrResponse(response)) => Ok(response),
             _ => Err(EnclaveAgentError::InvalidResponseError),
         }
     }
