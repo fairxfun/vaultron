@@ -4,26 +4,30 @@ version = "0.1.0"
 authors = ["mikerfrr"]
 edition = "2018"
 
-[features]
-default = []
-kmstool_aws_clib_feature = ["enclave_kmstool/kmstool_aws_clib_feature"]
-
 [dependencies]
+aes-gcm = {version = "0.10.3"}
 anyhow = {version = "1.0.97"}
 async-trait = {version = "0.1.64"}
+aws-nitro-enclaves-nsm-api = { git = "https://github.com/aws/aws-nitro-enclaves-nsm-api.git", rev = "8ec7eac", features = ["nix"] }
+aws-nitro-enclaves-cose = { git = "https://github.com/awslabs/aws-nitro-enclaves-cose.git", rev = "6064f82"}
 ciborium = {version = "0.2.2"}
-enclave_kmstool = {path = "../enclave_kmstool"}
-enclave_protos = {path = "../enclave_protos"}
+ecies = {version = "0.2.8"}
+enclave_attestation = {path = "../enclave_attestation"}
+enclave_protos = {path = "../enclave_protos", features = ["proto_full"]}
 enclave_utils = {path = "../enclave_utils"}
 enclave_vsock = {path = "../enclave_vsock"}
-enclave_wallet = {path = "../enclave_wallet"}
+enclave_crypto = {path = "../enclave_crypto"}
 env_logger = {version = "0.11.7"}
+ethers-signers = {version = "2.0.14"}
 ethers-core = {version = "2.0.14"}
 log = {version = "0.4.26"}
+openssl = {version = "0.10.64"}
 postcard = {version = "1.1.1", features = ["alloc"]}
 prost = {version = "0.13.5"}
+rand = { version = "0.9.0", package = "rand" }
 serde = {version = "1.0.219"}
 serde_json = {version = "1.0.140"}
+serde_cbor = {version = "0.11"}
 thiserror = {version = "2.0.12"}
 tokio = {version = "1.44.0", features = ["full"]}
 typed-builder = {version = "0.20.0"}

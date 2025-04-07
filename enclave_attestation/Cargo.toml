@@ -1,0 +1,18 @@
+[package]
+name = "enclave_attestation"
+version = "0.1.0"
+authors = ["mikerfrr"]
+edition = "2021"
+
+[dependencies]
+anyhow = {version = "1.0.97"}
+aws-nitro-enclaves-nsm-api = { git = "https://github.com/aws/aws-nitro-enclaves-nsm-api.git", rev = "8ec7eac", features = ["nix"] }
+aws-nitro-enclaves-cose = { git = "https://github.com/awslabs/aws-nitro-enclaves-cose.git", rev = "6064f82"}
+enclave_protos = {path = "../enclave_protos", features = ["proto_full"]}
+hex = {version = "0.4"}
+openssl = {version = "0.10"} 
+serde_cbor = {version = "0.11.2"}
+thiserror = {version = "2.0.12"}
+tokio = {version = "1.44.0", features = ["full"]}
+
+[dev-dependencies]

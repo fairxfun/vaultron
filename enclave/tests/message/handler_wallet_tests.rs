@@ -9,7 +9,7 @@ use enclave_protos::enclave::v1::AddKmsKeyResponse;
 use enclave_protos::enclave::v1::EnclaveProtoError;
 use enclave_protos::enclave::v1::KmsData;
 use enclave_protos::enclave::v1::{
-    enclave_request, enclave_response, CreateEnclaveWalletRequest, CreateEnclaveWalletResponse, EnclaveRequest,
+    enclave_request, enclave_response, CreateUserWalletRequest, CreateUserWalletResponse, EnclaveRequest,
     EnclaveResponse, SignatureType,
 };
 use enclave_utils::address::ethers_address_to_bytes;
@@ -21,12 +21,12 @@ use ethers_signers::{Signer, Wallet};
 use prost::Message;
 use std::sync::Arc;
 use vaultron_enclave::common::EnclaveConfig;
-use vaultron_enclave::data::EnclaveData;
-use vaultron_enclave::data::EnclaveKmsData;
-use vaultron_enclave::data::KmsAccountMnemonicPair;
-use vaultron_enclave::data::{KmsAccountEthPair, KmsAccountSolanaPair, KmsAccountSuiPair};
 use vaultron_enclave::message::MessageHandler;
 use vaultron_enclave::server::EnclaveServerContext;
+use vaultron_enclave::user::EnclaveData;
+use vaultron_enclave::user::EnclaveKmsData;
+use vaultron_enclave::user::UserAccountMnemonicPair;
+use vaultron_enclave::user::{KmsAccountSolanaPair, KmsAccountSuiPair, UserAccountEthPair};
 
 #[tokio::test]
 pub async fn test_enclave_eth_user_create_enclave_wallet_request() {
@@ -37,7 +37,7 @@ pub async fn test_enclave_eth_user_create_enclave_wallet_request() {
     let user_address = ethers_address_to_bytes(&user_wallet.address());
     let create_message = "create enclave wallet";
     let signature = user_wallet.sign_message(create_message.as_bytes()).await.unwrap();
-    let request = CreateEnclaveWalletRequest::builder()
+    let request = CreateUserWalletRequest::builder()
         .user_id(user_id.clone())
         .user_public_key(user_address.clone())
         .signature_type(SignatureType::WalletEth)
@@ -79,15 +79,15 @@ pub async fn test_enclave_eth_user_create_enclave_wallet_request() {
     );
     let handler = MessageHandler::builder().context(context).build();
     let create_wallet_request = EnclaveRequest::builder()
-        .request(Some(enclave_request::Request::CreateEnclaveWalletRequest(request)))
+        .request(Some(enclave_request::Request::CreateUserWalletRequest(request)))
         .build();
     let response = handler
-        .process_message(&create_wallet_request.encode_to_vec())
+        .process_request(&create_wallet_request.encode_to_vec())
         .await
         .unwrap();
     let response = EnclaveResponse::decode(&mut response.as_slice()).unwrap();
-    let response: CreateEnclaveWalletResponse = match response.response {
-        Some(enclave_response::Response::CreateEnclaveWalletResponse(response)) => response,
+    let response: CreateUserWalletResponse = match response.response {
+        Some(enclave_response::Response::CreateUserWalletResponse(response)) => response,
         _ => panic!("Invalid response"),
     };
     let code = response.code.clone().unwrap();
@@ -103,7 +103,7 @@ pub async fn test_enclave_eth_user_create_enclave_wallet_request() {
     let request = EnclaveRequest::builder()
         .request(Some(enclave_request::Request::AddKmsKeyRequest(request)))
         .build();
-    let response = handler.process_message(&request.encode_to_vec()).await.unwrap();
+    let response = handler.process_request(&request.encode_to_vec()).await.unwrap();
     let response = EnclaveResponse::decode(&mut response.as_slice()).unwrap();
     let response: AddKmsKeyResponse = match response.response {
         Some(enclave_response::Response::AddKmsKeyResponse(response)) => response,
@@ -113,12 +113,12 @@ pub async fn test_enclave_eth_user_create_enclave_wallet_request() {
     assert!(code.success);
 
     let response = handler
-        .process_message(&create_wallet_request.encode_to_vec())
+        .process_request(&create_wallet_request.encode_to_vec())
         .await
         .unwrap();
     let response = EnclaveResponse::decode(&mut response.as_slice()).unwrap();
-    let response: CreateEnclaveWalletResponse = match response.response {
-        Some(enclave_response::Response::CreateEnclaveWalletResponse(response)) => response,
+    let response: CreateUserWalletResponse = match response.response {
+        Some(enclave_response::Response::CreateUserWalletResponse(response)) => response,
         _ => panic!("Invalid response"),
     };
     let code = response.code.clone().unwrap();
@@ -126,9 +126,9 @@ pub async fn test_enclave_eth_user_create_enclave_wallet_request() {
     let kms_data = response.kms_data.clone().unwrap();
     assert_eq!(kms_data.kms_key_id, kms_key_id);
     let mnemonic_encrypted_data = bs64::decode(&response.wallet_encrypted_data).unwrap();
-    let mnemonic_pair = KmsAccountMnemonicPair::from_bytes(&mnemonic_encrypted_data).unwrap();
+    let mnemonic_pair = UserAccountMnemonicPair::from_bytes(&mnemonic_encrypted_data).unwrap();
     let eth_encrypted_data = bs64::decode(&response.eth_encrypted_data).unwrap();
-    let eth_keypair = KmsAccountEthPair::from_bytes(&eth_encrypted_data).unwrap();
+    let eth_keypair = UserAccountEthPair::from_bytes(&eth_encrypted_data).unwrap();
     let solana_encrypted_data = bs64::decode(&response.solana_encrypted_data).unwrap();
     let solana_keypair = KmsAccountSolanaPair::from_bytes(&solana_encrypted_data).unwrap();
     let sui_encrypted_data = bs64::decode(&response.sui_encrypted_data).unwrap();

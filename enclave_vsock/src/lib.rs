@@ -4,21 +4,18 @@ mod vsocket;
 pub use error::*;
 pub use vsocket::*;
 
-use std::fmt::Debug;
-
 #[async_trait::async_trait]
-pub trait VsockMessageHandlerTrait: Send + Sync + Debug {
-    type Error;
-    async fn process_message(&self, message: &[u8]) -> Result<Vec<u8>, Self::Error>;
+pub trait VsockMessageHandlerTrait: Send + Sync {
+    async fn process_request(&self, message: &[u8]) -> Vec<u8>;
 }
 
 #[async_trait::async_trait]
-pub trait VsockServerTrait<E: Debug + Send + Sync + 'static>: Send + Sync + Debug {
+pub trait VsockServerTrait: Send + Sync {
     async fn start(&self, options: VsockServerCreateOptions) -> Result<(), VsockServerError>;
 }
 
 #[async_trait::async_trait]
-pub trait VsockClientTrait: Send + Sync + Debug {
+pub trait VsockClientTrait: Send + Sync {
     async fn reconnect(&self) -> Result<(), VsockClientError>;
     async fn send_request(&self, message: &[u8]) -> Result<Vec<u8>, VsockClientError>;
 }

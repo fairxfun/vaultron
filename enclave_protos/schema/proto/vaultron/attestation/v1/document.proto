@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package vaultron.attestation.v1;
+
+enum Digest {
+  DIGEST_UNSPECIFIED = 0;
+  DIGEST_SHA256      = 1;
+  DIGEST_SHA384      = 2;
+  DIGEST_SHA512      = 3;
+}
+
+message AttestationDocumentUserData {
+    bytes request  = 1;
+    bytes response = 2;
+}
+
+message AttestationDocument {
+    string                      module_id   = 1;
+    Digest                      digest      = 2;
+    uint64                      timestamp   = 3;
+    map<uint32, bytes>          pcrs        = 4;
+    bytes                       certificate = 5;
+    repeated bytes              cabundle    = 6;
+    bytes                       public_key  = 7;
+    bytes                       nonce       = 8;
+    AttestationDocumentUserData user_data   = 9;
+}
+

@@ -12,6 +12,7 @@ enclave_vsock = {path = "../enclave_vsock"}
 env_logger = {version = "0.11.7"}
 log = {version = "0.4.26"}
 prost = {version = "0.13.5"}
+serde = {version = "1.0.219", features = ["derive"]}
 thiserror = {version = "2.0.12"}
 tokio = {version = "1.44.0", features = ["full"]}
 typed-builder = {version = "0.20.0"}

@@ -1,46 +1,33 @@
 use crate::{
-    common::{EnclaveConfig, EnclaveError},
-    data::{EnclaveData, EnclaveKmsData},
+    common::{EnclaveError, EnclaveSettings},
+    nsm::EnclaveNsmHandle,
 };
 use anyhow::Result;
-use enclave_kmstool::KmsToolTrait;
+use enclave_attestation::AttestationParser;
 use std::sync::Arc;
 use typed_builder::TypedBuilder;
 
-#[cfg(feature = "kmstool_aws_clib_feature")]
-use enclave_kmstool::create_kmstool_clib_client;
-
-#[derive(Debug, Clone, TypedBuilder)]
+#[derive(TypedBuilder)]
 pub struct EnclaveServerContext {
-    pub config: Arc<EnclaveConfig>,
-    pub kms_client: Arc<Box<dyn KmsToolTrait>>,
-    pub kms_keys: Arc<EnclaveKmsData>,
-    pub enclave_data: Arc<EnclaveData>,
+    pub settings: Arc<EnclaveSettings>,
+    pub nsm_handle: Arc<EnclaveNsmHandle>,
+    pub attestation_parser: Arc<AttestationParser>,
 }
 
 impl EnclaveServerContext {
-    pub fn new() -> Result<Self, EnclaveError> {
-        let config = Arc::new(EnclaveConfig::default());
-        let kms_client = create_kms_client()?;
-        let kms_keys = Arc::new(EnclaveKmsData::new());
-        let enclave_data = Arc::new(EnclaveData::new());
+    pub async fn new() -> Result<Self, EnclaveError> {
+        let attestation_parser = Arc::new(AttestationParser::new(None, None).await?);
+        let nsm_handle = Arc::new(EnclaveNsmHandle::new());
+        let (locked, pcr0) = nsm_handle.get_pcr(0u16)?;
+        if !locked {
+            return Err(EnclaveError::NsmApiError);
+        }
+        let seed = nsm_handle.get_random_bytes(32)?;
+        let settings = Arc::new(EnclaveSettings::new(pcr0, seed)?);
         Ok(EnclaveServerContext::builder()
-            .config(config)
-            .kms_client(kms_client)
-            .kms_keys(kms_keys)
-            .enclave_data(enclave_data)
+            .attestation_parser(attestation_parser)
+            .settings(settings)
+            .nsm_handle(nsm_handle)
             .build())
-    }
-}
-
-fn create_kms_client() -> Result<Arc<Box<dyn KmsToolTrait>>, EnclaveError> {
-    #[cfg(feature = "kmstool_aws_clib_feature")]
-    {
-        Ok(create_kmstool_clib_client())
-    }
-
-    #[cfg(not(feature = "kmstool_aws_clib_feature"))]
-    {
-        panic!("KMS client is not available in workflow mode - this code path should not be executed in workflows")
     }
 }

@@ -1,3 +1,0 @@
-[submodule "enclave_kmstool/lib/aws-nitro-enclaves-sdk-c"]
-	path = enclave_kmstool/lib/aws-nitro-enclaves-sdk-c
-	url = https://github.com/fairxfun/aws-nitro-enclaves-sdk-c.git

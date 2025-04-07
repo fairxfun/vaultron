@@ -1,21 +1,17 @@
 use super::{create_vsock_protocol, VsockProtocol, VsockServerCreateOptions};
-use crate::{VsockMessageHandlerTrait, VsockServerError, VsockServerTrait};
+use crate::{VsockMessageHandlerTrait, VsockProtocolError, VsockServerError, VsockServerTrait};
 use anyhow::Result;
 use log::{error, info};
-use std::fmt::Debug;
 use std::sync::Arc;
 use vsock::{get_local_cid, VsockListener, VsockStream};
 
-pub type VsockMessageHandler<E> = Box<dyn VsockMessageHandlerTrait<Error = E>>;
-
-#[derive(Debug)]
-pub struct VsockServer<E: Debug + Send + Sync + 'static> {
-    message_handler: Arc<VsockMessageHandler<E>>,
+pub struct VsockServer {
+    message_handler: Arc<Box<dyn VsockMessageHandlerTrait>>,
     protocol_handler: Arc<VsockProtocol>,
 }
 
-impl<E: Debug + Send + Sync + 'static> VsockServer<E> {
-    fn new(message_handler: Arc<VsockMessageHandler<E>>) -> Self {
+impl VsockServer {
+    fn new(message_handler: Arc<Box<dyn VsockMessageHandlerTrait>>) -> Self {
         let protocol_handler = Arc::new(create_vsock_protocol());
         Self {
             message_handler,
@@ -27,19 +23,24 @@ impl<E: Debug + Send + Sync + 'static> VsockServer<E> {
         loop {
             let message = match self.protocol_handler.read_message(&mut stream) {
                 Ok(msg) => msg,
-                Err(e) => {
-                    error!("Error reading message: {:?}", e);
-                    break;
-                }
+                Err(e) => match e {
+                    VsockProtocolError::IoError(io_err) => {
+                        if io_err.kind() == std::io::ErrorKind::UnexpectedEof {
+                            info!("Client disconnected gracefully");
+                            break;
+                        } else {
+                            error!("Error reading message: {:?}", io_err);
+                            break;
+                        }
+                    }
+                    _ => {
+                        error!("Error reading message: {:?}", e);
+                        break;
+                    }
+                },
             };
 
-            let response = match self.message_handler.process_message(&message).await {
-                Ok(resp) => resp,
-                Err(_) => {
-                    error!("Error processing message");
-                    break;
-                }
-            };
+            let response = self.message_handler.process_request(&message).await;
 
             if let Err(e) = self.protocol_handler.write_message(&mut stream, &response) {
                 error!("Error writing response: {:?}", e);
@@ -53,11 +54,14 @@ impl<E: Debug + Send + Sync + 'static> VsockServer<E> {
 }
 
 #[async_trait::async_trait]
-impl<E: Debug + Send + Sync + 'static> VsockServerTrait<E> for VsockServer<E> {
+impl VsockServerTrait for VsockServer {
     async fn start(&self, options: VsockServerCreateOptions) -> Result<(), VsockServerError> {
         let cid = get_local_cid()?;
-        info!("Starting vsock server with cid {} port {}", cid, options.port);
-        let listener = VsockListener::bind_with_cid_port(cid, options.port)?;
+        info!(
+            "Starting vsock server with cid {} port {}",
+            cid, options.enclave_vsock_port
+        );
+        let listener = VsockListener::bind_with_cid_port(cid, options.enclave_vsock_port)?;
 
         loop {
             match listener.accept() {
@@ -75,8 +79,6 @@ impl<E: Debug + Send + Sync + 'static> VsockServerTrait<E> for VsockServer<E> {
     }
 }
 
-pub fn create_vsock_server<E: Debug + Send + Sync + 'static>(
-    message_handler: Arc<VsockMessageHandler<E>>,
-) -> VsockServer<E> {
+pub fn create_vsock_server(message_handler: Arc<Box<dyn VsockMessageHandlerTrait>>) -> VsockServer {
     VsockServer::new(message_handler)
 }

@@ -1,4 +1,0 @@
-{
-    "PolicyName": "default",
-    "Policy": "{\"Version\": \"2012-10-17\", \"Id\": \"key-consolepolicy-3\", \"Statement\": [{\"Sid\": \"Enable decrypt from enclave\", \"Effect\": \"Allow\", \"Principal\": {\"AWS\": [\"arn:aws:iam::941377148997:role/fairx_enclave_role\", \"arn:aws:iam::941377148997:user/mike\"]}, \"Action\": \"kms:Decrypt\", \"Resource\": \"*\", \"Condition\": {\"StringEqualsIgnoreCase\": {\"kms:RecipientAttestation:ImageSha384\": \"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"}}}]}"
-}

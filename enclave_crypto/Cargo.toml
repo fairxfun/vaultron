@@ -1,0 +1,29 @@
+[package]
+name = "enclave_crypto"
+version = "0.1.0"
+authors = ["mikerfrr"]
+edition = "2021"
+
+[dependencies]
+aes-gcm = {version = "0.10.3"}
+anyhow = { version = "1.0.97" }
+bip32 = { version = "0.4.0" }
+bip39 = { version = "2.1.0", features = ["rand"] }
+ethers-core = { version = "2.0.14" }
+ethers-signers = { version = "2.0.14" }
+ecies = {version = "0.2.8"}
+fastcrypto = { version = "0.1.9" }
+hmac = { version = "0.12.1" }
+pbkdf2 = { version = "0.12.2" }
+sha2 = { version = "0.10.8" }
+solana-keypair = { version = "2.2.1", default-features = false }
+solana-signer = { version = "2.2.1", default-features = false }
+sui-keys = { git = "https://github.com/MystenLabs/sui.git", rev = "615516e" }
+sui-types = { git = "https://github.com/MystenLabs/sui.git", rev = "615516e" }
+thiserror = { version = "2.0.12" }
+typed-builder = { version = "0.20.0" }
+
+[dev-dependencies]
+enclave_utils = { path = "../enclave_utils" }
+mockall = { version = "0.11.4" }
+tokio = { version = "1.26.0", features = ["macros", "rt", "test-util"] }

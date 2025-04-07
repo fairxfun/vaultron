@@ -2,13 +2,13 @@
 members = [
     "enclave",
     "enclave_agent",
+    "enclave_attestation",
     "enclave_protos",
     "enclave_protos_macros",
     "enclave_utils",
-    "enclave_wallet",
-    "enclave_kmstool",
     "enclave_vsock",
-    "integration_tests"
+    "enclave_crypto",
+    "integration_tester"
 ]
 resolver = "2"
 

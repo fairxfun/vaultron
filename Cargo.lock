@@ -546,6 +546,32 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ace50bade8e6234aa140d9a2f552bbee1db4d353f69b8217bc503490fc1a9f26"
 
 [[package]]
+name = "aws-nitro-enclaves-cose"
+version = "0.5.3"
+source = "git+https://github.com/awslabs/aws-nitro-enclaves-cose.git?rev=6064f82#6064f826d551a9db0bd42e9cf928feaf272e8d17"
+dependencies = [
+ "openssl",
+ "serde",
+ "serde_bytes",
+ "serde_cbor",
+ "serde_repr",
+ "serde_with",
+]
+
+[[package]]
+name = "aws-nitro-enclaves-nsm-api"
+version = "0.4.0"
+source = "git+https://github.com/aws/aws-nitro-enclaves-nsm-api.git?rev=8ec7eac#8ec7eac72bbb2097f1058ee32c13e1ff232f13e8"
+dependencies = [
+ "libc",
+ "log",
+ "nix 0.26.4",
+ "serde",
+ "serde_bytes",
+ "serde_cbor",
+]
+
+[[package]]
 name = "axum"
 version = "0.6.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -782,24 +808,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b1f45e9417d87227c7a56d22e471c6206462cba514c7590c09aff4cf6d1ddcad"
 dependencies = [
  "serde",
-]
-
-[[package]]
-name = "bindgen"
-version = "0.71.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5f58bf3d7db68cfbac37cfc485a8d711e87e064c3d0fe0435b92f7a407f9d6b3"
-dependencies = [
- "bitflags 2.9.0",
- "cexpr",
- "clang-sys",
- "itertools 0.13.0",
- "proc-macro2",
- "quote",
- "regex",
- "rustc-hash 2.1.1",
- "shlex",
- "syn 2.0.100",
 ]
 
 [[package]]
@@ -1119,15 +1127,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cexpr"
-version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6fac387a98bb7c37292057cffc56d62ecb629900026402633ae9160df93a8766"
-dependencies = [
- "nom",
-]
-
-[[package]]
 name = "cfg-if"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1178,7 +1177,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "57663b653d948a338bfb3eeba9bb2fd5fcfaecb9e199e87e1eda4d9e8b240fd9"
 dependencies = [
  "ciborium-io",
- "half",
+ "half 2.5.0",
 ]
 
 [[package]]
@@ -1189,17 +1188,6 @@ checksum = "773f3b9af64447d2ce9850330c473515014aa235e6a783b02db81ff39e4a3dad"
 dependencies = [
  "crypto-common",
  "inout",
-]
-
-[[package]]
-name = "clang-sys"
-version = "1.8.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0b023947811758c97c59bf9d1c188fd619ad4718dcaa767947df1cadb14f39f4"
-dependencies = [
- "glob",
- "libc",
- "libloading",
 ]
 
 [[package]]
@@ -1809,6 +1797,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "ecies"
+version = "0.2.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0d0c6305d1e7b09171a7ae94bd241dbaa121a979c5c17835b304bc0c9bfa4e4b"
+dependencies = [
+ "getrandom 0.2.15",
+ "hkdf",
+ "libsecp256k1",
+ "once_cell",
+ "openssl",
+ "parking_lot",
+ "rand_core 0.6.4",
+ "sha2 0.10.8",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "ed25519"
 version = "1.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1917,22 +1922,48 @@ dependencies = [
  "log",
  "mockall",
  "prost 0.13.5",
+ "serde",
  "thiserror 2.0.12",
  "tokio",
  "typed-builder",
 ]
 
 [[package]]
-name = "enclave_kmstool"
+name = "enclave_attestation"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "bindgen",
+ "aws-nitro-enclaves-cose",
+ "aws-nitro-enclaves-nsm-api",
  "enclave_protos",
+ "hex",
+ "openssl",
+ "serde_cbor",
+ "thiserror 2.0.12",
+ "tokio",
+]
+
+[[package]]
+name = "enclave_crypto"
+version = "0.1.0"
+dependencies = [
+ "aes-gcm",
+ "anyhow",
+ "bip32",
+ "bip39",
+ "ecies",
  "enclave_utils",
- "enclave_vsock",
- "libc",
- "log",
+ "ethers-core",
+ "ethers-signers",
+ "fastcrypto 0.1.9",
+ "hmac",
+ "mockall",
+ "pbkdf2 0.12.2",
+ "sha2 0.10.8",
+ "solana-keypair",
+ "solana-signer",
+ "sui-keys",
+ "sui-types",
  "thiserror 2.0.12",
  "tokio",
  "typed-builder",
@@ -1942,6 +1973,8 @@ dependencies = [
 name = "enclave_protos"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
+ "aws-nitro-enclaves-nsm-api",
  "enclave_protos_macros",
  "idna",
  "pbjson",
@@ -1990,30 +2023,6 @@ dependencies = [
  "tokio",
  "typed-builder",
  "vsock",
-]
-
-[[package]]
-name = "enclave_wallet"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "bip32",
- "bip39",
- "enclave_utils",
- "ethers-core",
- "ethers-signers",
- "fastcrypto 0.1.9",
- "hmac",
- "mockall",
- "pbkdf2 0.12.2",
- "sha2 0.10.8",
- "solana-keypair",
- "solana-signer",
- "sui-keys",
- "sui-types",
- "thiserror 2.0.12",
- "tokio",
- "typed-builder",
 ]
 
 [[package]]
@@ -2826,6 +2835,12 @@ dependencies = [
 
 [[package]]
 name = "half"
+version = "1.8.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1b43ede17f21864e81be2fa654110bf1e793774238d86ef8555c37e6519c0403"
+
+[[package]]
+name = "half"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7db2ff139bba50379da6aa0766b52fdcb62cb5b263009b09ed58ba604e14bbd1"
@@ -3456,22 +3471,24 @@ dependencies = [
 ]
 
 [[package]]
-name = "integration_tests"
+name = "integration_tester"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
  "enclave_agent",
+ "enclave_attestation",
  "enclave_protos",
  "enclave_utils",
  "enclave_vsock",
  "env_logger",
  "ethers-core",
  "ethers-signers",
+ "hex",
  "log",
  "prost 0.13.5",
  "reqwest",
- "serde_json",
+ "serde",
  "thiserror 2.0.12",
  "tokio",
  "typed-builder",
@@ -3642,20 +3659,55 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c19937216e9d3aa9956d9bb8dfc0b0c8beb6058fc4f7a4dc4d850edf86a237d6"
 
 [[package]]
-name = "libloading"
-version = "0.8.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fc2f4eb4bc735547cfed7c0a4922cbd04a4655978c09b54f1f7b228750664c34"
-dependencies = [
- "cfg-if",
- "windows-targets 0.52.6",
-]
-
-[[package]]
 name = "libm"
 version = "0.2.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8355be11b20d696c8f18f6cc018c4e372165b1fa8126cef092399c9951984ffa"
+
+[[package]]
+name = "libsecp256k1"
+version = "0.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e79019718125edc905a079a70cfa5f3820bc76139fc91d6f9abc27ea2a887139"
+dependencies = [
+ "arrayref",
+ "base64 0.22.1",
+ "digest 0.9.0",
+ "libsecp256k1-core",
+ "libsecp256k1-gen-ecmult",
+ "libsecp256k1-gen-genmult",
+ "rand 0.8.5",
+ "serde",
+]
+
+[[package]]
+name = "libsecp256k1-core"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5be9b9bb642d8522a44d533eab56c16c738301965504753b03ad1de3425d5451"
+dependencies = [
+ "crunchy",
+ "digest 0.9.0",
+ "subtle",
+]
+
+[[package]]
+name = "libsecp256k1-gen-ecmult"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3038c808c55c87e8a172643a7d87187fc6c4174468159cb3090659d55bcb4809"
+dependencies = [
+ "libsecp256k1-core",
+]
+
+[[package]]
+name = "libsecp256k1-gen-genmult"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3db8d6ba2cec9eacc40e6e8ccc98931840301f1006e95647ceb2dd5c3aa06f7c"
+dependencies = [
+ "libsecp256k1-core",
+]
 
 [[package]]
 name = "linked-hash-map"
@@ -3723,6 +3775,15 @@ name = "memchr"
 version = "2.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "78ca9ab1a0babb1e7d5695e3530886289c18cf2f87ec19a575a0abdce112e3a3"
+
+[[package]]
+name = "memoffset"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5de893c32cde5f383baa4c04c5d6dbdd735cfd4a794b0debdb2bb1b421da5ff4"
+dependencies = [
+ "autocfg",
+]
 
 [[package]]
 name = "memoffset"
@@ -4081,6 +4142,19 @@ dependencies = [
 
 [[package]]
 name = "nix"
+version = "0.26.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "598beaf3cc6fdd9a5dfb1630c2800c7acd31df7aaf0f565796fba2b53ca1af1b"
+dependencies = [
+ "bitflags 1.3.2",
+ "cfg-if",
+ "libc",
+ "memoffset 0.7.1",
+ "pin-utils",
+]
+
+[[package]]
+name = "nix"
 version = "0.29.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "71e2746dc3a24dd78b3cfcb7be93368c6de9963d30f43a6a73998a9cf4b17b46"
@@ -4089,7 +4163,7 @@ dependencies = [
  "cfg-if",
  "cfg_aliases",
  "libc",
- "memoffset",
+ "memoffset 0.9.1",
 ]
 
 [[package]]
@@ -4310,6 +4384,10 @@ name = "once_cell"
 version = "1.21.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d75b0bedcc4fe52caa0e03d9f1151a323e4aa5e2d78ba3580400cd3c9e2bc4bc"
+dependencies = [
+ "critical-section",
+ "portable-atomic",
+]
 
 [[package]]
 name = "opaque-debug"
@@ -6015,6 +6093,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "serde_cbor"
+version = "0.11.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2bef2ebfde456fb76bbcf9f59315333decc4fda0b2b44b420243c11e0f5ec1f5"
+dependencies = [
+ "half 1.8.3",
+ "serde",
+]
+
+[[package]]
 name = "serde_derive"
 version = "1.0.219"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7591,23 +7679,30 @@ dependencies = [
 name = "vaultron_enclave"
 version = "0.1.0"
 dependencies = [
+ "aes-gcm",
  "anyhow",
  "async-trait",
+ "aws-nitro-enclaves-cose",
+ "aws-nitro-enclaves-nsm-api",
  "bs64",
  "ciborium",
- "enclave_kmstool",
+ "ecies",
+ "enclave_attestation",
+ "enclave_crypto",
  "enclave_protos",
  "enclave_utils",
  "enclave_vsock",
- "enclave_wallet",
  "env_logger",
  "ethers-core",
  "ethers-signers",
  "log",
  "mockall",
+ "openssl",
  "postcard",
  "prost 0.13.5",
+ "rand 0.9.0",
  "serde",
+ "serde_cbor",
  "serde_json",
  "thiserror 2.0.12",
  "tokio",
@@ -7633,7 +7728,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4e8b4d00e672f147fc86a09738fadb1445bd1c0a40542378dfb82909deeee688"
 dependencies = [
  "libc",
- "nix",
+ "nix 0.29.0",
 ]
 
 [[package]]

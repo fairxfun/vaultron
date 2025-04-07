@@ -1,6 +1,5 @@
-mod config;
+mod cluster;
 mod handler;
-mod ping;
-mod wallet;
+mod internal;
 
 pub use handler::*;

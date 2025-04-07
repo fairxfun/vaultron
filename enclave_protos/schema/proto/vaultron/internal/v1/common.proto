@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package vaultron.internal.v1;
+
+message EnclaveData {
+  bytes enclave_pcr0       = 1;
+  bytes enclave_public_key = 2;
+}
+

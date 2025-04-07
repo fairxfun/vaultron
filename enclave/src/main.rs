@@ -1,4 +1,4 @@
-use vaultron_enclave::server::start_server;
+use vaultron_enclave::start_server;
 
 #[tokio::main]
 async fn main() {
