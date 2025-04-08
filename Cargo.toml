@@ -3,6 +3,7 @@ members = [
     "enclave",
     "enclave_agent",
     "enclave_attestation",
+    "enclave_grpc",
     "enclave_protos",
     "enclave_protos_macros",
     "enclave_utils",

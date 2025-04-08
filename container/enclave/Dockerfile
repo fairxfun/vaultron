@@ -1,5 +1,3 @@
-# Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-# SPDX-License-Identifier: Apache-2.0
 ARG BASE_IMAGE=public.ecr.aws/amazonlinux/amazonlinux:2023
 
 FROM $BASE_IMAGE as VAULTRON_ENCLAVE

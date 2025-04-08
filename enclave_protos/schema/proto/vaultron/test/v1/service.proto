@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package vaultron.test.v1;
+
+message TestRequest {
+  string message = 1;
+}
+
+message TestResponse {
+  string message = 1;
+}
+
+service TestService {
+  rpc Test(TestRequest) returns (TestResponse) {}
+}

@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package vaultron.service.v1;
+
+message ServerOptions {
+  optional string bind_address                     = 1;
+  optional uint32 port                             = 2;
+  optional string tls_key                          = 3;
+  optional string tls_key_path                     = 4;
+  optional string tls_pem                          = 5;
+  optional string tls_pem_path                     = 6;
+  optional bool   accept_http1                     = 7;
+  optional bool   enable_web                       = 8;
+  optional uint64 concurrency_limit_per_connection = 9;
+  optional uint64 timeout_ms                       = 10;
+  optional uint32 initial_stream_window_size       = 11;
+  optional uint32 initial_connection_window_size   = 12;
+  optional uint32 max_concurrent_streams           = 13;
+  optional uint64 http2_keepalive_interval_ms      = 14;
+  optional uint64 http2_keepalive_timeout_ms       = 15;
+  optional bool   http2_adaptive_window            = 16;
+  optional uint64 tcp_keepalive_ms                 = 17;
+  optional bool   tcp_nodelay                      = 18;
+  optional uint32 max_frame_size                   = 19;
+}

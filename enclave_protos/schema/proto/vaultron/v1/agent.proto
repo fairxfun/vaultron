@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package vaultron.v1;
+
+import "vaultron/v1/request.proto";
+import "vaultron/v1/response.proto";
+
+service EnclaveAgentService {
+  rpc request(vaultron.v1.EnclaveRequest) returns (vaultron.v1.EnclaveResponse);
+}

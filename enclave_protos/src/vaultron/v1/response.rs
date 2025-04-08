@@ -4,7 +4,7 @@ impl From<status_code::Error> for EnclaveProtoError {
     fn from(value: status_code::Error) -> Self {
         match value {
             status_code::Error::Enclave(error_code) => {
-                EnclaveProtoError::try_from(error_code).unwrap_or(EnclaveProtoError::EnclaveErrorUnknownError)
+                EnclaveProtoError::from_i32(error_code).unwrap_or(EnclaveProtoError::EnclaveErrorUnknownError)
             }
         }
     }
@@ -14,7 +14,7 @@ impl From<&status_code::Error> for EnclaveProtoError {
     fn from(value: &status_code::Error) -> Self {
         match value {
             status_code::Error::Enclave(error_code) => {
-                EnclaveProtoError::try_from(*error_code).unwrap_or(EnclaveProtoError::EnclaveErrorUnknownError)
+                EnclaveProtoError::from_i32(*error_code).unwrap_or(EnclaveProtoError::EnclaveErrorUnknownError)
             }
         }
     }
