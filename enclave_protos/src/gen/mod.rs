@@ -24,6 +24,22 @@ pub mod vaultron {
             // @@protoc_insertion_point(vaultron.internal.v1)
         }
     }
+    pub mod service {
+        #[cfg(feature = "vaultron-service-v1")]
+        // @@protoc_insertion_point(attribute:vaultron.service.v1)
+        pub mod v1 {
+            include!("vaultron.service.v1.rs");
+            // @@protoc_insertion_point(vaultron.service.v1)
+        }
+    }
+    pub mod test {
+        #[cfg(feature = "vaultron-test-v1")]
+        // @@protoc_insertion_point(attribute:vaultron.test.v1)
+        pub mod v1 {
+            include!("vaultron.test.v1.rs");
+            // @@protoc_insertion_point(vaultron.test.v1)
+        }
+    }
     #[cfg(feature = "vaultron-v1")]
     // @@protoc_insertion_point(attribute:vaultron.v1)
     pub mod v1 {

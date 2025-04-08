@@ -24,8 +24,8 @@ use tokio::time::{sleep, Duration};
 
 pub async fn start_test(pcr0: Vec<u8>) -> Result<(), EnclaveTesterError> {
     integration_trace_init("info")?;
-    let options = EnclaveAgentCreateOptions::builder().pcr0(pcr0.clone()).build();
-    let mut handler = TesterMessageHandler::new(options).await?;
+    let options = EnclaveAgentCreateOptions::builder().build();
+    let mut handler = TesterMessageHandler::new(pcr0.clone(), options).await?;
     test_ping(&mut handler).await;
     let cluster_public_key = test_init_cluster_key(&mut handler).await;
 

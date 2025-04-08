@@ -7,14 +7,16 @@ edition = "2021"
 [dependencies]
 anyhow = {version = "1.0.97"}
 async-trait = {version = "0.1.64"}
-enclave_protos = {path = "../enclave_protos"}
+enclave_grpc = {path = "../enclave_grpc", features = ["server"]}
+enclave_protos = {path = "../enclave_protos", features = ["vaultron-v1"]}
 enclave_vsock = {path = "../enclave_vsock"}
 env_logger = {version = "0.11.7"}
 log = {version = "0.4.26"}
-prost = {version = "0.13.5"}
+prost = {version = "0.11.9"}
 serde = {version = "1.0.219", features = ["derive"]}
 thiserror = {version = "2.0.12"}
 tokio = {version = "1.44.0", features = ["full"]}
+tonic = { version = "0.9.2", features = ["tls", "tls-roots"] }
 typed-builder = {version = "0.20.0"}
 
 [dev-dependencies]

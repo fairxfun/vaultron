@@ -4,5 +4,9 @@ pub mod attestation;
 pub mod cluster;
 #[cfg(feature = "vaultron-internal-v1")]
 pub mod internal;
+#[cfg(feature = "vaultron-service-v1")]
+pub mod service;
+#[cfg(feature = "vaultron-test-v1")]
+pub mod test;
 #[cfg(feature = "vaultron-v1")]
 pub mod v1;

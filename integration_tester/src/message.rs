@@ -1,4 +1,4 @@
-use enclave_agent::{create_enclave_agent, EnclaveAgent, EnclaveAgentCreateOptions};
+use enclave_agent::{EnclaveAgent, EnclaveAgentCreateOptions};
 use enclave_attestation::AttestationParser;
 use enclave_protos::vaultron::attestation::v1::AttestationDocument;
 use enclave_protos::vaultron::v1::{EnclaveRequest, EnclaveResponse};
@@ -18,11 +18,10 @@ pub struct TesterMessageHandler {
 }
 
 impl TesterMessageHandler {
-    pub async fn new(options: EnclaveAgentCreateOptions) -> Result<Self, EnclaveTesterError> {
+    pub async fn new(pcr0: Vec<u8>, options: EnclaveAgentCreateOptions) -> Result<Self, EnclaveTesterError> {
         let parser = Arc::new(AttestationParser::new(None, None).await?);
-        let pcr0 = options.pcr0.clone();
-        let agent = create_enclave_agent(options)?;
-        Ok(Self::builder().parser(parser).agent(agent).pcr0(pcr0).build())
+        let agent = EnclaveAgent::new(&options)?;
+        Ok(Self::builder().parser(parser).agent(Arc::new(agent)).pcr0(pcr0).build())
     }
 
     pub async fn send_request<R, P>(
