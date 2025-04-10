@@ -34,6 +34,10 @@ impl ClusterMessageHandlerInner {
     }
 
     pub async fn process_request(&self, r: &EnclaveClusterRequest) -> EnclaveResponse {
+        if self.cluster_type == EnclaveType::Seed {
+            return EnclaveResponse::error(EnclaveError::SeedCannotProcessRequest);
+        }
+
         match &r.request {
             Some(enclave_cluster_request::Request::CreateUserWalletRequest(request)) => {
                 let result = self.handle_create_user_wallet_request(request).await;

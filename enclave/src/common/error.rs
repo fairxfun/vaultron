@@ -12,6 +12,9 @@ pub enum EnclaveError {
     #[error("Cluster already initialized")]
     ClusterAlreadyInitialized,
 
+    #[error("Seed enclave cannot process request")]
+    SeedCannotProcessRequest,
+
     #[error("Invalid request format error")]
     InvalidRequestError,
 
@@ -73,8 +76,9 @@ impl From<EnclaveError> for EnclaveProtoError {
 fn parse_enclave_error(err: &EnclaveError) -> EnclaveProtoError {
     match err {
         EnclaveError::UnknownError => EnclaveProtoError::EnclaveErrorUnknownError,
-        EnclaveError::ClusterNotInitialized => EnclaveProtoError::EnclaveErrorClusterNotInitialized,
-        EnclaveError::ClusterAlreadyInitialized => EnclaveProtoError::EnclaveErrorClusterAlreadyInitialized,
+        EnclaveError::ClusterNotInitialized => EnclaveProtoError::EnclaveErrorClusterNotInitializedError,
+        EnclaveError::ClusterAlreadyInitialized => EnclaveProtoError::EnclaveErrorClusterAlreadyInitializedError,
+        EnclaveError::SeedCannotProcessRequest => EnclaveProtoError::EnclaveErrorSeedCannotProcessRequestError,
         EnclaveError::InvalidRequestError => EnclaveProtoError::EnclaveErrorInvalidRequestError,
         EnclaveError::InvalidSignatureError => EnclaveProtoError::EnclaveErrorInvalidSignatureError,
         EnclaveError::InvalidAccountError => EnclaveProtoError::EnclaveErrorInvalidAccountError,
