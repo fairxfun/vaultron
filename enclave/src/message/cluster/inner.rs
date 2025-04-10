@@ -4,6 +4,7 @@ use crate::EnclaveError;
 use anyhow::Result;
 use enclave_protos::vaultron::{
     attestation::v1::AttestationDocumentUserData,
+    common::v1::EnclaveType,
     v1::{enclave_cluster_request, EnclaveClusterRequest, EnclaveResponse},
 };
 use prost::Message;
@@ -14,14 +15,20 @@ use typed_builder::TypedBuilder;
 #[derive(TypedBuilder)]
 pub struct ClusterMessageHandlerInner {
     pub context: Arc<EnclaveServerContext>,
+    pub cluster_type: EnclaveType,
     pub cluster_key: Arc<EnclaveClusterKeys>,
 }
 
 impl ClusterMessageHandlerInner {
-    pub fn new(context: Arc<EnclaveServerContext>, seed: &[u8]) -> Result<Self, EnclaveError> {
+    pub fn new(
+        context: Arc<EnclaveServerContext>,
+        seed: &[u8],
+        enclave_type: EnclaveType,
+    ) -> Result<Self, EnclaveError> {
         let cluster_key = EnclaveClusterKeys::new(seed)?;
         Ok(Self::builder()
             .context(context)
+            .cluster_type(enclave_type)
             .cluster_key(Arc::new(cluster_key))
             .build())
     }

@@ -9,7 +9,8 @@ members = [
     "enclave_utils",
     "enclave_vsock",
     "enclave_crypto",
-    "integration_tester"
+    "integration_tester",
+    "service_discovery"
 ]
 resolver = "2"
 

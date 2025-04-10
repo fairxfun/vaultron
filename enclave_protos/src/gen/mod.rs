@@ -16,6 +16,14 @@ pub mod vaultron {
             // @@protoc_insertion_point(vaultron.cluster.v1)
         }
     }
+    pub mod common {
+        #[cfg(feature = "vaultron-common-v1")]
+        // @@protoc_insertion_point(attribute:vaultron.common.v1)
+        pub mod v1 {
+            include!("vaultron.common.v1.rs");
+            // @@protoc_insertion_point(vaultron.common.v1)
+        }
+    }
     pub mod internal {
         #[cfg(feature = "vaultron-internal-v1")]
         // @@protoc_insertion_point(attribute:vaultron.internal.v1)

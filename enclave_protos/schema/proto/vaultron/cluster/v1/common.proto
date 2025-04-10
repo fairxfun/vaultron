@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package vaultron.cluster.v1;
 
-message ClusterData {
+message ClusterAttributes {
   bytes enclave_pcr0       = 1;
   bytes cluster_public_key = 2;
 }

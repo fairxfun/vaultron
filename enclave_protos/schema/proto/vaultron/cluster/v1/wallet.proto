@@ -13,17 +13,17 @@ enum SignatureType {
   SIGNATURE_TYPE_WALLET_SUI     = 5;
 }
 
-message CreateUserWalletData {
-    vaultron.cluster.v1.ClusterData cluster_data    = 1;
-    bytes                           user_id         = 2;
-    bytes                           user_public_key = 3;
-    SignatureType                   signature_type  = 4;
-    bytes                           message         = 5;
+message CreateUserWalletParams {
+    vaultron.cluster.v1.ClusterAttributes attributes      = 1;
+    bytes                                 user_id         = 2;
+    bytes                                 user_public_key = 3;
+    SignatureType                         signature_type  = 4;
+    bytes                                 message         = 5;
 }
 
 message CreateUserWalletRequest {
-    CreateUserWalletData data      = 1;
-    bytes                signature = 6;
+    CreateUserWalletParams params    = 1;
+    bytes                  signature = 2;
 }
 
 message CreateUserWalletResponse {

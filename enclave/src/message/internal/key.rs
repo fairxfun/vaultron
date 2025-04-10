@@ -1,6 +1,7 @@
 use super::InternalMessageHandler;
 use crate::common::EnclaveError;
 use enclave_crypto::ENCRYPTION_KEY_LENGTH;
+use enclave_protos::vaultron::common::v1::EnclaveType;
 use enclave_protos::vaultron::internal::v1::{
     ForwardClusterKeySyncRequest, ForwardClusterKeySyncResponse, InitClusterKeyRequest, InitClusterKeyResponse,
     InitClusterKeySyncRequest, InitClusterKeySyncResponse, ReplyClusterKeySyncRequest, ReplyClusterKeySyncResponse,
@@ -16,7 +17,7 @@ impl InternalMessageHandler {
         let cluster_seed = self.context.nsm_handle.get_random_bytes(ENCRYPTION_KEY_LENGTH)?;
         let cluster_public_key = self
             .cluster_handler
-            .initialize(self.context.clone(), &cluster_seed)
+            .initialize(self.context.clone(), &cluster_seed, EnclaveType::Seed)
             .await?;
         Ok(InitClusterKeyResponse::builder()
             .cluster_public_key(cluster_public_key)
@@ -76,7 +77,7 @@ impl InternalMessageHandler {
             .decrypt_by_private_key(&responder_response.encrypted_cluster_seed)?;
         let cluster_public_key = self
             .cluster_handler
-            .initialize(self.context.clone(), &cluster_seed)
+            .initialize(self.context.clone(), &cluster_seed, EnclaveType::Worker)
             .await?;
         if cluster_public_key != responder_response.cluster_public_key {
             return Err(EnclaveError::InvalidClusterPublicKeyError);

@@ -1,5 +1,5 @@
 // @generated
-impl serde::Serialize for ClusterData {
+impl serde::Serialize for ClusterAttributes {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -13,7 +13,7 @@ impl serde::Serialize for ClusterData {
         if !self.cluster_public_key.is_empty() {
             len += 1;
         }
-        let mut struct_ser = serializer.serialize_struct("vaultron.cluster.v1.ClusterData", len)?;
+        let mut struct_ser = serializer.serialize_struct("vaultron.cluster.v1.ClusterAttributes", len)?;
         if !self.enclave_pcr0.is_empty() {
             struct_ser.serialize_field("enclavePcr0", pbjson::private::base64::encode(&self.enclave_pcr0).as_str())?;
         }
@@ -23,7 +23,7 @@ impl serde::Serialize for ClusterData {
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for ClusterData {
+impl<'de> serde::Deserialize<'de> for ClusterAttributes {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -72,13 +72,13 @@ impl<'de> serde::Deserialize<'de> for ClusterData {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = ClusterData;
+            type Value = ClusterAttributes;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct vaultron.cluster.v1.ClusterData")
+                formatter.write_str("struct vaultron.cluster.v1.ClusterAttributes")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<ClusterData, V::Error>
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<ClusterAttributes, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -104,16 +104,16 @@ impl<'de> serde::Deserialize<'de> for ClusterData {
                         }
                     }
                 }
-                Ok(ClusterData {
+                Ok(ClusterAttributes {
                     enclave_pcr0: enclave_pcr0__.unwrap_or_default(),
                     cluster_public_key: cluster_public_key__.unwrap_or_default(),
                 })
             }
         }
-        deserializer.deserialize_struct("vaultron.cluster.v1.ClusterData", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("vaultron.cluster.v1.ClusterAttributes", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for CreateUserWalletData {
+impl serde::Serialize for CreateUserWalletParams {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -121,7 +121,7 @@ impl serde::Serialize for CreateUserWalletData {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
-        if self.cluster_data.is_some() {
+        if self.attributes.is_some() {
             len += 1;
         }
         if !self.user_id.is_empty() {
@@ -136,9 +136,9 @@ impl serde::Serialize for CreateUserWalletData {
         if !self.message.is_empty() {
             len += 1;
         }
-        let mut struct_ser = serializer.serialize_struct("vaultron.cluster.v1.CreateUserWalletData", len)?;
-        if let Some(v) = self.cluster_data.as_ref() {
-            struct_ser.serialize_field("clusterData", v)?;
+        let mut struct_ser = serializer.serialize_struct("vaultron.cluster.v1.CreateUserWalletParams", len)?;
+        if let Some(v) = self.attributes.as_ref() {
+            struct_ser.serialize_field("attributes", v)?;
         }
         if !self.user_id.is_empty() {
             struct_ser.serialize_field("userId", pbjson::private::base64::encode(&self.user_id).as_str())?;
@@ -157,15 +157,14 @@ impl serde::Serialize for CreateUserWalletData {
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for CreateUserWalletData {
+impl<'de> serde::Deserialize<'de> for CreateUserWalletParams {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "cluster_data",
-            "clusterData",
+            "attributes",
             "user_id",
             "userId",
             "user_public_key",
@@ -177,7 +176,7 @@ impl<'de> serde::Deserialize<'de> for CreateUserWalletData {
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
-            ClusterData,
+            Attributes,
             UserId,
             UserPublicKey,
             SignatureType,
@@ -203,7 +202,7 @@ impl<'de> serde::Deserialize<'de> for CreateUserWalletData {
                         E: serde::de::Error,
                     {
                         match value {
-                            "clusterData" | "cluster_data" => Ok(GeneratedField::ClusterData),
+                            "attributes" => Ok(GeneratedField::Attributes),
                             "userId" | "user_id" => Ok(GeneratedField::UserId),
                             "userPublicKey" | "user_public_key" => Ok(GeneratedField::UserPublicKey),
                             "signatureType" | "signature_type" => Ok(GeneratedField::SignatureType),
@@ -217,28 +216,28 @@ impl<'de> serde::Deserialize<'de> for CreateUserWalletData {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = CreateUserWalletData;
+            type Value = CreateUserWalletParams;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct vaultron.cluster.v1.CreateUserWalletData")
+                formatter.write_str("struct vaultron.cluster.v1.CreateUserWalletParams")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<CreateUserWalletData, V::Error>
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<CreateUserWalletParams, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                let mut cluster_data__ = None;
+                let mut attributes__ = None;
                 let mut user_id__ = None;
                 let mut user_public_key__ = None;
                 let mut signature_type__ = None;
                 let mut message__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
-                        GeneratedField::ClusterData => {
-                            if cluster_data__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("clusterData"));
+                        GeneratedField::Attributes => {
+                            if attributes__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("attributes"));
                             }
-                            cluster_data__ = map.next_value()?;
+                            attributes__ = map.next_value()?;
                         }
                         GeneratedField::UserId => {
                             if user_id__.is_some() {
@@ -272,8 +271,8 @@ impl<'de> serde::Deserialize<'de> for CreateUserWalletData {
                         }
                     }
                 }
-                Ok(CreateUserWalletData {
-                    cluster_data: cluster_data__,
+                Ok(CreateUserWalletParams {
+                    attributes: attributes__,
                     user_id: user_id__.unwrap_or_default(),
                     user_public_key: user_public_key__.unwrap_or_default(),
                     signature_type: signature_type__.unwrap_or_default(),
@@ -281,7 +280,7 @@ impl<'de> serde::Deserialize<'de> for CreateUserWalletData {
                 })
             }
         }
-        deserializer.deserialize_struct("vaultron.cluster.v1.CreateUserWalletData", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("vaultron.cluster.v1.CreateUserWalletParams", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for CreateUserWalletRequest {
@@ -292,15 +291,15 @@ impl serde::Serialize for CreateUserWalletRequest {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
-        if self.data.is_some() {
+        if self.params.is_some() {
             len += 1;
         }
         if !self.signature.is_empty() {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("vaultron.cluster.v1.CreateUserWalletRequest", len)?;
-        if let Some(v) = self.data.as_ref() {
-            struct_ser.serialize_field("data", v)?;
+        if let Some(v) = self.params.as_ref() {
+            struct_ser.serialize_field("params", v)?;
         }
         if !self.signature.is_empty() {
             struct_ser.serialize_field("signature", pbjson::private::base64::encode(&self.signature).as_str())?;
@@ -315,13 +314,13 @@ impl<'de> serde::Deserialize<'de> for CreateUserWalletRequest {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "data",
+            "params",
             "signature",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
-            Data,
+            Params,
             Signature,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
@@ -344,7 +343,7 @@ impl<'de> serde::Deserialize<'de> for CreateUserWalletRequest {
                         E: serde::de::Error,
                     {
                         match value {
-                            "data" => Ok(GeneratedField::Data),
+                            "params" => Ok(GeneratedField::Params),
                             "signature" => Ok(GeneratedField::Signature),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
@@ -365,15 +364,15 @@ impl<'de> serde::Deserialize<'de> for CreateUserWalletRequest {
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                let mut data__ = None;
+                let mut params__ = None;
                 let mut signature__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
-                        GeneratedField::Data => {
-                            if data__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("data"));
+                        GeneratedField::Params => {
+                            if params__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("params"));
                             }
-                            data__ = map.next_value()?;
+                            params__ = map.next_value()?;
                         }
                         GeneratedField::Signature => {
                             if signature__.is_some() {
@@ -386,7 +385,7 @@ impl<'de> serde::Deserialize<'de> for CreateUserWalletRequest {
                     }
                 }
                 Ok(CreateUserWalletRequest {
-                    data: data__,
+                    params: params__,
                     signature: signature__.unwrap_or_default(),
                 })
             }

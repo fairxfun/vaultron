@@ -113,6 +113,9 @@ impl serde::Serialize for EnclaveInternalRequest {
                 enclave_internal_request::Request::PingRequest(v) => {
                     struct_ser.serialize_field("pingRequest", v)?;
                 }
+                enclave_internal_request::Request::GetAttributesRequest(v) => {
+                    struct_ser.serialize_field("getAttributesRequest", v)?;
+                }
                 enclave_internal_request::Request::InitClusterKeyRequest(v) => {
                     struct_ser.serialize_field("initClusterKeyRequest", v)?;
                 }
@@ -139,6 +142,8 @@ impl<'de> serde::Deserialize<'de> for EnclaveInternalRequest {
         const FIELDS: &[&str] = &[
             "ping_request",
             "pingRequest",
+            "get_attributes_request",
+            "getAttributesRequest",
             "init_cluster_key_request",
             "initClusterKeyRequest",
             "init_cluster_key_sync_request",
@@ -152,6 +157,7 @@ impl<'de> serde::Deserialize<'de> for EnclaveInternalRequest {
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             PingRequest,
+            GetAttributesRequest,
             InitClusterKeyRequest,
             InitClusterKeySyncRequest,
             ForwardClusterKeySyncRequest,
@@ -178,6 +184,7 @@ impl<'de> serde::Deserialize<'de> for EnclaveInternalRequest {
                     {
                         match value {
                             "pingRequest" | "ping_request" => Ok(GeneratedField::PingRequest),
+                            "getAttributesRequest" | "get_attributes_request" => Ok(GeneratedField::GetAttributesRequest),
                             "initClusterKeyRequest" | "init_cluster_key_request" => Ok(GeneratedField::InitClusterKeyRequest),
                             "initClusterKeySyncRequest" | "init_cluster_key_sync_request" => Ok(GeneratedField::InitClusterKeySyncRequest),
                             "forwardClusterKeySyncRequest" | "forward_cluster_key_sync_request" => Ok(GeneratedField::ForwardClusterKeySyncRequest),
@@ -209,6 +216,13 @@ impl<'de> serde::Deserialize<'de> for EnclaveInternalRequest {
                                 return Err(serde::de::Error::duplicate_field("pingRequest"));
                             }
                             request__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_internal_request::Request::PingRequest)
+;
+                        }
+                        GeneratedField::GetAttributesRequest => {
+                            if request__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("getAttributesRequest"));
+                            }
+                            request__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_internal_request::Request::GetAttributesRequest)
 ;
                         }
                         GeneratedField::InitClusterKeyRequest => {
