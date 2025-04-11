@@ -31,7 +31,7 @@ jobs:
       - name: Build binaries
         run: make build
 
-      - name: make docker image
+      - name: Make docker image
         run: make img
 
       - name: Build EIF
@@ -54,21 +54,17 @@ jobs:
             type=sha
 
       - name: Docker Push
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          push: true
-          load: true
+        run: |
+          docker tag vaultron-enclave:latest ${{ steps.meta.outputs.tags }}
+          docker push ${{ steps.meta.outputs.tags }}
 
-      - name: Create Release
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2.2.1
         with:
           files: |
-            target/elf/vaultron_enclave.eif
-            target/release/vaultron_enclave
-            target/release/vaultron_enclave_agent
+            target/x86_64-unknown-linux-gnu/elf/vaultron_enclave.eif
+            target/x86_64-unknown-linux-gnu/release/vaultron_enclave
+            target/x86_64-unknown-linux-gnu/release/vaultron_enclave_agent
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

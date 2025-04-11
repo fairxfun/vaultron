@@ -10,16 +10,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: amazonlinux:2023
     steps:
-      - name: Install required tools
-        run: |
-          dnf update -y
-          dnf install -y tar
-          dnf install -y perl
-          dnf groupinstall -y "Development Tools"
-
       - name: Checkout
         uses: actions/checkout@v3
 
