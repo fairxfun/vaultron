@@ -2,10 +2,6 @@ syntax = "proto3";
 
 package vaultron.internal.v1;
 
-import "vaultron/internal/v1/common.proto";
-
 message PingRequest {}
 
-message PingResponse {
-  vaultron.internal.v1.EnclaveData enclave_data = 1;
-}
+message PingResponse {}

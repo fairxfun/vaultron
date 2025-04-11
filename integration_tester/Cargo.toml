@@ -12,6 +12,7 @@ enclave_attestation = {path = "../enclave_attestation"}
 enclave_protos = {path = "../enclave_protos"}
 enclave_vsock = {path = "../enclave_vsock"}
 enclave_utils = {path = "../enclave_utils"}
+service_discovery = {path = "../service_discovery"}
 env_logger = {version = "0.11.7"}
 ethers-signers = {version = "2.0.14"}
 ethers-core = {version = "2.0.14"}

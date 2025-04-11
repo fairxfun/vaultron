@@ -3,6 +3,7 @@ name = "vaultron_enclave"
 version = "0.1.0"
 authors = ["mikerfrr"]
 edition = "2018"
+build = "build.rs"
 
 [dependencies]
 aes-gcm = {version = "0.10.3"}

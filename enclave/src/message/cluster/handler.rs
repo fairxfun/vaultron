@@ -1,6 +1,7 @@
 use super::inner::ClusterMessageHandlerInner;
 use crate::common::EnclaveError;
 use crate::EnclaveServerContext;
+use enclave_protos::vaultron::common::v1::EnclaveType;
 use enclave_protos::vaultron::v1::{EnclaveClusterRequest, EnclaveResponse};
 use std::sync::Arc;
 use tokio::sync::RwLock;
@@ -16,12 +17,17 @@ impl ClusterMessageHandler {
         Self::builder().handler(RwLock::new(None)).build()
     }
 
-    pub async fn initialize(&self, context: Arc<EnclaveServerContext>, seed: &[u8]) -> Result<Vec<u8>, EnclaveError> {
+    pub async fn initialize(
+        &self,
+        context: Arc<EnclaveServerContext>,
+        seed: &[u8],
+        enclave_type: EnclaveType,
+    ) -> Result<Vec<u8>, EnclaveError> {
         if self.is_handler_initialized().await {
             return Err(EnclaveError::ClusterAlreadyInitialized);
         }
 
-        let handler = ClusterMessageHandlerInner::new(context, seed)?;
+        let handler = ClusterMessageHandlerInner::new(context, seed, enclave_type)?;
         let public_key = handler.get_cluster_public_key();
         let mut write = self.handler.write().await;
         *write = Some(Arc::new(handler));
@@ -34,6 +40,16 @@ impl ClusterMessageHandler {
             Ok(handler) => handler.process_request(request).await,
             Err(err) => EnclaveResponse::error(err),
         }
+    }
+
+    pub async fn get_cluster_type(&self) -> Result<EnclaveType, EnclaveError> {
+        let handler = self.get_message_handler().await?;
+        Ok(handler.cluster_type)
+    }
+
+    pub async fn get_cluster_public_key(&self) -> Result<Vec<u8>, EnclaveError> {
+        let handler = self.get_message_handler().await?;
+        Ok(handler.get_cluster_public_key())
     }
 
     pub async fn get_encoded_cluster_seed(&self, public_key: Vec<u8>) -> Result<Vec<u8>, EnclaveError> {
