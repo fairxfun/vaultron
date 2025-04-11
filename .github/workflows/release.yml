@@ -37,25 +37,20 @@ jobs:
       - name: Build EIF
         run: make eif
 
-      - name: Login to DockerHub
+      - name: Login to GHCR
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker meta
+      - name: Generate Docker metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/vaultron/vaultron-enclave
           tags: |
-            type=schedule
-            type=ref,event=branch
-            type=ref,event=pr
             type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
             type=sha
 
       - name: Docker Push
