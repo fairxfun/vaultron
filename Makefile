@@ -1,5 +1,16 @@
-build:
-	cargo build --release
+build-elf-install:
+	./scripts/build_elf_install.sh
+
+run-install:
+	./scripts/run_install.sh
+
+build-enclave:
+	cargo build --release --bin vaultron_enclave
+
+build-enclave-agent:
+	cargo build --release --bin vaultron_enclave_agent
+
+build: build-enclave build-enclave-agent
 
 img:
 	docker build -t vaultron_enclave -f ./container/enclave/Dockerfile .

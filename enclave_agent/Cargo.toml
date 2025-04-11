@@ -3,6 +3,12 @@ name = "enclave_agent"
 version = "0.1.0"
 authors = ["mikerfrr"]
 edition = "2021"
+build = "build.rs"
+
+[[bin]]
+name="vaultron_enclave_agent"
+path = "src/main.rs"
+
 
 [dependencies]
 anyhow = {version = "1.0.97"}

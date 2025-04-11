@@ -3,6 +3,8 @@ use enclave_crypto::EciesKeyPair;
 use enclave_vsock::DEFAULT_ENCLAVE_VSOCK_PORT;
 use typed_builder::TypedBuilder;
 
+pub const GIT_REVISION: &str = env!("VAULTRON_GIT_REVISION");
+
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct EnclaveSettings {
     pub log_level: String,

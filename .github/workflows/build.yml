@@ -10,17 +10,23 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: amazonlinux:2023
     steps:
+      - name: Install required tools
+        run: |
+          dnf update -y
+          dnf install -y tar
+          dnf install -y perl
+          dnf groupinstall -y "Development Tools"
+
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          submodules: recursive
-          persist-credentials: false
 
       - name: Toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
+          toolchain: 1.86.0
           components: rustfmt, clippy, llvm-tools-preview
 
       - name: Setup Buf
