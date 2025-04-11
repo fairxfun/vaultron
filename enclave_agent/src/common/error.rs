@@ -14,7 +14,9 @@ pub enum EnclaveAgentError {
     #[error("Protocol buffer decoding error")]
     ProtobufDecodeError(#[from] prost::DecodeError),
 
-    //TODO: convert proto error to agent error
     #[error("Enclave proto error")]
     EnclaveProtoError,
+
+    #[error(transparent)]
+    LogError(#[from] log::ParseLevelError),
 }

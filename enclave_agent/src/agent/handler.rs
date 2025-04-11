@@ -1,10 +1,11 @@
-use crate::error::EnclaveAgentError;
+use crate::{enclave_agent_trace_init, EnclaveAgentError, GIT_REVISION};
 use enclave_grpc::GrpcServer;
 use enclave_protos::vaultron::service::v1::ServerOptions;
 use enclave_protos::vaultron::v1::enclave_agent_service_server::{EnclaveAgentService, EnclaveAgentServiceServer};
 use enclave_protos::vaultron::v1::{EnclaveRequest, EnclaveResponse};
 use enclave_vsock::{create_vsock_client, VsockClientTrait};
 use enclave_vsock::{VsockClientCreateOptions, DEFAULT_ENCLAVE_CID, DEFAULT_ENCLAVE_VSOCK_PORT};
+use log::info;
 use prost::Message;
 use std::sync::Arc;
 use tonic::{Request, Response, Status};
@@ -22,6 +23,8 @@ pub struct EnclaveAgentCreateOptions {
     pub enclave_vsock_port: u32,
     #[builder(default = DEFAULT_ENCLAVE_AGENT_GRPC_SERVER_PORT)]
     pub enclave_agent_grpc_server_port: u32,
+    #[builder(default = "info".to_string())]
+    pub log_level: String,
 }
 
 impl From<&EnclaveAgentCreateOptions> for VsockClientCreateOptions {
@@ -69,6 +72,8 @@ impl EnclaveAgentService for EnclaveAgent {
 }
 
 pub async fn start_agent(options: EnclaveAgentCreateOptions) -> Result<(), EnclaveAgentError> {
+    enclave_agent_trace_init(&options.log_level)?;
+    info!("Start Enclave agent with git revision: {}", GIT_REVISION);
     let agent = EnclaveAgent::new(&options)?;
     let options = ServerOptions::builder()
         .port(options.enclave_agent_grpc_server_port)

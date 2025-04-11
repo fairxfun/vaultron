@@ -3,6 +3,7 @@ use crate::common::EnclaveError;
 use crate::EnclaveServerContext;
 use enclave_protos::vaultron::common::v1::EnclaveType;
 use enclave_protos::vaultron::v1::{EnclaveClusterRequest, EnclaveResponse};
+use log::info;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use typed_builder::TypedBuilder;
@@ -29,6 +30,10 @@ impl ClusterMessageHandler {
 
         let handler = ClusterMessageHandlerInner::new(context, seed, enclave_type)?;
         let public_key = handler.get_cluster_public_key();
+        info!(
+            "Enclave start with type: {:?}, cluster public key: {:?}",
+            enclave_type, public_key
+        );
         let mut write = self.handler.write().await;
         *write = Some(Arc::new(handler));
         Ok(public_key)
