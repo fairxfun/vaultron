@@ -1,118 +1,4 @@
 // @generated
-impl serde::Serialize for EnclaveData {
-    #[allow(deprecated)]
-    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        use serde::ser::SerializeStruct;
-        let mut len = 0;
-        if !self.enclave_pcr0.is_empty() {
-            len += 1;
-        }
-        if !self.enclave_public_key.is_empty() {
-            len += 1;
-        }
-        let mut struct_ser = serializer.serialize_struct("vaultron.internal.v1.EnclaveData", len)?;
-        if !self.enclave_pcr0.is_empty() {
-            struct_ser.serialize_field("enclavePcr0", pbjson::private::base64::encode(&self.enclave_pcr0).as_str())?;
-        }
-        if !self.enclave_public_key.is_empty() {
-            struct_ser.serialize_field("enclavePublicKey", pbjson::private::base64::encode(&self.enclave_public_key).as_str())?;
-        }
-        struct_ser.end()
-    }
-}
-impl<'de> serde::Deserialize<'de> for EnclaveData {
-    #[allow(deprecated)]
-    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        const FIELDS: &[&str] = &[
-            "enclave_pcr0",
-            "enclavePcr0",
-            "enclave_public_key",
-            "enclavePublicKey",
-        ];
-
-        #[allow(clippy::enum_variant_names)]
-        enum GeneratedField {
-            EnclavePcr0,
-            EnclavePublicKey,
-        }
-        impl<'de> serde::Deserialize<'de> for GeneratedField {
-            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
-            where
-                D: serde::Deserializer<'de>,
-            {
-                struct GeneratedVisitor;
-
-                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-                    type Value = GeneratedField;
-
-                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                        write!(formatter, "expected one of: {:?}", &FIELDS)
-                    }
-
-                    #[allow(unused_variables)]
-                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
-                    where
-                        E: serde::de::Error,
-                    {
-                        match value {
-                            "enclavePcr0" | "enclave_pcr0" => Ok(GeneratedField::EnclavePcr0),
-                            "enclavePublicKey" | "enclave_public_key" => Ok(GeneratedField::EnclavePublicKey),
-                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
-                        }
-                    }
-                }
-                deserializer.deserialize_identifier(GeneratedVisitor)
-            }
-        }
-        struct GeneratedVisitor;
-        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = EnclaveData;
-
-            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct vaultron.internal.v1.EnclaveData")
-            }
-
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<EnclaveData, V::Error>
-                where
-                    V: serde::de::MapAccess<'de>,
-            {
-                let mut enclave_pcr0__ = None;
-                let mut enclave_public_key__ = None;
-                while let Some(k) = map.next_key()? {
-                    match k {
-                        GeneratedField::EnclavePcr0 => {
-                            if enclave_pcr0__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("enclavePcr0"));
-                            }
-                            enclave_pcr0__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
-                        }
-                        GeneratedField::EnclavePublicKey => {
-                            if enclave_public_key__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("enclavePublicKey"));
-                            }
-                            enclave_public_key__ = 
-                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
-                            ;
-                        }
-                    }
-                }
-                Ok(EnclaveData {
-                    enclave_pcr0: enclave_pcr0__.unwrap_or_default(),
-                    enclave_public_key: enclave_public_key__.unwrap_or_default(),
-                })
-            }
-        }
-        deserializer.deserialize_struct("vaultron.internal.v1.EnclaveData", FIELDS, GeneratedVisitor)
-    }
-}
 impl serde::Serialize for ForwardClusterKeySyncRequest {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -319,6 +205,248 @@ impl<'de> serde::Deserialize<'de> for ForwardClusterKeySyncResponse {
             }
         }
         deserializer.deserialize_struct("vaultron.internal.v1.ForwardClusterKeySyncResponse", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for GetAttributesRequest {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let len = 0;
+        let struct_ser = serializer.serialize_struct("vaultron.internal.v1.GetAttributesRequest", len)?;
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for GetAttributesRequest {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                            Err(serde::de::Error::unknown_field(value, FIELDS))
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = GetAttributesRequest;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct vaultron.internal.v1.GetAttributesRequest")
+            }
+
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetAttributesRequest, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                while map.next_key::<GeneratedField>()?.is_some() {
+                    let _ = map.next_value::<serde::de::IgnoredAny>()?;
+                }
+                Ok(GetAttributesRequest {
+                })
+            }
+        }
+        deserializer.deserialize_struct("vaultron.internal.v1.GetAttributesRequest", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for GetAttributesResponse {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.tag.is_empty() {
+            len += 1;
+        }
+        if !self.enclave_pcr0.is_empty() {
+            len += 1;
+        }
+        if self.enclave_type != 0 {
+            len += 1;
+        }
+        if !self.internal_public_key.is_empty() {
+            len += 1;
+        }
+        if self.cluster_public_key.is_some() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("vaultron.internal.v1.GetAttributesResponse", len)?;
+        if !self.tag.is_empty() {
+            struct_ser.serialize_field("tag", &self.tag)?;
+        }
+        if !self.enclave_pcr0.is_empty() {
+            struct_ser.serialize_field("enclavePcr0", pbjson::private::base64::encode(&self.enclave_pcr0).as_str())?;
+        }
+        if self.enclave_type != 0 {
+            let v = super::super::common::v1::EnclaveType::from_i32(self.enclave_type)
+                .ok_or_else(|| serde::ser::Error::custom(format!("Invalid variant {}", self.enclave_type)))?;
+            struct_ser.serialize_field("enclaveType", &v)?;
+        }
+        if !self.internal_public_key.is_empty() {
+            struct_ser.serialize_field("internalPublicKey", pbjson::private::base64::encode(&self.internal_public_key).as_str())?;
+        }
+        if let Some(v) = self.cluster_public_key.as_ref() {
+            struct_ser.serialize_field("clusterPublicKey", pbjson::private::base64::encode(&v).as_str())?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for GetAttributesResponse {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "tag",
+            "enclave_pcr0",
+            "enclavePcr0",
+            "enclave_type",
+            "enclaveType",
+            "internal_public_key",
+            "internalPublicKey",
+            "cluster_public_key",
+            "clusterPublicKey",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Tag,
+            EnclavePcr0,
+            EnclaveType,
+            InternalPublicKey,
+            ClusterPublicKey,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "tag" => Ok(GeneratedField::Tag),
+                            "enclavePcr0" | "enclave_pcr0" => Ok(GeneratedField::EnclavePcr0),
+                            "enclaveType" | "enclave_type" => Ok(GeneratedField::EnclaveType),
+                            "internalPublicKey" | "internal_public_key" => Ok(GeneratedField::InternalPublicKey),
+                            "clusterPublicKey" | "cluster_public_key" => Ok(GeneratedField::ClusterPublicKey),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = GetAttributesResponse;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct vaultron.internal.v1.GetAttributesResponse")
+            }
+
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetAttributesResponse, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut tag__ = None;
+                let mut enclave_pcr0__ = None;
+                let mut enclave_type__ = None;
+                let mut internal_public_key__ = None;
+                let mut cluster_public_key__ = None;
+                while let Some(k) = map.next_key()? {
+                    match k {
+                        GeneratedField::Tag => {
+                            if tag__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("tag"));
+                            }
+                            tag__ = Some(map.next_value()?);
+                        }
+                        GeneratedField::EnclavePcr0 => {
+                            if enclave_pcr0__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("enclavePcr0"));
+                            }
+                            enclave_pcr0__ = 
+                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::EnclaveType => {
+                            if enclave_type__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("enclaveType"));
+                            }
+                            enclave_type__ = Some(map.next_value::<super::super::common::v1::EnclaveType>()? as i32);
+                        }
+                        GeneratedField::InternalPublicKey => {
+                            if internal_public_key__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("internalPublicKey"));
+                            }
+                            internal_public_key__ = 
+                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::ClusterPublicKey => {
+                            if cluster_public_key__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("clusterPublicKey"));
+                            }
+                            cluster_public_key__ = 
+                                map.next_value::<::std::option::Option<::pbjson::private::BytesDeserialize<_>>>()?.map(|x| x.0)
+                            ;
+                        }
+                    }
+                }
+                Ok(GetAttributesResponse {
+                    tag: tag__.unwrap_or_default(),
+                    enclave_pcr0: enclave_pcr0__.unwrap_or_default(),
+                    enclave_type: enclave_type__.unwrap_or_default(),
+                    internal_public_key: internal_public_key__.unwrap_or_default(),
+                    cluster_public_key: cluster_public_key__,
+                })
+            }
+        }
+        deserializer.deserialize_struct("vaultron.internal.v1.GetAttributesResponse", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for InitClusterKeyRequest {
@@ -706,14 +834,8 @@ impl serde::Serialize for PingResponse {
         S: serde::Serializer,
     {
         use serde::ser::SerializeStruct;
-        let mut len = 0;
-        if self.enclave_data.is_some() {
-            len += 1;
-        }
-        let mut struct_ser = serializer.serialize_struct("vaultron.internal.v1.PingResponse", len)?;
-        if let Some(v) = self.enclave_data.as_ref() {
-            struct_ser.serialize_field("enclaveData", v)?;
-        }
+        let len = 0;
+        let struct_ser = serializer.serialize_struct("vaultron.internal.v1.PingResponse", len)?;
         struct_ser.end()
     }
 }
@@ -724,13 +846,10 @@ impl<'de> serde::Deserialize<'de> for PingResponse {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "enclave_data",
-            "enclaveData",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
-            EnclaveData,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -751,10 +870,7 @@ impl<'de> serde::Deserialize<'de> for PingResponse {
                     where
                         E: serde::de::Error,
                     {
-                        match value {
-                            "enclaveData" | "enclave_data" => Ok(GeneratedField::EnclaveData),
-                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
-                        }
+                            Err(serde::de::Error::unknown_field(value, FIELDS))
                     }
                 }
                 deserializer.deserialize_identifier(GeneratedVisitor)
@@ -772,19 +888,10 @@ impl<'de> serde::Deserialize<'de> for PingResponse {
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                let mut enclave_data__ = None;
-                while let Some(k) = map.next_key()? {
-                    match k {
-                        GeneratedField::EnclaveData => {
-                            if enclave_data__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("enclaveData"));
-                            }
-                            enclave_data__ = map.next_value()?;
-                        }
-                    }
+                while map.next_key::<GeneratedField>()?.is_some() {
+                    let _ = map.next_value::<serde::de::IgnoredAny>()?;
                 }
                 Ok(PingResponse {
-                    enclave_data: enclave_data__,
                 })
             }
         }

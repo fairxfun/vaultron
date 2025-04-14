@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package vaultron.internal.v1;
+
+import "vaultron/common/v1/types.proto";
+
+message GetAttributesRequest {}
+
+message GetAttributesResponse {
+  string                        tag                 = 1;
+  bytes                          enclave_pcr0        = 2;
+  vaultron.common.v1.EnclaveType enclave_type        = 3;
+  bytes                          internal_public_key = 4;
+  optional bytes                 cluster_public_key  = 5;
+}
+
+

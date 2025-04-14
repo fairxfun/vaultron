@@ -31,6 +31,13 @@ impl InternalMessageHandler {
                     Err(err) => EnclaveResponse::error(err),
                 }
             }
+            Some(enclave_internal_request::Request::GetAttributesRequest(request)) => {
+                let result = self.handle_get_attributes_request(request).await;
+                match result {
+                    Ok(response) => self.build_response(request, &response),
+                    Err(err) => EnclaveResponse::error(err),
+                }
+            }
             Some(enclave_internal_request::Request::InitClusterKeyRequest(request)) => {
                 let result = self.handle_init_cluster_key_request(request).await;
                 match result {

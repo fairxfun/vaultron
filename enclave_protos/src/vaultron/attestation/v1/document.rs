@@ -68,7 +68,7 @@ impl From<AttestationDocument> for AttestationDoc {
             .into_iter()
             .map(|(k, v)| (k as usize, v.as_slice().to_vec()))
             .collect();
-        let digest = Digest::try_from(value.digest).unwrap_or(Digest::Unspecified);
+        let digest = Digest::from_i32(value.digest).unwrap_or(Digest::Unspecified);
         AttestationDoc::new(
             value.module_id,
             digest.into(),

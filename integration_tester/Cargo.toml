@@ -12,12 +12,13 @@ enclave_attestation = {path = "../enclave_attestation"}
 enclave_protos = {path = "../enclave_protos"}
 enclave_vsock = {path = "../enclave_vsock"}
 enclave_utils = {path = "../enclave_utils"}
+service_discovery = {path = "../service_discovery"}
 env_logger = {version = "0.11.7"}
 ethers-signers = {version = "2.0.14"}
 ethers-core = {version = "2.0.14"}
 hex = {version = "0.4.3"}
 log = {version = "0.4.26"}
-prost = {version = "0.13.5"}
+prost = {version = "0.11.9"}
 reqwest = {version = "0.12.12"}
 serde = {version = "1.0.219", features = ["derive"]}
 thiserror = {version = "2.0.12"}

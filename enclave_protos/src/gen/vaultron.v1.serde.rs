@@ -113,6 +113,9 @@ impl serde::Serialize for EnclaveInternalRequest {
                 enclave_internal_request::Request::PingRequest(v) => {
                     struct_ser.serialize_field("pingRequest", v)?;
                 }
+                enclave_internal_request::Request::GetAttributesRequest(v) => {
+                    struct_ser.serialize_field("getAttributesRequest", v)?;
+                }
                 enclave_internal_request::Request::InitClusterKeyRequest(v) => {
                     struct_ser.serialize_field("initClusterKeyRequest", v)?;
                 }
@@ -139,6 +142,8 @@ impl<'de> serde::Deserialize<'de> for EnclaveInternalRequest {
         const FIELDS: &[&str] = &[
             "ping_request",
             "pingRequest",
+            "get_attributes_request",
+            "getAttributesRequest",
             "init_cluster_key_request",
             "initClusterKeyRequest",
             "init_cluster_key_sync_request",
@@ -152,6 +157,7 @@ impl<'de> serde::Deserialize<'de> for EnclaveInternalRequest {
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             PingRequest,
+            GetAttributesRequest,
             InitClusterKeyRequest,
             InitClusterKeySyncRequest,
             ForwardClusterKeySyncRequest,
@@ -178,6 +184,7 @@ impl<'de> serde::Deserialize<'de> for EnclaveInternalRequest {
                     {
                         match value {
                             "pingRequest" | "ping_request" => Ok(GeneratedField::PingRequest),
+                            "getAttributesRequest" | "get_attributes_request" => Ok(GeneratedField::GetAttributesRequest),
                             "initClusterKeyRequest" | "init_cluster_key_request" => Ok(GeneratedField::InitClusterKeyRequest),
                             "initClusterKeySyncRequest" | "init_cluster_key_sync_request" => Ok(GeneratedField::InitClusterKeySyncRequest),
                             "forwardClusterKeySyncRequest" | "forward_cluster_key_sync_request" => Ok(GeneratedField::ForwardClusterKeySyncRequest),
@@ -209,6 +216,13 @@ impl<'de> serde::Deserialize<'de> for EnclaveInternalRequest {
                                 return Err(serde::de::Error::duplicate_field("pingRequest"));
                             }
                             request__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_internal_request::Request::PingRequest)
+;
+                        }
+                        GeneratedField::GetAttributesRequest => {
+                            if request__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("getAttributesRequest"));
+                            }
+                            request__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_internal_request::Request::GetAttributesRequest)
 ;
                         }
                         GeneratedField::InitClusterKeyRequest => {
@@ -258,8 +272,9 @@ impl serde::Serialize for EnclaveProtoError {
         let variant = match self {
             Self::EnclaveErrorUnspecified => "ENCLAVE_ERROR_UNSPECIFIED",
             Self::EnclaveErrorUnknownError => "ENCLAVE_ERROR_UNKNOWN_ERROR",
-            Self::EnclaveErrorClusterNotInitialized => "ENCLAVE_ERROR_CLUSTER_NOT_INITIALIZED",
-            Self::EnclaveErrorClusterAlreadyInitialized => "ENCLAVE_ERROR_CLUSTER_ALREADY_INITIALIZED",
+            Self::EnclaveErrorClusterNotInitializedError => "ENCLAVE_ERROR_CLUSTER_NOT_INITIALIZED_ERROR",
+            Self::EnclaveErrorClusterAlreadyInitializedError => "ENCLAVE_ERROR_CLUSTER_ALREADY_INITIALIZED_ERROR",
+            Self::EnclaveErrorSeedCannotProcessRequestError => "ENCLAVE_ERROR_SEED_CANNOT_PROCESS_REQUEST_ERROR",
             Self::EnclaveErrorInvalidRequestError => "ENCLAVE_ERROR_INVALID_REQUEST_ERROR",
             Self::EnclaveErrorInvalidSignatureError => "ENCLAVE_ERROR_INVALID_SIGNATURE_ERROR",
             Self::EnclaveErrorInvalidAccountError => "ENCLAVE_ERROR_INVALID_ACCOUNT_ERROR",
@@ -290,8 +305,9 @@ impl<'de> serde::Deserialize<'de> for EnclaveProtoError {
         const FIELDS: &[&str] = &[
             "ENCLAVE_ERROR_UNSPECIFIED",
             "ENCLAVE_ERROR_UNKNOWN_ERROR",
-            "ENCLAVE_ERROR_CLUSTER_NOT_INITIALIZED",
-            "ENCLAVE_ERROR_CLUSTER_ALREADY_INITIALIZED",
+            "ENCLAVE_ERROR_CLUSTER_NOT_INITIALIZED_ERROR",
+            "ENCLAVE_ERROR_CLUSTER_ALREADY_INITIALIZED_ERROR",
+            "ENCLAVE_ERROR_SEED_CANNOT_PROCESS_REQUEST_ERROR",
             "ENCLAVE_ERROR_INVALID_REQUEST_ERROR",
             "ENCLAVE_ERROR_INVALID_SIGNATURE_ERROR",
             "ENCLAVE_ERROR_INVALID_ACCOUNT_ERROR",
@@ -353,8 +369,9 @@ impl<'de> serde::Deserialize<'de> for EnclaveProtoError {
                 match value {
                     "ENCLAVE_ERROR_UNSPECIFIED" => Ok(EnclaveProtoError::EnclaveErrorUnspecified),
                     "ENCLAVE_ERROR_UNKNOWN_ERROR" => Ok(EnclaveProtoError::EnclaveErrorUnknownError),
-                    "ENCLAVE_ERROR_CLUSTER_NOT_INITIALIZED" => Ok(EnclaveProtoError::EnclaveErrorClusterNotInitialized),
-                    "ENCLAVE_ERROR_CLUSTER_ALREADY_INITIALIZED" => Ok(EnclaveProtoError::EnclaveErrorClusterAlreadyInitialized),
+                    "ENCLAVE_ERROR_CLUSTER_NOT_INITIALIZED_ERROR" => Ok(EnclaveProtoError::EnclaveErrorClusterNotInitializedError),
+                    "ENCLAVE_ERROR_CLUSTER_ALREADY_INITIALIZED_ERROR" => Ok(EnclaveProtoError::EnclaveErrorClusterAlreadyInitializedError),
+                    "ENCLAVE_ERROR_SEED_CANNOT_PROCESS_REQUEST_ERROR" => Ok(EnclaveProtoError::EnclaveErrorSeedCannotProcessRequestError),
                     "ENCLAVE_ERROR_INVALID_REQUEST_ERROR" => Ok(EnclaveProtoError::EnclaveErrorInvalidRequestError),
                     "ENCLAVE_ERROR_INVALID_SIGNATURE_ERROR" => Ok(EnclaveProtoError::EnclaveErrorInvalidSignatureError),
                     "ENCLAVE_ERROR_INVALID_ACCOUNT_ERROR" => Ok(EnclaveProtoError::EnclaveErrorInvalidAccountError),

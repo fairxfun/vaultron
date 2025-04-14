@@ -1,5 +1,3 @@
-# Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-# SPDX-License-Identifier: Apache-2.0
 ARG BASE_IMAGE=public.ecr.aws/amazonlinux/amazonlinux:2023
 
 FROM $BASE_IMAGE as VAULTRON_ENCLAVE
@@ -7,7 +5,7 @@ FROM $BASE_IMAGE as VAULTRON_ENCLAVE
 RUN yum install -y unzip
 
 RUN mkdir -p /fairx
-COPY ./target/release/vaultron_enclave /fairx/vaultron_enclave
+COPY ./target/x86_64-unknown-linux-gnu/release/vaultron_enclave /fairx/vaultron_enclave
 RUN chmod +x /fairx/vaultron_enclave
 
 RUN mkdir -p /fairx/certs
