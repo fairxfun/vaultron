@@ -2,7 +2,7 @@ use crate::EnclaveAttestationError;
 use aws_nitro_enclaves_cose::crypto::Openssl;
 use aws_nitro_enclaves_cose::CoseSign1;
 use aws_nitro_enclaves_nsm_api::api::AttestationDoc;
-use enclave_protos::vaultron::attestation::v1::AttestationDocument as AttestationDocProto;
+use enclave_protos::vaultron::enclave::attestation::v1::AttestationDocument as AttestationDocProto;
 use openssl::{
     stack::Stack,
     x509::{

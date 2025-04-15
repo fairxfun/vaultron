@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package vaultron.enclave.cluster.v1;
+
+import "vaultron/enclave/cluster/v1/common.proto";
+
+enum SignatureType {
+  SIGNATURE_TYPE_UNSPECIFIED    = 0;
+  SIGNATURE_TYPE_FAIRX          = 1;
+  SIGNATURE_TYPE_WALLET_BITCOIN = 2;
+  SIGNATURE_TYPE_WALLET_ETH     = 3;
+  SIGNATURE_TYPE_WALLET_SOLANA  = 4;
+  SIGNATURE_TYPE_WALLET_SUI     = 5;
+}
+
+message CreateUserWalletParams {
+    vaultron.enclave.cluster.v1.ClusterAttributes attributes      = 1;
+    bytes                                         user_id         = 2;
+    bytes                                         user_public_key = 3;
+    SignatureType                                 signature_type  = 4;
+    bytes                                         message         = 5;
+}
+
+message CreateUserWalletRequest {
+    CreateUserWalletParams params    = 1;
+    bytes                  signature = 2;
+}
+
+message CreateUserWalletResponse {
+    bytes wallet_encrypted_data = 1;
+    bytes eth_public_key        = 2;
+    bytes eth_encrypted_data    = 3; 
+    bytes solana_public_key     = 4;
+    bytes solana_encrypted_data = 5;
+    bytes sui_public_key        = 6;
+    bytes sui_encrypted_data    = 7;
+}

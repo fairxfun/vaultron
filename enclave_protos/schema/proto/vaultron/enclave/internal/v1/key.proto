@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package vaultron.enclave.internal.v1;
+
+import "vaultron/enclave/attestation/v1/document.proto";
+
+message InitClusterKeyRequest {}
+
+message InitClusterKeyResponse {
+  bytes cluster_public_key = 1;
+}
+
+message InitClusterKeySyncRequest {}
+
+message InitClusterKeySyncResponse {}
+
+message ForwardClusterKeySyncRequest {
+  bytes requester_doc = 1;
+}
+
+message ForwardClusterKeySyncResponse {
+  bytes encrypted_cluster_seed = 1;
+  bytes cluster_public_key     = 2;
+}
+
+message ReplyClusterKeySyncRequest {
+  bytes responder_doc = 1;
+}
+
+message ReplyClusterKeySyncResponse {}

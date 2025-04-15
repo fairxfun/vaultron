@@ -1,7 +1,7 @@
 use crate::{message::cluster::ClusterMessageHandler, server::EnclaveServerContext, EnclaveError};
 use enclave_protos::vaultron::{
-    attestation::v1::AttestationDocumentUserData,
-    v1::{enclave_internal_request, EnclaveInternalRequest, EnclaveResponse, EnclaveResponsePadding},
+    enclave::attestation::v1::AttestationDocumentUserData,
+    enclave::v1::{enclave_internal_request, EnclaveInternalRequest, EnclaveResponse, EnclaveResponsePadding},
 };
 use prost::Message;
 use serde::Serialize;

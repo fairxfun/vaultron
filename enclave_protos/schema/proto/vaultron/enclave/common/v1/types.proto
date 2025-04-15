@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package vaultron.enclave.common.v1;
+
+enum EnclaveType {
+  ENCLAVE_TYPE_UNSPECIFIED = 0;
+  ENCLAVE_TYPE_SEED        = 1;
+  ENCLAVE_TYPE_WORKER      = 2;
+}

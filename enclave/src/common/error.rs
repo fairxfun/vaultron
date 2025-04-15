@@ -1,4 +1,4 @@
-use enclave_protos::vaultron::v1::EnclaveProtoError;
+use enclave_protos::vaultron::common::v1::EnclaveError as EnclaveProtoError;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -75,26 +75,26 @@ impl From<EnclaveError> for EnclaveProtoError {
 
 fn parse_enclave_error(err: &EnclaveError) -> EnclaveProtoError {
     match err {
-        EnclaveError::UnknownError => EnclaveProtoError::EnclaveErrorUnknownError,
-        EnclaveError::ClusterNotInitialized => EnclaveProtoError::EnclaveErrorClusterNotInitializedError,
-        EnclaveError::ClusterAlreadyInitialized => EnclaveProtoError::EnclaveErrorClusterAlreadyInitializedError,
-        EnclaveError::SeedCannotProcessRequest => EnclaveProtoError::EnclaveErrorSeedCannotProcessRequestError,
-        EnclaveError::InvalidRequestError => EnclaveProtoError::EnclaveErrorInvalidRequestError,
-        EnclaveError::InvalidSignatureError => EnclaveProtoError::EnclaveErrorInvalidSignatureError,
-        EnclaveError::InvalidAccountError => EnclaveProtoError::EnclaveErrorInvalidAccountError,
-        EnclaveError::WalletGenerationError => EnclaveProtoError::EnclaveErrorWalletGenerationError,
-        EnclaveError::InvalidParameterError => EnclaveProtoError::EnclaveErrorInvalidParameterError,
-        EnclaveError::InvalidAttestationDocumentError => EnclaveProtoError::EnclaveErrorInvalidAttestationDocumentError,
-        EnclaveError::InvalidClusterPublicKeyError => EnclaveProtoError::EnclaveErrorInvalidClusterPublicKeyError,
-        EnclaveError::NsmApiError => EnclaveProtoError::EnclaveErrorNsmApiError,
-        EnclaveError::ProtobufEncodeError(_) => EnclaveProtoError::EnclaveErrorProtobufEncodeError,
-        EnclaveError::ProtobufDecodeError(_) => EnclaveProtoError::EnclaveErrorProtobufDecodeError,
-        EnclaveError::EnclaveCryptoError(_) => EnclaveProtoError::EnclaveErrorEnclaveCryptoError,
-        EnclaveError::PostcardError(_) => EnclaveProtoError::EnclaveErrorPostcardError,
-        EnclaveError::LogError(_) => EnclaveProtoError::EnclaveErrorLogError,
-        EnclaveError::IoError(_) => EnclaveProtoError::EnclaveErrorIoError,
-        EnclaveError::AnyhowError(_) => EnclaveProtoError::EnclaveErrorAnyhowError,
-        EnclaveError::SerdeJsonError(_) => EnclaveProtoError::EnclaveErrorSerdeJsonError,
-        EnclaveError::AttestationError(_) => EnclaveProtoError::EnclaveErrorAttestationError,
+        EnclaveError::UnknownError => EnclaveProtoError::UnknownError,
+        EnclaveError::ClusterNotInitialized => EnclaveProtoError::ClusterNotInitializedError,
+        EnclaveError::ClusterAlreadyInitialized => EnclaveProtoError::ClusterAlreadyInitializedError,
+        EnclaveError::SeedCannotProcessRequest => EnclaveProtoError::SeedCannotProcessRequestError,
+        EnclaveError::InvalidRequestError => EnclaveProtoError::InvalidRequestError,
+        EnclaveError::InvalidSignatureError => EnclaveProtoError::InvalidSignatureError,
+        EnclaveError::InvalidAccountError => EnclaveProtoError::InvalidAccountError,
+        EnclaveError::WalletGenerationError => EnclaveProtoError::WalletGenerationError,
+        EnclaveError::InvalidParameterError => EnclaveProtoError::InvalidParameterError,
+        EnclaveError::InvalidAttestationDocumentError => EnclaveProtoError::InvalidAttestationDocumentError,
+        EnclaveError::InvalidClusterPublicKeyError => EnclaveProtoError::InvalidClusterPublicKeyError,
+        EnclaveError::NsmApiError => EnclaveProtoError::NsmApiError,
+        EnclaveError::ProtobufEncodeError(_) => EnclaveProtoError::ProtobufEncodeError,
+        EnclaveError::ProtobufDecodeError(_) => EnclaveProtoError::ProtobufDecodeError,
+        EnclaveError::EnclaveCryptoError(_) => EnclaveProtoError::EnclaveCryptoError,
+        EnclaveError::PostcardError(_) => EnclaveProtoError::PostcardError,
+        EnclaveError::LogError(_) => EnclaveProtoError::LogError,
+        EnclaveError::IoError(_) => EnclaveProtoError::IoError,
+        EnclaveError::AnyhowError(_) => EnclaveProtoError::AnyhowError,
+        EnclaveError::SerdeJsonError(_) => EnclaveProtoError::SerdeJsonError,
+        EnclaveError::AttestationError(_) => EnclaveProtoError::AttestationError,
     }
 }

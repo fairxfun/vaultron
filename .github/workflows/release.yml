@@ -53,7 +53,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/vaultron/vaultron-enclave
+          images: ghcr.io/fairxfun/vaultron-enclave
           tags: |
             type=semver,pattern={{version}}
             type=sha

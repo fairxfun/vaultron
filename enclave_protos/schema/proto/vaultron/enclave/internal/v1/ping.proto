@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package vaultron.enclave.internal.v1;
+
+message PingRequest {}
+
+message PingResponse {}
