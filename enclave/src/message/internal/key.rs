@@ -1,8 +1,8 @@
 use super::InternalMessageHandler;
 use crate::common::EnclaveError;
 use enclave_crypto::ENCRYPTION_KEY_LENGTH;
-use enclave_protos::vaultron::common::v1::EnclaveType;
-use enclave_protos::vaultron::internal::v1::{
+use enclave_protos::vaultron::enclave::common::v1::EnclaveType;
+use enclave_protos::vaultron::enclave::internal::v1::{
     ForwardClusterKeySyncRequest, ForwardClusterKeySyncResponse, InitClusterKeyRequest, InitClusterKeyResponse,
     InitClusterKeySyncRequest, InitClusterKeySyncResponse, ReplyClusterKeySyncRequest, ReplyClusterKeySyncResponse,
 };

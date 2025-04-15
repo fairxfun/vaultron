@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-package vaultron.internal.v1;
-
-message PingRequest {}
-
-message PingResponse {}

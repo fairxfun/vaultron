@@ -1,8 +1,8 @@
 use super::inner::ClusterMessageHandlerInner;
 use crate::common::EnclaveError;
 use crate::EnclaveServerContext;
-use enclave_protos::vaultron::common::v1::EnclaveType;
-use enclave_protos::vaultron::v1::{EnclaveClusterRequest, EnclaveResponse};
+use enclave_protos::vaultron::enclave::common::v1::EnclaveType;
+use enclave_protos::vaultron::enclave::v1::{EnclaveClusterRequest, EnclaveResponse};
 use log::info;
 use std::sync::Arc;
 use tokio::sync::RwLock;

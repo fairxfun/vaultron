@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package vaultron.agent.v1;
+
+import "vaultron/common/v1/status.proto";
+
+message StartEnclaveRequest {}
+
+message StopEnclaveRequest {}
+
+message RestartEnclaveRequest {}
+
+message DescribeEnclaveRequest {}
+
+message EnclaveAgentRequest {
+  oneof request {
+    StartEnclaveRequest    start_request    = 1;
+    StopEnclaveRequest     stop_request     = 2;
+    RestartEnclaveRequest  restart_request  = 3;
+    DescribeEnclaveRequest describe_request = 4;
+  }
+}
+

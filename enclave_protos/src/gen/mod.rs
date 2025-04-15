@@ -1,19 +1,11 @@
 // @generated
 pub mod vaultron {
-    pub mod attestation {
-        #[cfg(feature = "vaultron-attestation-v1")]
-        // @@protoc_insertion_point(attribute:vaultron.attestation.v1)
+    pub mod agent {
+        #[cfg(feature = "vaultron-agent-v1")]
+        // @@protoc_insertion_point(attribute:vaultron.agent.v1)
         pub mod v1 {
-            include!("vaultron.attestation.v1.rs");
-            // @@protoc_insertion_point(vaultron.attestation.v1)
-        }
-    }
-    pub mod cluster {
-        #[cfg(feature = "vaultron-cluster-v1")]
-        // @@protoc_insertion_point(attribute:vaultron.cluster.v1)
-        pub mod v1 {
-            include!("vaultron.cluster.v1.rs");
-            // @@protoc_insertion_point(vaultron.cluster.v1)
+            include!("vaultron.agent.v1.rs");
+            // @@protoc_insertion_point(vaultron.agent.v1)
         }
     }
     pub mod common {
@@ -24,12 +16,44 @@ pub mod vaultron {
             // @@protoc_insertion_point(vaultron.common.v1)
         }
     }
-    pub mod internal {
-        #[cfg(feature = "vaultron-internal-v1")]
-        // @@protoc_insertion_point(attribute:vaultron.internal.v1)
+    pub mod enclave {
+        pub mod attestation {
+            #[cfg(feature = "vaultron-enclave-attestation-v1")]
+            // @@protoc_insertion_point(attribute:vaultron.enclave.attestation.v1)
+            pub mod v1 {
+                include!("vaultron.enclave.attestation.v1.rs");
+                // @@protoc_insertion_point(vaultron.enclave.attestation.v1)
+            }
+        }
+        pub mod cluster {
+            #[cfg(feature = "vaultron-enclave-cluster-v1")]
+            // @@protoc_insertion_point(attribute:vaultron.enclave.cluster.v1)
+            pub mod v1 {
+                include!("vaultron.enclave.cluster.v1.rs");
+                // @@protoc_insertion_point(vaultron.enclave.cluster.v1)
+            }
+        }
+        pub mod common {
+            #[cfg(feature = "vaultron-enclave-common-v1")]
+            // @@protoc_insertion_point(attribute:vaultron.enclave.common.v1)
+            pub mod v1 {
+                include!("vaultron.enclave.common.v1.rs");
+                // @@protoc_insertion_point(vaultron.enclave.common.v1)
+            }
+        }
+        pub mod internal {
+            #[cfg(feature = "vaultron-enclave-internal-v1")]
+            // @@protoc_insertion_point(attribute:vaultron.enclave.internal.v1)
+            pub mod v1 {
+                include!("vaultron.enclave.internal.v1.rs");
+                // @@protoc_insertion_point(vaultron.enclave.internal.v1)
+            }
+        }
+        #[cfg(feature = "vaultron-enclave-v1")]
+        // @@protoc_insertion_point(attribute:vaultron.enclave.v1)
         pub mod v1 {
-            include!("vaultron.internal.v1.rs");
-            // @@protoc_insertion_point(vaultron.internal.v1)
+            include!("vaultron.enclave.v1.rs");
+            // @@protoc_insertion_point(vaultron.enclave.v1)
         }
     }
     pub mod service {
@@ -47,11 +71,5 @@ pub mod vaultron {
             include!("vaultron.test.v1.rs");
             // @@protoc_insertion_point(vaultron.test.v1)
         }
-    }
-    #[cfg(feature = "vaultron-v1")]
-    // @@protoc_insertion_point(attribute:vaultron.v1)
-    pub mod v1 {
-        include!("vaultron.v1.rs");
-        // @@protoc_insertion_point(vaultron.v1)
     }
 }

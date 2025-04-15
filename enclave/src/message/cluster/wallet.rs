@@ -4,7 +4,7 @@ use super::user::{
     UserAccountSuiPair,
 };
 use crate::common::EnclaveError;
-use enclave_protos::vaultron::cluster::v1::{
+use enclave_protos::vaultron::enclave::cluster::v1::{
     CreateUserWalletParams, CreateUserWalletRequest, CreateUserWalletResponse, SignatureType,
 };
 use enclave_utils::address::ethers_address_from_bytes;

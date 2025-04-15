@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package vaultron.enclave.v1;
+
+import "vaultron/enclave/internal/v1/ping.proto";
+import "vaultron/enclave/internal/v1/key.proto";
+import "vaultron/enclave/internal/v1/attribute.proto";
+import "vaultron/enclave/cluster/v1/wallet.proto";
+
+message EnclaveRequest {
+  oneof request {
+    EnclaveInternalRequest internal_request = 1;
+    EnclaveClusterRequest  cluster_request  = 2;
+  }
+}
+
+message EnclaveInternalRequest {
+  oneof request {
+    vaultron.enclave.internal.v1.PingRequest                  ping_request                     = 1;
+    vaultron.enclave.internal.v1.GetAttributesRequest         get_attributes_request           = 2;
+    vaultron.enclave.internal.v1.InitClusterKeyRequest        init_cluster_key_request         = 3;
+    vaultron.enclave.internal.v1.InitClusterKeySyncRequest    init_cluster_key_sync_request    = 4;
+    vaultron.enclave.internal.v1.ForwardClusterKeySyncRequest forward_cluster_key_sync_request = 5;
+    vaultron.enclave.internal.v1.ReplyClusterKeySyncRequest   reply_cluster_key_sync_request   = 6;
+  }
+}
+
+
+message EnclaveClusterRequest {
+  oneof request {
+    vaultron.enclave.cluster.v1.CreateUserWalletRequest create_user_wallet_request = 3;
+  }
+}
+

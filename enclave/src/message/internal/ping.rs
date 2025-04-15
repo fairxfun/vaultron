@@ -1,6 +1,6 @@
 use super::InternalMessageHandler;
 use crate::common::EnclaveError;
-use enclave_protos::vaultron::internal::v1::{PingRequest, PingResponse};
+use enclave_protos::vaultron::enclave::internal::v1::{PingRequest, PingResponse};
 use log::info;
 
 impl InternalMessageHandler {

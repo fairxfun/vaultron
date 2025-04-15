@@ -1,7 +1,7 @@
 use super::InternalMessageHandler;
 use crate::common::EnclaveError;
 use crate::common::GIT_REVISION;
-use enclave_protos::vaultron::internal::v1::{GetAttributesRequest, GetAttributesResponse};
+use enclave_protos::vaultron::enclave::internal::v1::{GetAttributesRequest, GetAttributesResponse};
 use log::info;
 
 impl InternalMessageHandler {

@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package vaultron.agent.v1;
+
+import "vaultron/common/v1/status.proto";
+
+message StartEnclaveResponse {
+}
+
+message StopEnclaveResponse {
+}
+
+message RestartEnclaveResponse {
+}
+
+message DescribeEnclaveInfo {
+  string          enclave_name   = 1;
+  string          enclave_id     = 2;
+  uint32          enclave_cid    = 3;
+  uint32          number_of_cpus = 4;
+  repeated uint32 cpu_ids        = 5;
+  uint32          memory_mib     = 6;
+  string          state          = 7;
+  string          flags          = 8;
+}
+
+message DescribeEnclaveResponse {
+  DescribeEnclaveInfo info = 1;
+}
+
+message EnclaveAgentResponse {
+  vaultron.common.v1.StatusCode code              = 1;
+  oneof response {
+    StartEnclaveResponse        start_response    = 2;
+    StopEnclaveResponse         stop_response     = 3;
+    RestartEnclaveResponse      restart_response  = 4;
+    DescribeEnclaveResponse     describe_response = 5;
+  }
+}

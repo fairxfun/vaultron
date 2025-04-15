@@ -1,6 +1,6 @@
 use super::{cluster::ClusterMessageHandler, internal::InternalMessageHandler};
 use crate::{common::EnclaveError, server::EnclaveServerContext};
-use enclave_protos::vaultron::v1::{enclave_request, EnclaveRequest, EnclaveResponse};
+use enclave_protos::vaultron::enclave::v1::{enclave_request, EnclaveRequest, EnclaveResponse};
 use enclave_vsock::VsockMessageHandlerTrait;
 use log::warn;
 use prost::Message;

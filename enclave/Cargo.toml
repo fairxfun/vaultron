@@ -14,7 +14,7 @@ aws-nitro-enclaves-cose = { git = "https://github.com/awslabs/aws-nitro-enclaves
 ciborium = {version = "0.2.2"}
 ecies = {version = "0.2.8"}
 enclave_attestation = {path = "../enclave_attestation"}
-enclave_protos = {path = "../enclave_protos", features = ["proto_full"]}
+enclave_protos = {path = "../enclave_protos", features = ["vaultron-common-v1", "vaultron-enclave-v1"]}
 enclave_utils = {path = "../enclave_utils"}
 enclave_vsock = {path = "../enclave_vsock"}
 enclave_crypto = {path = "../enclave_crypto"}

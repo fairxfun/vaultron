@@ -3,9 +3,9 @@ use crate::server::EnclaveServerContext;
 use crate::EnclaveError;
 use anyhow::Result;
 use enclave_protos::vaultron::{
-    attestation::v1::AttestationDocumentUserData,
-    common::v1::EnclaveType,
-    v1::{enclave_cluster_request, EnclaveClusterRequest, EnclaveResponse},
+    enclave::attestation::v1::AttestationDocumentUserData,
+    enclave::common::v1::EnclaveType,
+    enclave::v1::{enclave_cluster_request, EnclaveClusterRequest, EnclaveResponse},
 };
 use prost::Message;
 use serde::Serialize;

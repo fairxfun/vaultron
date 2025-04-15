@@ -8,7 +8,9 @@ fn main() {
     let git_hash = String::from_utf8(output.stdout)
         .expect("Invalid UTF-8 sequence")
         .trim()
-        .to_string();
+        .chars()
+        .take(7)
+        .collect::<String>();
     println!("cargo:rustc-env=VAULTRON_GIT_REVISION={}", git_hash);
     println!("cargo:rerun-if-changed=.git/HEAD");
 }
