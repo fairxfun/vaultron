@@ -11,6 +11,7 @@ plugins:
       - message_attribute=.=#[derive(typed_builder::TypedBuilder)]
       - message_attribute=.=#[builder(field_defaults(default\, setter(into)))]
       - message_attribute=.=#[derive(enclave_protos_macros::ProtoBuilder)]
+      - message_attribute=vaultron.agent.v1.EnclaveAgentResponse=#[allow(clippy::large_enum_variant)]
   - plugin: buf.build/community/neoeinstein-tonic:v0.3.0
     opt:
       - compile_well_known_types

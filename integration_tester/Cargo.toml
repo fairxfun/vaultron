@@ -9,8 +9,8 @@ anyhow = {version = "1.0.97"}
 async-trait = {version = "0.1.64"}
 enclave_agent = {path = "../enclave_agent"}
 enclave_attestation = {path = "../enclave_attestation"}
-enclave_protos = {path = "../enclave_protos"}
-enclave_vsock = {path = "../enclave_vsock"}
+enclave_protos = {path = "../enclave_protos", features = ["proto_full", "grpc-client"]}
+enclave_grpc =  {path = "../enclave_grpc"}
 enclave_utils = {path = "../enclave_utils"}
 service_discovery = {path = "../service_discovery"}
 env_logger = {version = "0.11.7"}
@@ -21,6 +21,7 @@ log = {version = "0.4.26"}
 prost = {version = "0.11.9"}
 reqwest = {version = "0.12.12"}
 serde = {version = "1.0.219", features = ["derive"]}
+tonic = { version = "0.9.2", features = ["tls", "tls-roots"] }
 thiserror = {version = "2.0.12"}
 tokio = {version = "1.44.0", features = ["full"]}
 typed-builder = {version = "0.20.0"}

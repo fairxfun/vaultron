@@ -13,6 +13,9 @@ impl serde::Serialize for DescribeEnclaveInfo {
         if !self.enclave_id.is_empty() {
             len += 1;
         }
+        if self.process_id != 0 {
+            len += 1;
+        }
         if self.enclave_cid != 0 {
             len += 1;
         }
@@ -29,32 +32,41 @@ impl serde::Serialize for DescribeEnclaveInfo {
             len += 1;
         }
         if !self.flags.is_empty() {
+            len += 1;
+        }
+        if self.measurements.is_some() {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("vaultron.agent.v1.DescribeEnclaveInfo", len)?;
         if !self.enclave_name.is_empty() {
-            struct_ser.serialize_field("enclaveName", &self.enclave_name)?;
+            struct_ser.serialize_field("EnclaveName", &self.enclave_name)?;
         }
         if !self.enclave_id.is_empty() {
-            struct_ser.serialize_field("enclaveId", &self.enclave_id)?;
+            struct_ser.serialize_field("EnclaveID", &self.enclave_id)?;
+        }
+        if self.process_id != 0 {
+            struct_ser.serialize_field("ProcessID", &self.process_id)?;
         }
         if self.enclave_cid != 0 {
-            struct_ser.serialize_field("enclaveCid", &self.enclave_cid)?;
+            struct_ser.serialize_field("EnclaveCID", &self.enclave_cid)?;
         }
         if self.number_of_cpus != 0 {
-            struct_ser.serialize_field("numberOfCpus", &self.number_of_cpus)?;
+            struct_ser.serialize_field("NumberOfCPUs", &self.number_of_cpus)?;
         }
         if !self.cpu_ids.is_empty() {
-            struct_ser.serialize_field("cpuIds", &self.cpu_ids)?;
+            struct_ser.serialize_field("CPUIDs", &self.cpu_ids)?;
         }
         if self.memory_mib != 0 {
-            struct_ser.serialize_field("memoryMib", &self.memory_mib)?;
+            struct_ser.serialize_field("MemoryMiB", &self.memory_mib)?;
         }
         if !self.state.is_empty() {
-            struct_ser.serialize_field("state", &self.state)?;
+            struct_ser.serialize_field("State", &self.state)?;
         }
         if !self.flags.is_empty() {
-            struct_ser.serialize_field("flags", &self.flags)?;
+            struct_ser.serialize_field("Flags", &self.flags)?;
+        }
+        if let Some(v) = self.measurements.as_ref() {
+            struct_ser.serialize_field("Measurements", v)?;
         }
         struct_ser.end()
     }
@@ -67,31 +79,39 @@ impl<'de> serde::Deserialize<'de> for DescribeEnclaveInfo {
     {
         const FIELDS: &[&str] = &[
             "enclave_name",
-            "enclaveName",
+            "EnclaveName",
             "enclave_id",
-            "enclaveId",
+            "EnclaveID",
+            "process_id",
+            "ProcessID",
             "enclave_cid",
-            "enclaveCid",
+            "EnclaveCID",
             "number_of_cpus",
-            "numberOfCpus",
+            "NumberOfCPUs",
             "cpu_ids",
-            "cpuIds",
+            "CPUIDs",
             "memory_mib",
-            "memoryMib",
+            "MemoryMiB",
             "state",
+            "State",
             "flags",
+            "Flags",
+            "measurements",
+            "Measurements",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             EnclaveName,
             EnclaveId,
+            ProcessId,
             EnclaveCid,
             NumberOfCpus,
             CpuIds,
             MemoryMib,
             State,
             Flags,
+            Measurements,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -113,14 +133,16 @@ impl<'de> serde::Deserialize<'de> for DescribeEnclaveInfo {
                         E: serde::de::Error,
                     {
                         match value {
-                            "enclaveName" | "enclave_name" => Ok(GeneratedField::EnclaveName),
-                            "enclaveId" | "enclave_id" => Ok(GeneratedField::EnclaveId),
-                            "enclaveCid" | "enclave_cid" => Ok(GeneratedField::EnclaveCid),
-                            "numberOfCpus" | "number_of_cpus" => Ok(GeneratedField::NumberOfCpus),
-                            "cpuIds" | "cpu_ids" => Ok(GeneratedField::CpuIds),
-                            "memoryMib" | "memory_mib" => Ok(GeneratedField::MemoryMib),
-                            "state" => Ok(GeneratedField::State),
-                            "flags" => Ok(GeneratedField::Flags),
+                            "EnclaveName" | "enclave_name" => Ok(GeneratedField::EnclaveName),
+                            "EnclaveID" | "enclave_id" => Ok(GeneratedField::EnclaveId),
+                            "ProcessID" | "process_id" => Ok(GeneratedField::ProcessId),
+                            "EnclaveCID" | "enclave_cid" => Ok(GeneratedField::EnclaveCid),
+                            "NumberOfCPUs" | "number_of_cpus" => Ok(GeneratedField::NumberOfCpus),
+                            "CPUIDs" | "cpu_ids" => Ok(GeneratedField::CpuIds),
+                            "MemoryMiB" | "memory_mib" => Ok(GeneratedField::MemoryMib),
+                            "State" | "state" => Ok(GeneratedField::State),
+                            "Flags" | "flags" => Ok(GeneratedField::Flags),
+                            "Measurements" | "measurements" => Ok(GeneratedField::Measurements),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -142,29 +164,39 @@ impl<'de> serde::Deserialize<'de> for DescribeEnclaveInfo {
             {
                 let mut enclave_name__ = None;
                 let mut enclave_id__ = None;
+                let mut process_id__ = None;
                 let mut enclave_cid__ = None;
                 let mut number_of_cpus__ = None;
                 let mut cpu_ids__ = None;
                 let mut memory_mib__ = None;
                 let mut state__ = None;
                 let mut flags__ = None;
+                let mut measurements__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
                         GeneratedField::EnclaveName => {
                             if enclave_name__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("enclaveName"));
+                                return Err(serde::de::Error::duplicate_field("EnclaveName"));
                             }
                             enclave_name__ = Some(map.next_value()?);
                         }
                         GeneratedField::EnclaveId => {
                             if enclave_id__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("enclaveId"));
+                                return Err(serde::de::Error::duplicate_field("EnclaveID"));
                             }
                             enclave_id__ = Some(map.next_value()?);
                         }
+                        GeneratedField::ProcessId => {
+                            if process_id__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("ProcessID"));
+                            }
+                            process_id__ = 
+                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
                         GeneratedField::EnclaveCid => {
                             if enclave_cid__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("enclaveCid"));
+                                return Err(serde::de::Error::duplicate_field("EnclaveCID"));
                             }
                             enclave_cid__ = 
                                 Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
@@ -172,7 +204,7 @@ impl<'de> serde::Deserialize<'de> for DescribeEnclaveInfo {
                         }
                         GeneratedField::NumberOfCpus => {
                             if number_of_cpus__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("numberOfCpus"));
+                                return Err(serde::de::Error::duplicate_field("NumberOfCPUs"));
                             }
                             number_of_cpus__ = 
                                 Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
@@ -180,7 +212,7 @@ impl<'de> serde::Deserialize<'de> for DescribeEnclaveInfo {
                         }
                         GeneratedField::CpuIds => {
                             if cpu_ids__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("cpuIds"));
+                                return Err(serde::de::Error::duplicate_field("CPUIDs"));
                             }
                             cpu_ids__ = 
                                 Some(map.next_value::<Vec<::pbjson::private::NumberDeserialize<_>>>()?
@@ -189,7 +221,7 @@ impl<'de> serde::Deserialize<'de> for DescribeEnclaveInfo {
                         }
                         GeneratedField::MemoryMib => {
                             if memory_mib__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("memoryMib"));
+                                return Err(serde::de::Error::duplicate_field("MemoryMiB"));
                             }
                             memory_mib__ = 
                                 Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
@@ -197,27 +229,35 @@ impl<'de> serde::Deserialize<'de> for DescribeEnclaveInfo {
                         }
                         GeneratedField::State => {
                             if state__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("state"));
+                                return Err(serde::de::Error::duplicate_field("State"));
                             }
                             state__ = Some(map.next_value()?);
                         }
                         GeneratedField::Flags => {
                             if flags__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("flags"));
+                                return Err(serde::de::Error::duplicate_field("Flags"));
                             }
                             flags__ = Some(map.next_value()?);
+                        }
+                        GeneratedField::Measurements => {
+                            if measurements__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("Measurements"));
+                            }
+                            measurements__ = map.next_value()?;
                         }
                     }
                 }
                 Ok(DescribeEnclaveInfo {
                     enclave_name: enclave_name__.unwrap_or_default(),
                     enclave_id: enclave_id__.unwrap_or_default(),
+                    process_id: process_id__.unwrap_or_default(),
                     enclave_cid: enclave_cid__.unwrap_or_default(),
                     number_of_cpus: number_of_cpus__.unwrap_or_default(),
                     cpu_ids: cpu_ids__.unwrap_or_default(),
                     memory_mib: memory_mib__.unwrap_or_default(),
                     state: state__.unwrap_or_default(),
                     flags: flags__.unwrap_or_default(),
+                    measurements: measurements__,
                 })
             }
         }
@@ -679,6 +719,152 @@ impl<'de> serde::Deserialize<'de> for EnclaveAgentResponse {
             }
         }
         deserializer.deserialize_struct("vaultron.agent.v1.EnclaveAgentResponse", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for EnclaveMeasurements {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.hash_algorithm.is_empty() {
+            len += 1;
+        }
+        if !self.pcr0.is_empty() {
+            len += 1;
+        }
+        if !self.pcr1.is_empty() {
+            len += 1;
+        }
+        if !self.pcr2.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("vaultron.agent.v1.EnclaveMeasurements", len)?;
+        if !self.hash_algorithm.is_empty() {
+            struct_ser.serialize_field("HashAlgorithm", &self.hash_algorithm)?;
+        }
+        if !self.pcr0.is_empty() {
+            struct_ser.serialize_field("PCR0", &self.pcr0)?;
+        }
+        if !self.pcr1.is_empty() {
+            struct_ser.serialize_field("PCR1", &self.pcr1)?;
+        }
+        if !self.pcr2.is_empty() {
+            struct_ser.serialize_field("PCR2", &self.pcr2)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for EnclaveMeasurements {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "hash_algorithm",
+            "HashAlgorithm",
+            "pcr0",
+            "PCR0",
+            "pcr1",
+            "PCR1",
+            "pcr2",
+            "PCR2",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            HashAlgorithm,
+            Pcr0,
+            Pcr1,
+            Pcr2,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "HashAlgorithm" | "hash_algorithm" => Ok(GeneratedField::HashAlgorithm),
+                            "PCR0" | "pcr0" => Ok(GeneratedField::Pcr0),
+                            "PCR1" | "pcr1" => Ok(GeneratedField::Pcr1),
+                            "PCR2" | "pcr2" => Ok(GeneratedField::Pcr2),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = EnclaveMeasurements;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct vaultron.agent.v1.EnclaveMeasurements")
+            }
+
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<EnclaveMeasurements, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut hash_algorithm__ = None;
+                let mut pcr0__ = None;
+                let mut pcr1__ = None;
+                let mut pcr2__ = None;
+                while let Some(k) = map.next_key()? {
+                    match k {
+                        GeneratedField::HashAlgorithm => {
+                            if hash_algorithm__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("HashAlgorithm"));
+                            }
+                            hash_algorithm__ = Some(map.next_value()?);
+                        }
+                        GeneratedField::Pcr0 => {
+                            if pcr0__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("PCR0"));
+                            }
+                            pcr0__ = Some(map.next_value()?);
+                        }
+                        GeneratedField::Pcr1 => {
+                            if pcr1__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("PCR1"));
+                            }
+                            pcr1__ = Some(map.next_value()?);
+                        }
+                        GeneratedField::Pcr2 => {
+                            if pcr2__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("PCR2"));
+                            }
+                            pcr2__ = Some(map.next_value()?);
+                        }
+                    }
+                }
+                Ok(EnclaveMeasurements {
+                    hash_algorithm: hash_algorithm__.unwrap_or_default(),
+                    pcr0: pcr0__.unwrap_or_default(),
+                    pcr1: pcr1__.unwrap_or_default(),
+                    pcr2: pcr2__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("vaultron.agent.v1.EnclaveMeasurements", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for RestartEnclaveRequest {

@@ -1,4 +1,4 @@
-use crate::EnclaveTesterError;
+use crate::error::EnclaveTesterError;
 use anyhow::Result;
 use std::str::FromStr;
 
