@@ -16,14 +16,12 @@ build-integration-tester:
 build: build-enclave build-enclave-agent build-integration-tester
 
 img:
-	docker build -t vaultron-enclave:latest -f ./container/enclave/Dockerfile .
+	docker build -t ghcr.io/fairxfun/vaultron-enclave$(if $(DOCKER_TAG),:$(DOCKER_TAG),:latest) -f ./container/enclave/Dockerfile .
 
 eif:
-	nitro-cli build-enclave --docker-uri vaultron-enclave:latest --output-file vaultron_enclave.eif
+	nitro-cli build-enclave --docker-uri ghcr.io/fairxfun/vaultron-enclave$(if $(DOCKER_TAG),:$(DOCKER_TAG),:latest) --output-file vaultron_enclave.eif
 	mkdir -p ./target/x86_64-unknown-linux-gnu/elf
 	mv vaultron_enclave.eif ./target/x86_64-unknown-linux-gnu/elf/
-	mkdir -p /fairx
-	cp ./target/x86_64-unknown-linux-gnu/elf/vaultron_enclave.eif /fairx/vaultron_enclave.eif
 
 checksums:
 	sha256sum ./target/x86_64-unknown-linux-gnu/elf/vaultron_enclave.eif | cut -d' ' -f1 > ./target/x86_64-unknown-linux-gnu/elf/vaultron_enclave.eif.sha256
