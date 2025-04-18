@@ -13,15 +13,24 @@ message StopEnclaveResponse {
 message RestartEnclaveResponse {
 }
 
+message EnclaveMeasurements {
+  string hash_algorithm = 1 [json_name = "HashAlgorithm"];
+  string pcr0           = 2 [json_name = "PCR0"];
+  string pcr1           = 3 [json_name = "PCR1"];
+  string pcr2           = 4 [json_name = "PCR2"];
+}
+
 message DescribeEnclaveInfo {
-  string          enclave_name   = 1;
-  string          enclave_id     = 2;
-  uint32          enclave_cid    = 3;
-  uint32          number_of_cpus = 4;
-  repeated uint32 cpu_ids        = 5;
-  uint32          memory_mib     = 6;
-  string          state          = 7;
-  string          flags          = 8;
+  string          enclave_name     = 1  [json_name = "EnclaveName"];
+  string          enclave_id       = 2  [json_name = "EnclaveID"];
+  uint32          process_id       = 3  [json_name = "ProcessID"];
+  uint32          enclave_cid      = 4  [json_name = "EnclaveCID"];
+  uint32          number_of_cpus   = 5  [json_name = "NumberOfCPUs"];
+  repeated uint32 cpu_ids          = 6  [json_name = "CPUIDs"];
+  uint32          memory_mib       = 7  [json_name = "MemoryMiB"];
+  string          state            = 8  [json_name = "State"];
+  string          flags            = 9  [json_name = "Flags"];
+  EnclaveMeasurements measurements = 10 [json_name = "Measurements"];
 }
 
 message DescribeEnclaveResponse {

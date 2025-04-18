@@ -1,6 +1,5 @@
 use super::InternalMessageHandler;
-use crate::common::EnclaveError;
-use crate::common::GIT_REVISION;
+use crate::{common::EnclaveError, GIT_REVISION};
 use enclave_protos::vaultron::enclave::internal::v1::{GetAttributesRequest, GetAttributesResponse};
 use log::info;
 

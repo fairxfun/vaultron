@@ -31,6 +31,10 @@ jobs:
       - name: Cargo Install
         run: cargo install protoc-gen-prost-crate --force
 
+      - name: Build Protos
+        working-directory: ./enclave_protos
+        run: ./scripts/build-protos.sh
+
       - name: Build All Features
         env:
           RUSTFLAGS: "-D warnings"

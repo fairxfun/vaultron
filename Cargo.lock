@@ -1641,9 +1641,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "4.5.32"
+version = "4.5.36"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6088f3ae8c3608d19260cd7445411865a485688711b78b5be70d78cd96136f83"
+checksum = "2df961d8c8a0d08aa9945718ccf584145eee3f3aa06cddbeac12933781102e04"
 dependencies = [
  "clap_builder",
  "clap_derive",
@@ -1651,9 +1651,9 @@ dependencies = [
 
 [[package]]
 name = "clap_builder"
-version = "4.5.32"
+version = "4.5.36"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "22a7ef7f676155edfb82daa97f99441f3ebf4a58d5e32f295a56259f1b6facc8"
+checksum = "132dbda40fb6753878316a489d5a1242a8ef2f0d9e47ba01c951ea8aa7d013a5"
 dependencies = [
  "anstream",
  "anstyle",
@@ -2390,6 +2390,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
+ "clap",
  "enclave_grpc",
  "enclave_protos",
  "enclave_vsock",
@@ -4003,9 +4004,9 @@ dependencies = [
  "async-trait",
  "enclave_agent",
  "enclave_attestation",
+ "enclave_grpc",
  "enclave_protos",
  "enclave_utils",
- "enclave_vsock",
  "env_logger",
  "ethers-core",
  "ethers-signers",
@@ -4017,6 +4018,7 @@ dependencies = [
  "service_discovery",
  "thiserror 2.0.12",
  "tokio",
+ "tonic 0.9.2",
  "typed-builder",
 ]
 

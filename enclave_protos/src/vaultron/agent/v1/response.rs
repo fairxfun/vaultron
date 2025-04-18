@@ -1,5 +1,7 @@
-pub use crate::gen::vaultron::agent::v1::*;
-
+use super::{
+    enclave_agent_response, DescribeEnclaveInfo, DescribeEnclaveResponse, EnclaveAgentResponse, RestartEnclaveResponse,
+    StartEnclaveResponse, StopEnclaveResponse,
+};
 use crate::vaultron::common::v1::{EnclaveAgentError, StatusCode};
 
 impl StartEnclaveResponse {
@@ -77,5 +79,21 @@ impl EnclaveAgentResponse {
         Self::builder()
             .code(StatusCode::enclave_unknown_error(error_message))
             .build()
+    }
+
+    pub fn is_success(&self) -> Result<(), EnclaveAgentError> {
+        match &self.code {
+            Some(code) => {
+                if code.success {
+                    Ok(())
+                } else {
+                    match &code.error {
+                        Some(error) => Err(error.into()),
+                        None => Err(EnclaveAgentError::UnknownError),
+                    }
+                }
+            }
+            None => Err(EnclaveAgentError::UnknownError),
+        }
     }
 }

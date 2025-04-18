@@ -1,44 +1,19 @@
+use std::str::FromStr;
+
 use super::EnclaveController;
-use crate::EnclaveAgentControllerError;
+use crate::{EnclaveAgentControllerError, EnclaveDescribeStatus};
 use anyhow::Result;
 use enclave_protos::vaultron::agent::v1::DescribeEnclaveInfo;
-use log::info;
-use std::str::FromStr;
 use tokio::process::Command;
 
-#[derive(Debug, PartialEq, Eq)]
-pub enum EnclaveStatus {
-    Unknown,
-    Running,
-    Terminating,
-    Stopped,
-}
-
-impl FromStr for EnclaveStatus {
-    type Err = EnclaveAgentControllerError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "Running" => Ok(EnclaveStatus::Running),
-            "Terminating" => Ok(EnclaveStatus::Terminating),
-            "Stopped" => Ok(EnclaveStatus::Stopped),
-            _ => Ok(EnclaveStatus::Unknown),
-        }
-    }
-}
-
 impl EnclaveController {
-    pub async fn check_enclave_status(&self) -> Result<(), EnclaveAgentControllerError> {
+    pub async fn get_enclave_status(&self) -> Result<EnclaveDescribeStatus, EnclaveAgentControllerError> {
         let enclave_info = self.describe_enclave().await?;
         if let Some(enclave_info) = enclave_info {
-            let status = EnclaveStatus::from_str(&enclave_info.state)?;
-            if status == EnclaveStatus::Running {
-                info!("Enclave is already running");
-                return Ok(());
-            }
+            EnclaveDescribeStatus::from_str(&enclave_info.state)
+        } else {
+            Ok(EnclaveDescribeStatus::Empty)
         }
-        self.restart_enclave().await?;
-        Ok(())
     }
 
     pub async fn describe_enclave(&self) -> Result<Option<DescribeEnclaveInfo>, EnclaveAgentControllerError> {
@@ -49,7 +24,7 @@ impl EnclaveController {
             .map_err(|e| EnclaveAgentControllerError::DescribeEnclaveError(e.to_string()))?;
 
         if output.status.success() {
-            let infos: Vec<DescribeEnclaveInfo> = serde_json::from_slice(&output.stdout)?;
+            let infos: Vec<DescribeEnclaveInfo> = serde_json::from_str(&String::from_utf8_lossy(&output.stdout))?;
             for info in infos {
                 if info.enclave_name == self.options.enclave_name {
                     return Ok(Some(info));

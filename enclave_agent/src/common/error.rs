@@ -23,6 +23,12 @@ pub enum EnclaveAgentError {
 
     #[error(transparent)]
     LogError(#[from] log::ParseLevelError),
+
+    #[error(transparent)]
+    IoError(#[from] std::io::Error),
+
+    #[error(transparent)]
+    AnyError(#[from] anyhow::Error),
 }
 
 #[derive(Error, Debug)]
