@@ -25,7 +25,12 @@ eif:
 	mkdir -p /fairx
 	cp ./target/x86_64-unknown-linux-gnu/elf/vaultron_enclave.eif /fairx/vaultron_enclave.eif
 
-all: build img eif 
+checksums:
+	sha256sum ./target/x86_64-unknown-linux-gnu/elf/vaultron_enclave.eif | cut -d' ' -f1 > ./target/x86_64-unknown-linux-gnu/elf/vaultron_enclave.eif.sha256
+	sha256sum ./target/x86_64-unknown-linux-gnu/release/vaultron_enclave | cut -d' ' -f1 > ./target/x86_64-unknown-linux-gnu/release/vaultron_enclave.sha256
+	sha256sum ./target/x86_64-unknown-linux-gnu/release/vaultron_enclave_agent | cut -d' ' -f1 > ./target/x86_64-unknown-linux-gnu/release/vaultron_enclave_agent.sha256
+
+all: build img eif checksums
 
 run-enclave:
 	nitro-cli run-enclave \

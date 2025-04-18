@@ -9,6 +9,9 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
     container:
       image: amazonlinux:2023
     steps:
@@ -28,20 +31,6 @@ jobs:
       - name: Install required tools
         run: make build-elf-install
 
-      - name: Build binaries
-        run: make build
-
-      - name: Make docker image
-        run: make img
-
-      - name: Build EIF
-        id: build_eif
-        run: |
-          make eif > eif_output.txt
-          echo "EIF_MEASUREMENTS<<EOF" >> $GITHUB_ENV
-          cat eif_output.txt >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
       - name: Login to GHCR
         uses: docker/login-action@v3
         with:
@@ -58,16 +47,25 @@ jobs:
             type=semver,pattern={{version}}
             type=sha
 
-      - name: Tag Docker image
-        run: |
-          docker tag vaultron-enclave:latest ghcr.io/fairxfun/vaultron-enclave:latest
+      - name: Build binaries
+        run: make build
 
-      - name: Docker Push
+      - name: Build EIF
+        id: build_eif
+        run: |
+          make eif | tee eif_output.txt
+          echo "EIF_MEASUREMENTS=$(jq -Rsa . eif_output.txt)" >> $GITHUB_ENV
+
+      - name: Build checksums
+        run: make checksums
+
+      - name: Docker Build and Push
         uses: docker/build-push-action@v5
         with:
           context: .
-          load: true
+          file: ./container/enclave/Dockerfile
           tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           push: true
 
       - name: Create GitHub Release
@@ -75,12 +73,15 @@ jobs:
         with:
           files: |
             target/x86_64-unknown-linux-gnu/elf/vaultron_enclave.eif
+            target/x86_64-unknown-linux-gnu/elf/vaultron_enclave.eif.sha256
             target/x86_64-unknown-linux-gnu/release/vaultron_enclave
+            target/x86_64-unknown-linux-gnu/release/vaultron_enclave.sha256
             target/x86_64-unknown-linux-gnu/release/vaultron_enclave_agent
+            target/x86_64-unknown-linux-gnu/release/vaultron_enclave_agent.sha256
           body: |
             EIF Measurements:
-            ```
-            ${{ env.EIF_MEASUREMENTS }}
+            ```json
+            ${{ fromJSON(env.EIF_MEASUREMENTS) }}
             ```
           generate_release_notes: true
         env:
