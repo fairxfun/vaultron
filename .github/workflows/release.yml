@@ -62,8 +62,9 @@ jobs:
       - name: Build EIF
         id: build_eif
         run: |
-          make eif | tee eif_output.txt
-          echo "EIF_MEASUREMENTS=$(jq -Rsa . eif_output.txt | grep -o '{\"Measurements\":.*}' | jq -Rsa .)" >> $GITHUB_ENV
+          make eif
+          measurements=$(nitro-cli describe-eif --eif-path ./target/x86_64-unknown-linux-gnu/elf/vaultron_enclave.eif | jq -c '.Measurements')
+          echo "EIF_MEASUREMENTS=$(jq -Rs . <<< "$measurements")" >> $GITHUB_ENV
         env:
           DOCKER_TAG: ${{ steps.meta.outputs.version }}
 
