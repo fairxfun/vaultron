@@ -906,10 +906,18 @@ impl serde::Serialize for ReplyClusterKeySyncRequest {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
+        if self.enclave_type != 0 {
+            len += 1;
+        }
         if !self.responder_doc.is_empty() {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("vaultron.enclave.internal.v1.ReplyClusterKeySyncRequest", len)?;
+        if self.enclave_type != 0 {
+            let v = super::super::common::v1::EnclaveType::from_i32(self.enclave_type)
+                .ok_or_else(|| serde::ser::Error::custom(format!("Invalid variant {}", self.enclave_type)))?;
+            struct_ser.serialize_field("enclaveType", &v)?;
+        }
         if !self.responder_doc.is_empty() {
             struct_ser.serialize_field("responderDoc", pbjson::private::base64::encode(&self.responder_doc).as_str())?;
         }
@@ -923,12 +931,15 @@ impl<'de> serde::Deserialize<'de> for ReplyClusterKeySyncRequest {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
+            "enclave_type",
+            "enclaveType",
             "responder_doc",
             "responderDoc",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
+            EnclaveType,
             ResponderDoc,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
@@ -951,6 +962,7 @@ impl<'de> serde::Deserialize<'de> for ReplyClusterKeySyncRequest {
                         E: serde::de::Error,
                     {
                         match value {
+                            "enclaveType" | "enclave_type" => Ok(GeneratedField::EnclaveType),
                             "responderDoc" | "responder_doc" => Ok(GeneratedField::ResponderDoc),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
@@ -971,9 +983,16 @@ impl<'de> serde::Deserialize<'de> for ReplyClusterKeySyncRequest {
                 where
                     V: serde::de::MapAccess<'de>,
             {
+                let mut enclave_type__ = None;
                 let mut responder_doc__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
+                        GeneratedField::EnclaveType => {
+                            if enclave_type__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("enclaveType"));
+                            }
+                            enclave_type__ = Some(map.next_value::<super::super::common::v1::EnclaveType>()? as i32);
+                        }
                         GeneratedField::ResponderDoc => {
                             if responder_doc__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("responderDoc"));
@@ -985,6 +1004,7 @@ impl<'de> serde::Deserialize<'de> for ReplyClusterKeySyncRequest {
                     }
                 }
                 Ok(ReplyClusterKeySyncRequest {
+                    enclave_type: enclave_type__.unwrap_or_default(),
                     responder_doc: responder_doc__.unwrap_or_default(),
                 })
             }
