@@ -7,7 +7,7 @@ dnf update -y
 dnf install -y aws-nitro-enclaves-cli-1.3.4 aws-nitro-enclaves-cli-devel-1.3.4 
 
 # Install perl
-dnf install -y perl git
+dnf install -y perl git jq
 
 # Install development tools
 # dnf groupinstall -y "Development Tools"
