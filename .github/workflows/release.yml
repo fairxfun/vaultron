@@ -59,11 +59,12 @@ jobs:
             type=sha
 
       - name: Docker Push
-        run: |
-          for tag in ${{ steps.meta.outputs.tags }}; do
-            docker tag vaultron-enclave:latest "$tag"
-            docker push "$tag"
-          done
+        uses: docker/build-push-action@v5
+        with:
+          source: local
+          image: vaultron-enclave:latest
+          target: ${{ steps.meta.outputs.tags }}
+          push: true
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2.2.1
