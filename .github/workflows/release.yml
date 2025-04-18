@@ -63,7 +63,9 @@ jobs:
         id: build_eif
         run: |
           make eif | tee eif_output.txt
-          echo "EIF_MEASUREMENTS=$(jq -Rsa . eif_output.txt)" >> $GITHUB_ENV
+          echo "EIF_MEASUREMENTS=$(jq -Rsa . eif_output.txt | grep -o '{\"Measurements\":.*}' | jq -Rsa .)" >> $GITHUB_ENV
+        env:
+          DOCKER_TAG: ${{ steps.meta.outputs.version }}
 
       - name: Build checksums
         run: make checksums
