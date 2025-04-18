@@ -75,9 +75,10 @@ impl InternalMessageHandler {
             .settings
             .local_key
             .decrypt_by_private_key(&responder_response.encrypted_cluster_seed)?;
+        let enclave_type = EnclaveType::from_i32(request.enclave_type).unwrap_or(EnclaveType::Seed);
         let cluster_public_key = self
             .cluster_handler
-            .initialize(self.context.clone(), &cluster_seed, EnclaveType::Worker)
+            .initialize(self.context.clone(), &cluster_seed, enclave_type)
             .await?;
         if cluster_public_key != responder_response.cluster_public_key {
             return Err(EnclaveError::InvalidClusterPublicKeyError);

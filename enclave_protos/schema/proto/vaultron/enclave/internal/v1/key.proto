@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package vaultron.enclave.internal.v1;
 
+import "vaultron/enclave/common/v1/types.proto";
 import "vaultron/enclave/attestation/v1/document.proto";
 
 message InitClusterKeyRequest {}
@@ -24,7 +25,8 @@ message ForwardClusterKeySyncResponse {
 }
 
 message ReplyClusterKeySyncRequest {
-  bytes responder_doc = 1;
+  vaultron.enclave.common.v1.EnclaveType enclave_type  = 1;
+  bytes                                  responder_doc = 2;
 }
 
 message ReplyClusterKeySyncResponse {}
