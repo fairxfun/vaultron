@@ -50,15 +50,6 @@ jobs:
       - name: Build binaries
         run: make build
 
-      - name: Build EIF
-        id: build_eif
-        run: |
-          make eif | tee eif_output.txt
-          echo "EIF_MEASUREMENTS=$(jq -Rsa . eif_output.txt)" >> $GITHUB_ENV
-
-      - name: Build checksums
-        run: make checksums
-
       - name: Docker Build and Push
         uses: docker/build-push-action@v5
         with:
@@ -67,6 +58,15 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           push: true
+
+      - name: Build EIF
+        id: build_eif
+        run: |
+          make eif | tee eif_output.txt
+          echo "EIF_MEASUREMENTS=$(jq -Rsa . eif_output.txt)" >> $GITHUB_ENV
+
+      - name: Build checksums
+        run: make checksums
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2.2.1
