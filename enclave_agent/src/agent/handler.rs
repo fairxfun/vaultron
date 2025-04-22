@@ -1,6 +1,7 @@
+use super::create_enclave_agent_service_register;
 use crate::enclave::EnclaveController;
 use crate::message::{EnclaveAgentMessageHandler, EnclaveMessageHandler};
-use crate::{enclave_agent_trace_init, EnclaveAgentError, GIT_REVISION};
+use crate::{enclave_agent_trace_init, EnclaveAgentError, ENCLAVE_AGENT_GIT_REVISION};
 use enclave_grpc::GrpcServer;
 use enclave_protos::vaultron::agent::v1::enclave_agent_service_server::{
     EnclaveAgentService, EnclaveAgentServiceServer,
@@ -10,6 +11,7 @@ use enclave_protos::vaultron::enclave::v1::{EnclaveRequest, EnclaveResponse};
 use enclave_protos::vaultron::service::v1::ServerOptions;
 use enclave_vsock::VsockClientCreateOptions;
 use log::info;
+use service_discovery::{VaultronServiceConfig, VaultronServiceRegisterTrait};
 use std::sync::Arc;
 use tokio::signal::unix::{signal, SignalKind};
 use tonic::{Request, Response, Status};
@@ -17,9 +19,32 @@ use typed_builder::TypedBuilder;
 
 #[derive(Debug, TypedBuilder)]
 pub struct EnclaveAgentCreateOptions {
+    pub agent_create_options: AgentCreateOptions,
     pub enclave_create_options: EnclaveCreateOptions,
-    pub enclave_agent_grpc_server_port: u32,
+}
+
+#[derive(Debug, Clone, TypedBuilder)]
+pub struct AgentCreateOptions {
+    pub service_options: AgentServiceOptions,
     pub log_level: String,
+}
+
+#[derive(Debug, Clone, TypedBuilder)]
+pub struct AgentServiceOptions {
+    pub region: String,
+    pub namespace: String,
+    pub service: String,
+    pub port: u32,
+}
+
+impl From<&AgentServiceOptions> for VaultronServiceConfig {
+    fn from(options: &AgentServiceOptions) -> Self {
+        VaultronServiceConfig::builder()
+            .region(options.region.clone())
+            .namespace(options.namespace.clone())
+            .service_name(options.service.clone())
+            .build()
+    }
 }
 
 #[derive(Debug, Clone, TypedBuilder)]
@@ -78,19 +103,24 @@ impl EnclaveAgentService for EnclaveAgent {
 }
 
 pub async fn start_enclave_agent(options: EnclaveAgentCreateOptions) -> Result<(), EnclaveAgentError> {
-    enclave_agent_trace_init(&options.log_level)?;
-    info!("Start Enclave agent with git revision: {}", GIT_REVISION);
+    enclave_agent_trace_init(&options.agent_create_options.log_level)?;
+    info!("Start Enclave agent with git revision: {}", ENCLAVE_AGENT_GIT_REVISION);
     let agent = EnclaveAgent::new(&options).await?;
-    let options = ServerOptions::builder()
-        .port(options.enclave_agent_grpc_server_port)
+    let server_options = ServerOptions::builder()
+        .port(options.agent_create_options.service_options.port)
         .accept_http1(false)
         .enable_web(false)
         .build();
     let mut server = GrpcServer::default();
-    server.start(EnclaveAgentServiceServer::new(agent), options).await?;
+    server
+        .start(EnclaveAgentServiceServer::new(agent), server_options)
+        .await?;
+    let service_register = create_enclave_agent_service_register(&options).await?;
     info!("Enclave agent started");
+    service_register.register_service().await?;
     wait_for_signal().await?;
     let _ = server.stop().await;
+    service_register.deregister_service().await?;
     info!("Enclave agent stopped");
     Ok(())
 }

@@ -1,5 +1,5 @@
 mod handler;
-mod service;
+mod querier;
+mod register;
 
 pub use handler::*;
-pub use service::*;

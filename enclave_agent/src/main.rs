@@ -1,5 +1,8 @@
 use clap::Parser;
-use enclave_agent::{start_enclave_agent, EnclaveAgentError};
+use enclave_agent::{
+    start_enclave_agent, AgentCreateOptions, AgentServiceOptions, EnclaveAgentError,
+    DEFAULT_VAULTRON_ENCLAVE_AGENT_SERVICE_NAME, DEFAULT_VAULTRON_SERVICE_NAMESPACE, DEFAULT_VAULTRON_SERVICE_REGION,
+};
 use enclave_agent::{
     EnclaveAgentCreateOptions, EnclaveCreateOptions, DEFAULT_ENCLAVE_AGENT_GRPC_SERVER_PORT, DEFAULT_ENCLAVE_CPU_COUNT,
     DEFAULT_ENCLAVE_ELF_FILE, DEFAULT_ENCLAVE_LOG_LEVEL, DEFAULT_ENCLAVE_MEMORY_SIZE, DEFAULT_ENCLAVE_NAME_PREFIX,
@@ -37,6 +40,18 @@ struct EnclaveAgentArgs {
     #[arg(long, default_value_t = DEFAULT_ENCLAVE_AGENT_GRPC_SERVER_PORT)]
     enclave_agent_grpc_server_port: u32,
 
+    /// Service region
+    #[arg(long, default_value = DEFAULT_VAULTRON_SERVICE_REGION)]
+    region: String,
+
+    /// Service namespace
+    #[arg(long, default_value = DEFAULT_VAULTRON_SERVICE_NAMESPACE)]
+    namespace: String,
+
+    /// Service name
+    #[arg(long, default_value = DEFAULT_VAULTRON_ENCLAVE_AGENT_SERVICE_NAME)]
+    service_name: String,
+
     /// Log level
     #[arg(long, default_value = DEFAULT_ENCLAVE_LOG_LEVEL)]
     log_level: String,
@@ -60,8 +75,19 @@ impl From<EnclaveAgentArgs> for EnclaveAgentCreateOptions {
                     .debug_mode(args.debug_mode)
                     .build(),
             )
-            .enclave_agent_grpc_server_port(args.enclave_agent_grpc_server_port)
-            .log_level(args.log_level)
+            .agent_create_options(
+                AgentCreateOptions::builder()
+                    .service_options(
+                        AgentServiceOptions::builder()
+                            .region(args.region)
+                            .namespace(args.namespace)
+                            .service(args.service_name)
+                            .port(args.enclave_agent_grpc_server_port)
+                            .build(),
+                    )
+                    .log_level(args.log_level)
+                    .build(),
+            )
             .build()
     }
 }

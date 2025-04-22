@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = { version = "1.0.97" }
+async-trait = {version = "0.1.64"}
 aws-config = { version = "1.1.7", features = ["behavior-version-latest"] }
 aws-sdk-servicediscovery = { version = "1.65.0" }
 aws-smithy-runtime-api = { version = "1.7.4" }

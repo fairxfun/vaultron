@@ -1,16 +1,16 @@
-use crate::ServiceDiscoveryError;
+use crate::VaultronServiceDiscoveryError;
 use aws_sdk_servicediscovery::types::{HealthStatus, Instance, InstanceSummary};
 use std::collections::HashMap;
 use typed_builder::TypedBuilder;
 
 #[derive(Debug, Clone, TypedBuilder)]
-pub struct VaultronInstance {
+pub struct VaultronServiceInstance {
     pub id: String,
     pub attributes: HashMap<String, String>,
 }
 
-impl TryFrom<&InstanceSummary> for VaultronInstance {
-    type Error = ServiceDiscoveryError;
+impl TryFrom<&InstanceSummary> for VaultronServiceInstance {
+    type Error = VaultronServiceDiscoveryError;
 
     fn try_from(instance: &InstanceSummary) -> Result<Self, Self::Error> {
         match instance.id.as_ref() {
@@ -18,12 +18,12 @@ impl TryFrom<&InstanceSummary> for VaultronInstance {
                 id: id.clone(),
                 attributes: instance.attributes.clone().unwrap_or_default(),
             }),
-            None => Err(ServiceDiscoveryError::InstanceNotFound),
+            None => Err(VaultronServiceDiscoveryError::InstanceNotFound),
         }
     }
 }
 
-impl From<&Instance> for VaultronInstance {
+impl From<&Instance> for VaultronServiceInstance {
     fn from(instance: &Instance) -> Self {
         Self {
             id: instance.id.clone(),

@@ -10,6 +10,9 @@ pub enum EnclaveAgentError {
     InvalidRequestError,
 
     #[error(transparent)]
+    ReqwestError(#[from] reqwest::Error),
+
+    #[error(transparent)]
     ProtobufEncodeError(#[from] prost::EncodeError),
 
     #[error(transparent)]
@@ -26,6 +29,9 @@ pub enum EnclaveAgentError {
 
     #[error(transparent)]
     IoError(#[from] std::io::Error),
+
+    #[error(transparent)]
+    ServiceDiscoveryError(#[from] service_discovery::VaultronServiceDiscoveryError),
 
     #[error(transparent)]
     AnyError(#[from] anyhow::Error),

@@ -16,9 +16,11 @@ async-trait = {version = "0.1.64"}
 enclave_grpc = {path = "../enclave_grpc", features = ["server"]}
 enclave_protos = {path = "../enclave_protos", features = ["vaultron-common-v1", "vaultron-agent-v1", "vaultron-enclave-v1"]}
 enclave_vsock = {path = "../enclave_vsock"}
+service_discovery = {path = "../service_discovery"}
 env_logger = {version = "0.11.7"}
 log = {version = "0.4.26"}
 prost = {version = "0.11.9"}
+reqwest = {version = "0.12.12"}
 serde = {version = "1.0.219", features = ["derive"]}
 serde_json = {version = "1.0.140"}
 thiserror = {version = "2.0.12"}
