@@ -81,7 +81,7 @@ impl From<EnclaveAgentArgs> for EnclaveAgentCreateOptions {
                         AgentServiceOptions::builder()
                             .region(args.region)
                             .namespace(args.namespace)
-                            .service(args.service_name)
+                            .service_name(args.service_name)
                             .port(args.enclave_agent_grpc_server_port)
                             .build(),
                     )

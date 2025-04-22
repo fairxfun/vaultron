@@ -33,7 +33,7 @@ pub struct AgentCreateOptions {
 pub struct AgentServiceOptions {
     pub region: String,
     pub namespace: String,
-    pub service: String,
+    pub service_name: String,
     pub port: u32,
 }
 
@@ -42,7 +42,7 @@ impl From<&AgentServiceOptions> for VaultronServiceConfig {
         VaultronServiceConfig::builder()
             .region(options.region.clone())
             .namespace(options.namespace.clone())
-            .service_name(options.service.clone())
+            .service_name(options.service_name.clone())
             .build()
     }
 }

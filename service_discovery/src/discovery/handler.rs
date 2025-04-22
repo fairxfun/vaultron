@@ -1,4 +1,4 @@
-use crate::{VaultronServiceDiscoveryError, VaultronServiceRegisterTrait};
+use crate::{VaultronServiceDiscoveryError, VaultronServiceQuerierTrait, VaultronServiceRegisterTrait};
 use aws_config::meta::region::RegionProviderChain;
 use aws_sdk_servicediscovery::{
     types::{NamespaceFilter, NamespaceFilterName, ServiceFilter, ServiceFilterName},
@@ -31,10 +31,10 @@ pub struct VaultronServiceDiscoveryHandler {
 
 pub async fn create_service_discovery_querier(
     config: VaultronServiceConfig,
-) -> Result<Arc<Box<dyn VaultronServiceRegisterTrait>>, VaultronServiceDiscoveryError> {
+) -> Result<Arc<Box<dyn VaultronServiceQuerierTrait>>, VaultronServiceDiscoveryError> {
     let handler =
         VaultronServiceDiscoveryHandler::new(config, VaultronServiceAttributes::default(), "".to_string()).await?;
-    Ok(Arc::new(Box::new(handler) as Box<dyn VaultronServiceRegisterTrait>))
+    Ok(Arc::new(Box::new(handler) as Box<dyn VaultronServiceQuerierTrait>))
 }
 
 pub async fn create_service_discovery_register(
