@@ -83,6 +83,8 @@ impl InternalMessageHandler {
         if cluster_public_key != responder_response.cluster_public_key {
             return Err(EnclaveError::InvalidClusterPublicKeyError);
         }
-        Ok(ReplyClusterKeySyncResponse::builder().build())
+        Ok(ReplyClusterKeySyncResponse::builder()
+            .cluster_public_key(cluster_public_key)
+            .build())
     }
 }

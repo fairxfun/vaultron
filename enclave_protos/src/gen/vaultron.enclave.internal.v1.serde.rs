@@ -1019,8 +1019,14 @@ impl serde::Serialize for ReplyClusterKeySyncResponse {
         S: serde::Serializer,
     {
         use serde::ser::SerializeStruct;
-        let len = 0;
-        let struct_ser = serializer.serialize_struct("vaultron.enclave.internal.v1.ReplyClusterKeySyncResponse", len)?;
+        let mut len = 0;
+        if !self.cluster_public_key.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("vaultron.enclave.internal.v1.ReplyClusterKeySyncResponse", len)?;
+        if !self.cluster_public_key.is_empty() {
+            struct_ser.serialize_field("clusterPublicKey", pbjson::private::base64::encode(&self.cluster_public_key).as_str())?;
+        }
         struct_ser.end()
     }
 }
@@ -1031,10 +1037,13 @@ impl<'de> serde::Deserialize<'de> for ReplyClusterKeySyncResponse {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
+            "cluster_public_key",
+            "clusterPublicKey",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
+            ClusterPublicKey,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -1055,7 +1064,10 @@ impl<'de> serde::Deserialize<'de> for ReplyClusterKeySyncResponse {
                     where
                         E: serde::de::Error,
                     {
-                            Err(serde::de::Error::unknown_field(value, FIELDS))
+                        match value {
+                            "clusterPublicKey" | "cluster_public_key" => Ok(GeneratedField::ClusterPublicKey),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
                     }
                 }
                 deserializer.deserialize_identifier(GeneratedVisitor)
@@ -1073,10 +1085,21 @@ impl<'de> serde::Deserialize<'de> for ReplyClusterKeySyncResponse {
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                while map.next_key::<GeneratedField>()?.is_some() {
-                    let _ = map.next_value::<serde::de::IgnoredAny>()?;
+                let mut cluster_public_key__ = None;
+                while let Some(k) = map.next_key()? {
+                    match k {
+                        GeneratedField::ClusterPublicKey => {
+                            if cluster_public_key__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("clusterPublicKey"));
+                            }
+                            cluster_public_key__ = 
+                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
+                            ;
+                        }
+                    }
                 }
                 Ok(ReplyClusterKeySyncResponse {
+                    cluster_public_key: cluster_public_key__.unwrap_or_default(),
                 })
             }
         }
