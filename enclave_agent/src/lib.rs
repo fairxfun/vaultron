@@ -19,6 +19,6 @@ pub const DEFAULT_ENCLAVE_ELF_FILE: &str = "/fairx/vaultron_enclave.eif";
 pub const DEFAULT_VAULTRON_SERVICE_REGION: &str = "ap-southeast-1";
 pub const DEFAULT_VAULTRON_SERVICE_NAMESPACE: &str = "fairx.vaultron";
 
-pub fn enclave_agent_service_name(git_revision: &str) -> String {
-    format!("enclave-agent-{}", git_revision)
+pub fn enclave_agent_service_name(version: &str) -> String {
+    format!("enclave-agent-{}", version)
 }

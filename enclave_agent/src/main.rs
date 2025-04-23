@@ -1,7 +1,7 @@
 use clap::Parser;
 use enclave_agent::{
     enclave_agent_service_name, start_enclave_agent, AgentCreateOptions, AgentServiceOptions, EnclaveAgentError,
-    DEFAULT_VAULTRON_SERVICE_NAMESPACE, DEFAULT_VAULTRON_SERVICE_REGION, ENCLAVE_AGENT_GIT_REVISION,
+    DEFAULT_VAULTRON_SERVICE_NAMESPACE, DEFAULT_VAULTRON_SERVICE_REGION, ENCLAVE_AGENT_VERSION,
 };
 use enclave_agent::{
     EnclaveAgentCreateOptions, EnclaveCreateOptions, DEFAULT_ENCLAVE_AGENT_GRPC_SERVER_PORT, DEFAULT_ENCLAVE_CPU_COUNT,
@@ -77,7 +77,7 @@ impl From<EnclaveAgentArgs> for EnclaveAgentCreateOptions {
                         AgentServiceOptions::builder()
                             .region(args.region)
                             .namespace(args.namespace)
-                            .service_name(enclave_agent_service_name(ENCLAVE_AGENT_GIT_REVISION))
+                            .service_name(enclave_agent_service_name(ENCLAVE_AGENT_VERSION))
                             .port(args.enclave_agent_grpc_server_port)
                             .build(),
                     )
