@@ -13,6 +13,6 @@ service EnclaveAgentService {
 }
 
 service CoordinatorService {
-  rpc enclave_request(vaultron.enclave.v1.EnclaveRequest)          returns (vaultron.enclave.v1.EnclaveResponse);
+  rpc enclave_cluster_request(vaultron.enclave.v1.EnclaveRequest)  returns (vaultron.enclave.v1.EnclaveResponse);
 }
 
