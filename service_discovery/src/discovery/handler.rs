@@ -1,11 +1,12 @@
-use crate::{VaultronServiceDiscoveryError, VaultronServiceQuerierTrait, VaultronServiceRegisterTrait};
+use crate::{
+    ServiceAttributesTrait, VaultronServiceDiscoveryError, VaultronServiceQuerierTrait, VaultronServiceRegisterTrait,
+};
 use aws_config::meta::region::RegionProviderChain;
 use aws_sdk_servicediscovery::{
     types::{NamespaceFilter, NamespaceFilterName, ServiceFilter, ServiceFilterName},
     Client,
 };
 use aws_types::region::Region;
-use std::collections::HashMap;
 use std::sync::Arc;
 use typed_builder::TypedBuilder;
 
@@ -16,40 +17,34 @@ pub struct VaultronServiceConfig {
     pub service_name: String,
 }
 
-#[derive(Debug, Clone, Default, TypedBuilder)]
-pub struct VaultronServiceAttributes {
-    pub attributes: HashMap<String, String>,
-}
-
 #[derive(Debug, Clone, TypedBuilder)]
-pub struct VaultronServiceDiscoveryHandler {
-    pub(crate) attributes: VaultronServiceAttributes,
+pub struct VaultronServiceDiscoveryHandler<A: ServiceAttributesTrait> {
+    pub(crate) attributes: A,
     pub(crate) service_id: String,
     pub(crate) instance_id: String,
     pub(crate) aws_client: Client,
 }
 
-pub async fn create_service_discovery_querier(
+pub async fn create_service_discovery_querier<A: ServiceAttributesTrait>(
     config: VaultronServiceConfig,
-) -> Result<Arc<Box<dyn VaultronServiceQuerierTrait>>, VaultronServiceDiscoveryError> {
-    let handler =
-        VaultronServiceDiscoveryHandler::new(config, VaultronServiceAttributes::default(), "".to_string()).await?;
-    Ok(Arc::new(Box::new(handler) as Box<dyn VaultronServiceQuerierTrait>))
+) -> Result<Arc<Box<dyn VaultronServiceQuerierTrait<A>>>, VaultronServiceDiscoveryError> {
+    let handler = VaultronServiceDiscoveryHandler::new(config, A::default(), "".to_string()).await?;
+    Ok(Arc::new(Box::new(handler) as Box<dyn VaultronServiceQuerierTrait<A>>))
 }
 
-pub async fn create_service_discovery_register(
+pub async fn create_service_discovery_register<A: ServiceAttributesTrait>(
     config: VaultronServiceConfig,
-    attributes: VaultronServiceAttributes,
+    attributes: A,
     instance_id: String,
-) -> Result<Arc<Box<dyn VaultronServiceRegisterTrait>>, VaultronServiceDiscoveryError> {
+) -> Result<Arc<Box<dyn VaultronServiceRegisterTrait<A>>>, VaultronServiceDiscoveryError> {
     let handler = VaultronServiceDiscoveryHandler::new(config, attributes, instance_id).await?;
-    Ok(Arc::new(Box::new(handler) as Box<dyn VaultronServiceRegisterTrait>))
+    Ok(Arc::new(Box::new(handler) as Box<dyn VaultronServiceRegisterTrait<A>>))
 }
 
-impl VaultronServiceDiscoveryHandler {
+impl<A: ServiceAttributesTrait> VaultronServiceDiscoveryHandler<A> {
     async fn new(
         config: VaultronServiceConfig,
-        attributes: VaultronServiceAttributes,
+        attributes: A,
         instance_id: String,
     ) -> Result<Self, VaultronServiceDiscoveryError> {
         let region_provider = RegionProviderChain::first_try(Region::new(config.region.clone()));

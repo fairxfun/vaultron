@@ -1,12 +1,12 @@
 use super::VaultronServiceDiscoveryHandler;
 use crate::{
-    VaultronInstanceHealthStatusMap, VaultronServiceDiscoveryError, VaultronServiceInstance,
+    ServiceAttributesTrait, VaultronInstanceHealthStatusMap, VaultronServiceDiscoveryError, VaultronServiceInstance,
     VaultronServiceQuerierTrait,
 };
 
 #[async_trait::async_trait]
-impl VaultronServiceQuerierTrait for VaultronServiceDiscoveryHandler {
-    async fn list_instances(&self) -> Result<Vec<VaultronServiceInstance>, VaultronServiceDiscoveryError> {
+impl<A: ServiceAttributesTrait> VaultronServiceQuerierTrait<A> for VaultronServiceDiscoveryHandler<A> {
+    async fn list_instances(&self) -> Result<Vec<VaultronServiceInstance<A>>, VaultronServiceDiscoveryError> {
         let mut instances = Vec::new();
         let mut next_token = None;
         loop {
@@ -17,7 +17,7 @@ impl VaultronServiceQuerierTrait for VaultronServiceDiscoveryHandler {
                 .set_next_token(next_token)
                 .send()
                 .await?;
-            let batch_instances: Vec<VaultronServiceInstance> = response
+            let batch_instances: Vec<VaultronServiceInstance<A>> = response
                 .instances()
                 .iter()
                 .flat_map(|instance| instance.try_into())
@@ -34,7 +34,7 @@ impl VaultronServiceQuerierTrait for VaultronServiceDiscoveryHandler {
     async fn get_instance(
         &self,
         instance_id: String,
-    ) -> Result<VaultronServiceInstance, VaultronServiceDiscoveryError> {
+    ) -> Result<VaultronServiceInstance<A>, VaultronServiceDiscoveryError> {
         let response = self
             .aws_client
             .get_instance()
@@ -43,7 +43,7 @@ impl VaultronServiceQuerierTrait for VaultronServiceDiscoveryHandler {
             .send()
             .await?;
         match response.instance() {
-            Some(instance) => Ok(instance.into()),
+            Some(instance) => Ok(instance.try_into()?),
             None => Err(VaultronServiceDiscoveryError::InstanceNotFound),
         }
     }

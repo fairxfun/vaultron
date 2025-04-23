@@ -7,10 +7,12 @@ pub use error::*;
 pub use types::*;
 
 #[async_trait::async_trait]
-pub trait VaultronServiceQuerierTrait: Send + Sync {
-    async fn list_instances(&self) -> Result<Vec<VaultronServiceInstance>, VaultronServiceDiscoveryError>;
-    async fn get_instance(&self, instance_id: String)
-        -> Result<VaultronServiceInstance, VaultronServiceDiscoveryError>;
+pub trait VaultronServiceQuerierTrait<A: ServiceAttributesTrait>: Send + Sync {
+    async fn list_instances(&self) -> Result<Vec<VaultronServiceInstance<A>>, VaultronServiceDiscoveryError>;
+    async fn get_instance(
+        &self,
+        instance_id: String,
+    ) -> Result<VaultronServiceInstance<A>, VaultronServiceDiscoveryError>;
     async fn get_instance_health_status(
         &self,
         instance_ids: Vec<String>,
@@ -18,15 +20,15 @@ pub trait VaultronServiceQuerierTrait: Send + Sync {
 }
 
 #[async_trait::async_trait]
-impl VaultronServiceQuerierTrait for Box<dyn VaultronServiceQuerierTrait> {
-    async fn list_instances(&self) -> Result<Vec<VaultronServiceInstance>, VaultronServiceDiscoveryError> {
+impl<A: ServiceAttributesTrait> VaultronServiceQuerierTrait<A> for Box<dyn VaultronServiceQuerierTrait<A>> {
+    async fn list_instances(&self) -> Result<Vec<VaultronServiceInstance<A>>, VaultronServiceDiscoveryError> {
         self.as_ref().list_instances().await
     }
 
     async fn get_instance(
         &self,
         instance_id: String,
-    ) -> Result<VaultronServiceInstance, VaultronServiceDiscoveryError> {
+    ) -> Result<VaultronServiceInstance<A>, VaultronServiceDiscoveryError> {
         self.as_ref().get_instance(instance_id).await
     }
 
@@ -39,13 +41,13 @@ impl VaultronServiceQuerierTrait for Box<dyn VaultronServiceQuerierTrait> {
 }
 
 #[async_trait::async_trait]
-pub trait VaultronServiceRegisterTrait: Send + Sync {
+pub trait VaultronServiceRegisterTrait<A: ServiceAttributesTrait>: Send + Sync {
     async fn register_service(&self) -> Result<(), VaultronServiceDiscoveryError>;
     async fn deregister_service(&self) -> Result<(), VaultronServiceDiscoveryError>;
 }
 
 #[async_trait::async_trait]
-impl VaultronServiceRegisterTrait for Box<dyn VaultronServiceRegisterTrait> {
+impl<A: ServiceAttributesTrait> VaultronServiceRegisterTrait<A> for Box<dyn VaultronServiceRegisterTrait<A>> {
     async fn register_service(&self) -> Result<(), VaultronServiceDiscoveryError> {
         self.as_ref().register_service().await
     }
