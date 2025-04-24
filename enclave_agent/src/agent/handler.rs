@@ -1,7 +1,9 @@
 use super::create_enclave_agent_service_register;
 use crate::enclave::EnclaveController;
 use crate::message::{EnclaveAgentMessageHandler, EnclaveMessageHandler};
-use crate::{enclave_agent_trace_init, EnclaveAgentError, ENCLAVE_AGENT_GIT_REVISION};
+use crate::{
+    enclave_agent_trace_init, get_ec2_instance_id, get_ec2_instance_ip, EnclaveAgentError, ENCLAVE_AGENT_GIT_REVISION,
+};
 use enclave_grpc::GrpcServer;
 use enclave_protos::vaultron::agent::v1::enclave_agent_service_server::{
     EnclaveAgentService, EnclaveAgentServiceServer,
@@ -18,9 +20,27 @@ use tonic::{Request, Response, Status};
 use typed_builder::TypedBuilder;
 
 #[derive(Debug, TypedBuilder)]
-pub struct EnclaveAgentCreateOptions {
+pub struct CreateOptions {
+    pub ec2_instance_options: Ec2InstanceOptions,
     pub agent_create_options: AgentCreateOptions,
     pub enclave_create_options: EnclaveCreateOptions,
+}
+
+#[derive(Debug, Clone, TypedBuilder)]
+pub struct Ec2InstanceOptions {
+    pub instance_id: String,
+    pub instance_address: String,
+}
+
+impl Ec2InstanceOptions {
+    pub async fn new() -> Result<Self, EnclaveAgentError> {
+        let instance_id = get_ec2_instance_id().await?;
+        let instance_address = get_ec2_instance_ip().await?;
+        Ok(Self::builder()
+            .instance_id(instance_id)
+            .instance_address(instance_address)
+            .build())
+    }
 }
 
 #[derive(Debug, Clone, TypedBuilder)]
@@ -74,7 +94,7 @@ pub struct EnclaveAgent {
 }
 
 impl EnclaveAgent {
-    async fn new(options: &EnclaveAgentCreateOptions) -> Result<Self, EnclaveAgentError> {
+    async fn new(options: &CreateOptions) -> Result<Self, EnclaveAgentError> {
         let controller = Arc::new(EnclaveController::new(options.enclave_create_options.clone()));
         controller.try_start_enclave().await?;
         let enclave_message_handler = Arc::new(EnclaveMessageHandler::new(&options.enclave_create_options).await?);
@@ -102,7 +122,7 @@ impl EnclaveAgentService for EnclaveAgent {
     }
 }
 
-pub async fn start_enclave_agent(options: EnclaveAgentCreateOptions) -> Result<(), EnclaveAgentError> {
+pub async fn start_enclave_agent(options: CreateOptions) -> Result<(), EnclaveAgentError> {
     enclave_agent_trace_init(&options.agent_create_options.log_level)?;
     info!("Start Enclave agent with git revision: {}", ENCLAVE_AGENT_GIT_REVISION);
     let agent = EnclaveAgent::new(&options).await?;
@@ -117,10 +137,10 @@ pub async fn start_enclave_agent(options: EnclaveAgentCreateOptions) -> Result<(
         .await?;
     let service_register = create_enclave_agent_service_register(&options).await?;
     info!("Enclave agent started");
-    service_register.register_service().await?;
+    service_register.register_instance().await?;
     wait_for_signal().await?;
     let _ = server.stop().await;
-    service_register.deregister_service().await?;
+    service_register.deregister_instance().await?;
     info!("Enclave agent stopped");
     Ok(())
 }

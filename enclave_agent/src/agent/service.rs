@@ -1,4 +1,4 @@
-use super::EnclaveAgentCreateOptions;
+use super::CreateOptions;
 use crate::{
     EnclaveAgentError, DEFAULT_ENCLAVE_AGENT_GRPC_SERVER_PORT, ENCLAVE_AGENT_GIT_REVISION, ENCLAVE_AGENT_VERSION,
 };
@@ -57,32 +57,17 @@ impl ServiceAttributesTrait for EnclaveAgentServiceAttributes {
 }
 
 pub(crate) async fn create_enclave_agent_service_register(
-    options: &EnclaveAgentCreateOptions,
+    options: &CreateOptions,
 ) -> Result<Arc<Box<dyn VaultronServiceRegisterTrait<EnclaveAgentServiceAttributes>>>, EnclaveAgentError> {
-    let instance_id = generate_instance_id().await?;
-    let enclave_agent_ip = get_enclave_agent_ip().await?;
     let attributes = EnclaveAgentServiceAttributes::builder()
-        .host(enclave_agent_ip)
+        .host(options.ec2_instance_options.instance_address.clone())
         .port(options.agent_create_options.service_options.port)
         .build();
     let service_register = create_service_discovery_register::<EnclaveAgentServiceAttributes>(
         (&options.agent_create_options.service_options).into(),
         attributes,
-        instance_id,
+        options.ec2_instance_options.instance_id.clone(),
     )
     .await?;
     Ok(service_register)
-}
-
-async fn generate_instance_id() -> Result<String, EnclaveAgentError> {
-    // use ec2 instance id as service instance id
-    let response = reqwest::get("http://169.254.169.254/latest/meta-data/instance-id").await?;
-    let instance_id = response.text().await?;
-    Ok(instance_id)
-}
-
-async fn get_enclave_agent_ip() -> Result<String, EnclaveAgentError> {
-    let response = reqwest::get("http://169.254.169.254/latest/meta-data/local-ipv4").await?;
-    let enclave_agent_ip = response.text().await?;
-    Ok(enclave_agent_ip)
 }

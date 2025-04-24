@@ -42,17 +42,17 @@ impl<A: ServiceAttributesTrait> VaultronServiceQuerierTrait<A> for Box<dyn Vault
 
 #[async_trait::async_trait]
 pub trait VaultronServiceRegisterTrait<A: ServiceAttributesTrait>: Send + Sync {
-    async fn register_service(&self) -> Result<(), VaultronServiceDiscoveryError>;
-    async fn deregister_service(&self) -> Result<(), VaultronServiceDiscoveryError>;
+    async fn register_instance(&self) -> Result<(), VaultronServiceDiscoveryError>;
+    async fn deregister_instance(&self) -> Result<(), VaultronServiceDiscoveryError>;
 }
 
 #[async_trait::async_trait]
 impl<A: ServiceAttributesTrait> VaultronServiceRegisterTrait<A> for Box<dyn VaultronServiceRegisterTrait<A>> {
-    async fn register_service(&self) -> Result<(), VaultronServiceDiscoveryError> {
-        self.as_ref().register_service().await
+    async fn register_instance(&self) -> Result<(), VaultronServiceDiscoveryError> {
+        self.as_ref().register_instance().await
     }
 
-    async fn deregister_service(&self) -> Result<(), VaultronServiceDiscoveryError> {
-        self.as_ref().deregister_service().await
+    async fn deregister_instance(&self) -> Result<(), VaultronServiceDiscoveryError> {
+        self.as_ref().deregister_instance().await
     }
 }

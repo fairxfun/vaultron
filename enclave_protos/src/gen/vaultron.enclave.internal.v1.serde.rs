@@ -286,7 +286,7 @@ impl serde::Serialize for GetAttributesResponse {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
-        if !self.tag.is_empty() {
+        if !self.git_revision.is_empty() {
             len += 1;
         }
         if !self.enclave_pcr0.is_empty() {
@@ -302,8 +302,8 @@ impl serde::Serialize for GetAttributesResponse {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("vaultron.enclave.internal.v1.GetAttributesResponse", len)?;
-        if !self.tag.is_empty() {
-            struct_ser.serialize_field("tag", &self.tag)?;
+        if !self.git_revision.is_empty() {
+            struct_ser.serialize_field("gitRevision", &self.git_revision)?;
         }
         if !self.enclave_pcr0.is_empty() {
             struct_ser.serialize_field("enclavePcr0", pbjson::private::base64::encode(&self.enclave_pcr0).as_str())?;
@@ -329,7 +329,8 @@ impl<'de> serde::Deserialize<'de> for GetAttributesResponse {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "tag",
+            "git_revision",
+            "gitRevision",
             "enclave_pcr0",
             "enclavePcr0",
             "enclave_type",
@@ -342,7 +343,7 @@ impl<'de> serde::Deserialize<'de> for GetAttributesResponse {
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
-            Tag,
+            GitRevision,
             EnclavePcr0,
             EnclaveType,
             InternalPublicKey,
@@ -368,7 +369,7 @@ impl<'de> serde::Deserialize<'de> for GetAttributesResponse {
                         E: serde::de::Error,
                     {
                         match value {
-                            "tag" => Ok(GeneratedField::Tag),
+                            "gitRevision" | "git_revision" => Ok(GeneratedField::GitRevision),
                             "enclavePcr0" | "enclave_pcr0" => Ok(GeneratedField::EnclavePcr0),
                             "enclaveType" | "enclave_type" => Ok(GeneratedField::EnclaveType),
                             "internalPublicKey" | "internal_public_key" => Ok(GeneratedField::InternalPublicKey),
@@ -392,18 +393,18 @@ impl<'de> serde::Deserialize<'de> for GetAttributesResponse {
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                let mut tag__ = None;
+                let mut git_revision__ = None;
                 let mut enclave_pcr0__ = None;
                 let mut enclave_type__ = None;
                 let mut internal_public_key__ = None;
                 let mut cluster_public_key__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
-                        GeneratedField::Tag => {
-                            if tag__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("tag"));
+                        GeneratedField::GitRevision => {
+                            if git_revision__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("gitRevision"));
                             }
-                            tag__ = Some(map.next_value()?);
+                            git_revision__ = Some(map.next_value()?);
                         }
                         GeneratedField::EnclavePcr0 => {
                             if enclave_pcr0__.is_some() {
@@ -438,7 +439,7 @@ impl<'de> serde::Deserialize<'de> for GetAttributesResponse {
                     }
                 }
                 Ok(GetAttributesResponse {
-                    tag: tag__.unwrap_or_default(),
+                    git_revision: git_revision__.unwrap_or_default(),
                     enclave_pcr0: enclave_pcr0__.unwrap_or_default(),
                     enclave_type: enclave_type__.unwrap_or_default(),
                     internal_public_key: internal_public_key__.unwrap_or_default(),

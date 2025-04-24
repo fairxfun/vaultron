@@ -12,7 +12,7 @@ impl InternalMessageHandler {
         let cluster_key = (self.cluster_handler.get_cluster_public_key().await).ok();
         let enclave_type = self.cluster_handler.get_cluster_type().await?;
         let response = GetAttributesResponse::builder()
-            .tag(GIT_REVISION.to_string())
+            .git_revision(GIT_REVISION.to_string())
             .enclave_pcr0(self.context.settings.pcr0.clone())
             .enclave_type(enclave_type)
             .internal_public_key(self.context.settings.local_key.public_key().to_vec())

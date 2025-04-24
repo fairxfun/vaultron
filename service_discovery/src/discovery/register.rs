@@ -5,7 +5,7 @@ use crate::{
 
 #[async_trait::async_trait]
 impl<A: ServiceAttributesTrait> VaultronServiceRegisterTrait<A> for VaultronServiceDiscoveryHandler<A> {
-    async fn register_service(&self) -> Result<(), VaultronServiceDiscoveryError> {
+    async fn register_instance(&self) -> Result<(), VaultronServiceDiscoveryError> {
         self.aws_client
             .register_instance()
             .set_service_id(Some(self.service_id.clone()))
@@ -16,7 +16,7 @@ impl<A: ServiceAttributesTrait> VaultronServiceRegisterTrait<A> for VaultronServ
         Ok(())
     }
 
-    async fn deregister_service(&self) -> Result<(), VaultronServiceDiscoveryError> {
+    async fn deregister_instance(&self) -> Result<(), VaultronServiceDiscoveryError> {
         self.aws_client
             .deregister_instance()
             .set_service_id(Some(self.service_id.clone()))
