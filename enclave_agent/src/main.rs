@@ -1,8 +1,12 @@
 use clap::Parser;
-use enclave_agent::{start_enclave_agent, EnclaveAgentError};
 use enclave_agent::{
-    EnclaveAgentCreateOptions, EnclaveCreateOptions, DEFAULT_ENCLAVE_AGENT_GRPC_SERVER_PORT, DEFAULT_ENCLAVE_CPU_COUNT,
-    DEFAULT_ENCLAVE_ELF_FILE, DEFAULT_ENCLAVE_LOG_LEVEL, DEFAULT_ENCLAVE_MEMORY_SIZE, DEFAULT_ENCLAVE_NAME_PREFIX,
+    enclave_agent_service_name, enclave_name, start_enclave_agent, AgentCreateOptions, AgentServiceOptions,
+    Ec2InstanceOptions, EnclaveAgentError, DEFAULT_VAULTRON_SERVICE_NAMESPACE, DEFAULT_VAULTRON_SERVICE_REGION,
+    ENCLAVE_AGENT_VERSION,
+};
+use enclave_agent::{
+    CreateOptions, EnclaveCreateOptions, DEFAULT_ENCLAVE_AGENT_GRPC_SERVER_PORT, DEFAULT_ENCLAVE_CPU_COUNT,
+    DEFAULT_ENCLAVE_ELF_FILE, DEFAULT_ENCLAVE_LOG_LEVEL, DEFAULT_ENCLAVE_MEMORY_SIZE,
 };
 use enclave_vsock::{DEFAULT_ENCLAVE_CID, DEFAULT_ENCLAVE_VSOCK_PORT};
 
@@ -37,39 +41,55 @@ struct EnclaveAgentArgs {
     #[arg(long, default_value_t = DEFAULT_ENCLAVE_AGENT_GRPC_SERVER_PORT)]
     enclave_agent_grpc_server_port: u32,
 
+    /// Service region
+    #[arg(long, default_value = DEFAULT_VAULTRON_SERVICE_REGION)]
+    region: String,
+
+    /// Service namespace
+    #[arg(long, default_value = DEFAULT_VAULTRON_SERVICE_NAMESPACE)]
+    namespace: String,
+
     /// Log level
     #[arg(long, default_value = DEFAULT_ENCLAVE_LOG_LEVEL)]
     log_level: String,
 }
 
-fn enclave_name(cid: u32) -> String {
-    format!("{}_{}", DEFAULT_ENCLAVE_NAME_PREFIX, cid)
-}
-
-impl From<EnclaveAgentArgs> for EnclaveAgentCreateOptions {
-    fn from(args: EnclaveAgentArgs) -> Self {
-        EnclaveAgentCreateOptions::builder()
-            .enclave_create_options(
-                EnclaveCreateOptions::builder()
-                    .enclave_name(enclave_name(args.enclave_cid))
-                    .enclave_cid(args.enclave_cid)
-                    .enclave_vsock_port(args.enclave_vsock_port)
-                    .enclave_cpu_count(args.enclave_cpu_count)
-                    .enclave_memory_size(args.enclave_memory_size)
-                    .enclave_elf_file(args.enclave_elf_file)
-                    .debug_mode(args.debug_mode)
-                    .build(),
-            )
-            .enclave_agent_grpc_server_port(args.enclave_agent_grpc_server_port)
-            .log_level(args.log_level)
-            .build()
-    }
+async fn create_options_from_args(args: EnclaveAgentArgs) -> Result<CreateOptions, EnclaveAgentError> {
+    let ec2_instance_options = Ec2InstanceOptions::new().await?;
+    let instance_id = ec2_instance_options.instance_id.clone();
+    Ok(CreateOptions::builder()
+        .ec2_instance_options(ec2_instance_options)
+        .enclave_create_options(
+            EnclaveCreateOptions::builder()
+                .enclave_name(enclave_name(&instance_id, args.enclave_cid))
+                .enclave_cid(args.enclave_cid)
+                .enclave_vsock_port(args.enclave_vsock_port)
+                .enclave_cpu_count(args.enclave_cpu_count)
+                .enclave_memory_size(args.enclave_memory_size)
+                .enclave_elf_file(args.enclave_elf_file)
+                .debug_mode(args.debug_mode)
+                .build(),
+        )
+        .agent_create_options(
+            AgentCreateOptions::builder()
+                .service_options(
+                    AgentServiceOptions::builder()
+                        .region(args.region)
+                        .namespace(args.namespace)
+                        .service_name(enclave_agent_service_name(ENCLAVE_AGENT_VERSION))
+                        .port(args.enclave_agent_grpc_server_port)
+                        .build(),
+                )
+                .log_level(args.log_level)
+                .build(),
+        )
+        .build())
 }
 
 #[tokio::main]
 async fn main() -> Result<(), EnclaveAgentError> {
     let args = EnclaveAgentArgs::parse();
-    let agent_options = EnclaveAgentCreateOptions::from(args);
+    let agent_options = create_options_from_args(args).await?;
     start_enclave_agent(agent_options).await?;
     Ok(())
 }

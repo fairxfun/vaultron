@@ -7,7 +7,7 @@ import "vaultron/enclave/common/v1/types.proto";
 message GetAttributesRequest {}
 
 message GetAttributesResponse {
-  string                                 tag                 = 1;
+  string                                 git_revision        = 1;
   bytes                                  enclave_pcr0        = 2;
   vaultron.enclave.common.v1.EnclaveType enclave_type        = 3;
   bytes                                  internal_public_key = 4;

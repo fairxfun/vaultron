@@ -29,4 +29,6 @@ message ReplyClusterKeySyncRequest {
   bytes                                  responder_doc = 2;
 }
 
-message ReplyClusterKeySyncResponse {}
+message ReplyClusterKeySyncResponse {
+  bytes cluster_public_key = 1;
+}

@@ -1,34 +1,41 @@
-use crate::ServiceDiscoveryError;
+use crate::VaultronServiceDiscoveryError;
 use aws_sdk_servicediscovery::types::{HealthStatus, Instance, InstanceSummary};
 use std::collections::HashMap;
 use typed_builder::TypedBuilder;
 
-#[derive(Debug, Clone, TypedBuilder)]
-pub struct VaultronInstance {
-    pub id: String,
-    pub attributes: HashMap<String, String>,
+pub trait ServiceAttributesTrait: Sized + Default + Clone + Send + Sync + 'static {
+    fn into_attributes(self) -> HashMap<String, String>;
+    fn from_attributes(attributes: HashMap<String, String>) -> Result<Self, VaultronServiceDiscoveryError>;
 }
 
-impl TryFrom<&InstanceSummary> for VaultronInstance {
-    type Error = ServiceDiscoveryError;
+#[derive(Debug, Clone, TypedBuilder)]
+pub struct VaultronServiceInstance<A: ServiceAttributesTrait> {
+    pub id: String,
+    pub attributes: A,
+}
+
+impl<A: ServiceAttributesTrait> TryFrom<&InstanceSummary> for VaultronServiceInstance<A> {
+    type Error = VaultronServiceDiscoveryError;
 
     fn try_from(instance: &InstanceSummary) -> Result<Self, Self::Error> {
         match instance.id.as_ref() {
             Some(id) => Ok(Self {
                 id: id.clone(),
-                attributes: instance.attributes.clone().unwrap_or_default(),
+                attributes: A::from_attributes(instance.attributes.clone().unwrap_or_default())?,
             }),
-            None => Err(ServiceDiscoveryError::InstanceNotFound),
+            None => Err(VaultronServiceDiscoveryError::InstanceNotFound),
         }
     }
 }
 
-impl From<&Instance> for VaultronInstance {
-    fn from(instance: &Instance) -> Self {
-        Self {
+impl<A: ServiceAttributesTrait> TryFrom<&Instance> for VaultronServiceInstance<A> {
+    type Error = VaultronServiceDiscoveryError;
+
+    fn try_from(instance: &Instance) -> Result<Self, Self::Error> {
+        Ok(Self {
             id: instance.id.clone(),
-            attributes: instance.attributes.clone().unwrap_or_default(),
-        }
+            attributes: A::from_attributes(instance.attributes.clone().unwrap_or_default())?,
+        })
     }
 }
 

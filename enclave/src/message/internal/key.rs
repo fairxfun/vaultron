@@ -14,6 +14,9 @@ impl InternalMessageHandler {
         _request: &InitClusterKeyRequest,
     ) -> Result<InitClusterKeyResponse, EnclaveError> {
         info!("Received init cluster key request");
+        if self.cluster_handler.is_handler_initialized().await {
+            return Err(EnclaveError::ClusterAlreadyInitialized);
+        }
         let cluster_seed = self.context.nsm_handle.get_random_bytes(ENCRYPTION_KEY_LENGTH)?;
         let cluster_public_key = self
             .cluster_handler
@@ -83,6 +86,8 @@ impl InternalMessageHandler {
         if cluster_public_key != responder_response.cluster_public_key {
             return Err(EnclaveError::InvalidClusterPublicKeyError);
         }
-        Ok(ReplyClusterKeySyncResponse::builder().build())
+        Ok(ReplyClusterKeySyncResponse::builder()
+            .cluster_public_key(cluster_public_key)
+            .build())
     }
 }
