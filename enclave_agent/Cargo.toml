@@ -13,12 +13,14 @@ path = "src/main.rs"
 [dependencies]
 anyhow = {version = "1.0.97"}
 async-trait = {version = "0.1.64"}
+enclave_attestation = {path = "../enclave_attestation"}
 enclave_grpc = {path = "../enclave_grpc", features = ["server"]}
-enclave_protos = {path = "../enclave_protos", features = ["vaultron-common-v1", "vaultron-agent-v1", "vaultron-enclave-v1"]}
+enclave_protos = {path = "../enclave_protos", default-features = false, features = ["vaultron-common-v1", "vaultron-agent-v1", "vaultron-service-v1", "vaultron-enclave-v1"]}
 enclave_vsock = {path = "../enclave_vsock"}
 service_discovery = {path = "../service_discovery"}
 env_logger = {version = "0.11.7"}
 log = {version = "0.4.26"}
+hex = {version = "0.4.3"}
 prost = {version = "0.11.9"}
 reqwest = {version = "0.12.12"}
 serde = {version = "1.0.219", features = ["derive"]}

@@ -1,4 +1,86 @@
 // @generated
+impl serde::Serialize for CoordinatorError {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let variant = match self {
+            Self::Unspecified => "Coordinator_ERROR_UNSPECIFIED",
+            Self::UnknownError => "Coordinator_ERROR_UNKNOWN_ERROR",
+            Self::InvalidRequestError => "Coordinator_ERROR_INVALID_REQUEST_ERROR",
+            Self::NoWorkerAvailableError => "COORDINATOR_ERROR_NO_WORKER_AVAILABLE_ERROR",
+            Self::NotReadyError => "COORDINATOR_ERROR_NOT_READY_ERROR",
+        };
+        serializer.serialize_str(variant)
+    }
+}
+impl<'de> serde::Deserialize<'de> for CoordinatorError {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "Coordinator_ERROR_UNSPECIFIED",
+            "Coordinator_ERROR_UNKNOWN_ERROR",
+            "Coordinator_ERROR_INVALID_REQUEST_ERROR",
+            "COORDINATOR_ERROR_NO_WORKER_AVAILABLE_ERROR",
+            "COORDINATOR_ERROR_NOT_READY_ERROR",
+        ];
+
+        struct GeneratedVisitor;
+
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = CoordinatorError;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                write!(formatter, "expected one of: {:?}", &FIELDS)
+            }
+
+            fn visit_i64<E>(self, v: i64) -> std::result::Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                use std::convert::TryFrom;
+                i32::try_from(v)
+                    .ok()
+                    .and_then(CoordinatorError::from_i32)
+                    .ok_or_else(|| {
+                        serde::de::Error::invalid_value(serde::de::Unexpected::Signed(v), &self)
+                    })
+            }
+
+            fn visit_u64<E>(self, v: u64) -> std::result::Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                use std::convert::TryFrom;
+                i32::try_from(v)
+                    .ok()
+                    .and_then(CoordinatorError::from_i32)
+                    .ok_or_else(|| {
+                        serde::de::Error::invalid_value(serde::de::Unexpected::Unsigned(v), &self)
+                    })
+            }
+
+            fn visit_str<E>(self, value: &str) -> std::result::Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                match value {
+                    "Coordinator_ERROR_UNSPECIFIED" => Ok(CoordinatorError::Unspecified),
+                    "Coordinator_ERROR_UNKNOWN_ERROR" => Ok(CoordinatorError::UnknownError),
+                    "Coordinator_ERROR_INVALID_REQUEST_ERROR" => Ok(CoordinatorError::InvalidRequestError),
+                    "COORDINATOR_ERROR_NO_WORKER_AVAILABLE_ERROR" => Ok(CoordinatorError::NoWorkerAvailableError),
+                    "COORDINATOR_ERROR_NOT_READY_ERROR" => Ok(CoordinatorError::NotReadyError),
+                    _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),
+                }
+            }
+        }
+        deserializer.deserialize_any(GeneratedVisitor)
+    }
+}
 impl serde::Serialize for EnclaveAgentError {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -14,6 +96,8 @@ impl serde::Serialize for EnclaveAgentError {
             Self::DescribeEnclaveError => "ENCLAVE_AGENT_ERROR_DESCRIBE_ENCLAVE_ERROR",
             Self::IoError => "ENCLAVE_AGENT_ERROR_IO_ERROR",
             Self::SerdeJsonError => "ENCLAVE_AGENT_ERROR_SERDE_JSON_ERROR",
+            Self::ResponseDecodeError => "ENCLAVE_AGENT_ERROR_RESPONSE_DECODE_ERROR",
+            Self::VsockClientError => "ENCLAVE_AGENT_ERROR_VSOCK_CLIENT_ERROR",
         };
         serializer.serialize_str(variant)
     }
@@ -33,6 +117,8 @@ impl<'de> serde::Deserialize<'de> for EnclaveAgentError {
             "ENCLAVE_AGENT_ERROR_DESCRIBE_ENCLAVE_ERROR",
             "ENCLAVE_AGENT_ERROR_IO_ERROR",
             "ENCLAVE_AGENT_ERROR_SERDE_JSON_ERROR",
+            "ENCLAVE_AGENT_ERROR_RESPONSE_DECODE_ERROR",
+            "ENCLAVE_AGENT_ERROR_VSOCK_CLIENT_ERROR",
         ];
 
         struct GeneratedVisitor;
@@ -83,6 +169,8 @@ impl<'de> serde::Deserialize<'de> for EnclaveAgentError {
                     "ENCLAVE_AGENT_ERROR_DESCRIBE_ENCLAVE_ERROR" => Ok(EnclaveAgentError::DescribeEnclaveError),
                     "ENCLAVE_AGENT_ERROR_IO_ERROR" => Ok(EnclaveAgentError::IoError),
                     "ENCLAVE_AGENT_ERROR_SERDE_JSON_ERROR" => Ok(EnclaveAgentError::SerdeJsonError),
+                    "ENCLAVE_AGENT_ERROR_RESPONSE_DECODE_ERROR" => Ok(EnclaveAgentError::ResponseDecodeError),
+                    "ENCLAVE_AGENT_ERROR_VSOCK_CLIENT_ERROR" => Ok(EnclaveAgentError::VsockClientError),
                     _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),
                 }
             }
@@ -265,6 +353,11 @@ impl serde::Serialize for StatusCode {
                         .ok_or_else(|| serde::ser::Error::custom(format!("Invalid variant {}", *v)))?;
                     struct_ser.serialize_field("enclaveAgentError", &v)?;
                 }
+                status_code::Error::CoordinatorError(v) => {
+                    let v = CoordinatorError::from_i32(*v)
+                        .ok_or_else(|| serde::ser::Error::custom(format!("Invalid variant {}", *v)))?;
+                    struct_ser.serialize_field("coordinatorError", &v)?;
+                }
             }
         }
         struct_ser.end()
@@ -284,6 +377,8 @@ impl<'de> serde::Deserialize<'de> for StatusCode {
             "enclaveError",
             "enclave_agent_error",
             "enclaveAgentError",
+            "coordinator_error",
+            "coordinatorError",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -292,6 +387,7 @@ impl<'de> serde::Deserialize<'de> for StatusCode {
             ErrorMessage,
             EnclaveError,
             EnclaveAgentError,
+            CoordinatorError,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -317,6 +413,7 @@ impl<'de> serde::Deserialize<'de> for StatusCode {
                             "errorMessage" | "error_message" => Ok(GeneratedField::ErrorMessage),
                             "enclaveError" | "enclave_error" => Ok(GeneratedField::EnclaveError),
                             "enclaveAgentError" | "enclave_agent_error" => Ok(GeneratedField::EnclaveAgentError),
+                            "coordinatorError" | "coordinator_error" => Ok(GeneratedField::CoordinatorError),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -364,6 +461,12 @@ impl<'de> serde::Deserialize<'de> for StatusCode {
                                 return Err(serde::de::Error::duplicate_field("enclaveAgentError"));
                             }
                             error__ = map.next_value::<::std::option::Option<EnclaveAgentError>>()?.map(|x| status_code::Error::EnclaveAgentError(x as i32));
+                        }
+                        GeneratedField::CoordinatorError => {
+                            if error__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("coordinatorError"));
+                            }
+                            error__ = map.next_value::<::std::option::Option<CoordinatorError>>()?.map(|x| status_code::Error::CoordinatorError(x as i32));
                         }
                     }
                 }

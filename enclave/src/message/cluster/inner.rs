@@ -35,7 +35,7 @@ impl ClusterMessageHandlerInner {
 
     pub async fn process_request(&self, r: &EnclaveClusterRequest) -> EnclaveResponse {
         if self.cluster_type == EnclaveType::Seed {
-            return EnclaveResponse::error(EnclaveError::SeedCannotProcessRequest);
+            return EnclaveResponse::enclave_error(EnclaveError::SeedCannotProcessRequest);
         }
 
         match &r.request {
@@ -43,10 +43,10 @@ impl ClusterMessageHandlerInner {
                 let result = self.handle_create_user_wallet_request(request).await;
                 match result {
                     Ok(response) => self.build_response(request, &response),
-                    Err(err) => EnclaveResponse::error(err),
+                    Err(err) => EnclaveResponse::enclave_error(err),
                 }
             }
-            _ => EnclaveResponse::error(EnclaveError::InvalidRequestError),
+            _ => EnclaveResponse::enclave_error(EnclaveError::InvalidRequestError),
         }
     }
 
@@ -71,7 +71,7 @@ impl ClusterMessageHandlerInner {
             .generate_attestation_document(user_data, public_key)
         {
             Ok(doc) => EnclaveResponse::success(doc),
-            Err(err) => EnclaveResponse::error(err),
+            Err(err) => EnclaveResponse::enclave_error(err),
         }
     }
 }

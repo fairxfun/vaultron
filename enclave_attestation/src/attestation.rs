@@ -3,6 +3,7 @@ use aws_nitro_enclaves_cose::crypto::Openssl;
 use aws_nitro_enclaves_cose::CoseSign1;
 use aws_nitro_enclaves_nsm_api::api::AttestationDoc;
 use enclave_protos::vaultron::enclave::attestation::v1::AttestationDocument as AttestationDocProto;
+use log::error;
 use openssl::{
     stack::Stack,
     x509::{
@@ -11,7 +12,6 @@ use openssl::{
     },
 };
 use std::time::{SystemTime, UNIX_EPOCH};
-
 const MAX_ATTESTATION_AGE_SECONDS: u64 = 300;
 const ROOT_CERT_PATH: &str = "/fairx/certs/aws-nitro-enclaves-root.pem";
 
@@ -78,6 +78,7 @@ impl AttestationParser {
         // Verify PCR0 matches expected value
         let pcr0 = doc.pcrs.get(&0).ok_or(EnclaveAttestationError::Pcr0Mismatch)?;
         if pcr0 != expected_pcr0 {
+            error!("PCR0 mismatch: expected {:?}, got {:?}", expected_pcr0, pcr0);
             return Err(EnclaveAttestationError::Pcr0Mismatch);
         }
 

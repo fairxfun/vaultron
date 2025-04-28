@@ -10,6 +10,7 @@ aws-nitro-enclaves-nsm-api = { git = "https://github.com/aws/aws-nitro-enclaves-
 aws-nitro-enclaves-cose = { git = "https://github.com/awslabs/aws-nitro-enclaves-cose.git", rev = "6064f82"}
 enclave_protos = {path = "../enclave_protos", default-features = false, features = ["vaultron-enclave-attestation-v1"]}
 hex = {version = "0.4"}
+log = {version = "0.4.26"}
 openssl = { version = "0.10.72", features = ["vendored"] }
 serde_cbor = {version = "0.11.2"}
 thiserror = {version = "2.0.12"}

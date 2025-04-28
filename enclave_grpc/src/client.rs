@@ -4,10 +4,28 @@ use tonic::transport::{Certificate, Channel, ClientTlsConfig, Endpoint};
 
 pub async fn connect(options: &ClientOptions) -> Result<Channel> {
     let uri = options.to_uri()?;
+    let mut endpoint = Endpoint::from(uri);
+
+    if let Some(connect_timeout_ms) = options.connect_timeout_ms {
+        endpoint = endpoint.connect_timeout(std::time::Duration::from_millis(connect_timeout_ms));
+    }
+
+    if let Some(request_timeout_ms) = options.request_timeout_ms {
+        endpoint = endpoint.timeout(std::time::Duration::from_millis(request_timeout_ms));
+    }
+
+    if let Some(keep_alive_while_idle) = options.keep_alive_while_idle {
+        endpoint = endpoint.keep_alive_while_idle(keep_alive_while_idle);
+    }
+
+    if let Some(keep_alive_timeout_ms) = options.keep_alive_timeout_ms {
+        endpoint = endpoint.keep_alive_timeout(std::time::Duration::from_millis(keep_alive_timeout_ms));
+    }
+
     let channel = if let Some(tls) = tls_config(options).await? {
-        Endpoint::from(uri).tls_config(tls)?.connect_lazy()
+        endpoint.tls_config(tls)?.connect_lazy()
     } else {
-        Endpoint::from(uri).connect_lazy()
+        endpoint.connect_lazy()
     };
     Ok(channel)
 }

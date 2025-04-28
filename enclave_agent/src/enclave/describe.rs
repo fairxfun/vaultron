@@ -26,7 +26,7 @@ impl EnclaveController {
         if output.status.success() {
             let infos: Vec<DescribeEnclaveInfo> = serde_json::from_str(&String::from_utf8_lossy(&output.stdout))?;
             for info in infos {
-                if info.enclave_name == self.options.enclave_name {
+                if info.enclave_name == self.options.name {
                     return Ok(Some(info));
                 }
             }

@@ -1,11 +1,16 @@
 use super::VaultronServiceDiscoveryHandler;
 use crate::{
-    ServiceAttributesTrait, VaultronInstanceHealthStatusMap, VaultronServiceDiscoveryError, VaultronServiceInstance,
-    VaultronServiceQuerierTrait,
+    ServiceInstanceAttributesTrait, VaultronServiceDiscoveryError, VaultronServiceInstance,
+    VaultronServiceQuerierTrait, VaultronServiceTags,
 };
 
 #[async_trait::async_trait]
-impl<A: ServiceAttributesTrait> VaultronServiceQuerierTrait<A> for VaultronServiceDiscoveryHandler<A> {
+impl<A: ServiceInstanceAttributesTrait> VaultronServiceQuerierTrait<A> for VaultronServiceDiscoveryHandler<A> {
+    async fn get_service_tags(&self) -> Result<VaultronServiceTags, VaultronServiceDiscoveryError> {
+        let tags = self.list_resource_tags().await?;
+        Ok(tags.try_into()?)
+    }
+
     async fn list_instances(&self) -> Result<Vec<VaultronServiceInstance<A>>, VaultronServiceDiscoveryError> {
         let mut instances = Vec::new();
         let mut next_token = None;
@@ -45,23 +50,6 @@ impl<A: ServiceAttributesTrait> VaultronServiceQuerierTrait<A> for VaultronServi
         match response.instance() {
             Some(instance) => Ok(instance.try_into()?),
             None => Err(VaultronServiceDiscoveryError::InstanceNotFound),
-        }
-    }
-
-    async fn get_instance_health_status(
-        &self,
-        instance_ids: Vec<String>,
-    ) -> Result<VaultronInstanceHealthStatusMap, VaultronServiceDiscoveryError> {
-        let response = self
-            .aws_client
-            .get_instances_health_status()
-            .set_service_id(Some(self.service_id.clone()))
-            .set_instances(Some(instance_ids))
-            .send()
-            .await?;
-        match response.status() {
-            Some(status) => Ok(status.into()),
-            None => Err(VaultronServiceDiscoveryError::InstanceStatusUnknown),
         }
     }
 }

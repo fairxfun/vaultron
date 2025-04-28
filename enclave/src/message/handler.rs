@@ -39,14 +39,14 @@ impl VsockMessageHandlerTrait for MessageHandler {
                     }
                     _ => {
                         warn!("Unknown message type");
-                        EnclaveResponse::error(EnclaveError::InvalidRequestError)
+                        EnclaveResponse::enclave_error(EnclaveError::InvalidRequestError)
                     }
                 };
                 response.encode_to_vec()
             }
             Err(err) => {
                 warn!("Error decoding message: {}", err);
-                EnclaveResponse::error(EnclaveError::InvalidRequestError).encode_to_vec()
+                EnclaveResponse::enclave_error(EnclaveError::InvalidRequestError).encode_to_vec()
             }
         }
     }

@@ -25,6 +25,18 @@ impl serde::Serialize for ClientOptions {
         if self.ssl_server_name.is_some() {
             len += 1;
         }
+        if self.connect_timeout_ms.is_some() {
+            len += 1;
+        }
+        if self.request_timeout_ms.is_some() {
+            len += 1;
+        }
+        if self.keep_alive_while_idle.is_some() {
+            len += 1;
+        }
+        if self.keep_alive_timeout_ms.is_some() {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("vaultron.service.v1.ClientOptions", len)?;
         if let Some(v) = self.host.as_ref() {
             struct_ser.serialize_field("host", v)?;
@@ -43,6 +55,18 @@ impl serde::Serialize for ClientOptions {
         }
         if let Some(v) = self.ssl_server_name.as_ref() {
             struct_ser.serialize_field("sslServerName", v)?;
+        }
+        if let Some(v) = self.connect_timeout_ms.as_ref() {
+            struct_ser.serialize_field("connectTimeoutMs", ToString::to_string(&v).as_str())?;
+        }
+        if let Some(v) = self.request_timeout_ms.as_ref() {
+            struct_ser.serialize_field("requestTimeoutMs", ToString::to_string(&v).as_str())?;
+        }
+        if let Some(v) = self.keep_alive_while_idle.as_ref() {
+            struct_ser.serialize_field("keepAliveWhileIdle", v)?;
+        }
+        if let Some(v) = self.keep_alive_timeout_ms.as_ref() {
+            struct_ser.serialize_field("keepAliveTimeoutMs", ToString::to_string(&v).as_str())?;
         }
         struct_ser.end()
     }
@@ -64,6 +88,14 @@ impl<'de> serde::Deserialize<'de> for ClientOptions {
             "sslCertPath",
             "ssl_server_name",
             "sslServerName",
+            "connect_timeout_ms",
+            "connectTimeoutMs",
+            "request_timeout_ms",
+            "requestTimeoutMs",
+            "keep_alive_while_idle",
+            "keepAliveWhileIdle",
+            "keep_alive_timeout_ms",
+            "keepAliveTimeoutMs",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -74,6 +106,10 @@ impl<'de> serde::Deserialize<'de> for ClientOptions {
             SslCert,
             SslCertPath,
             SslServerName,
+            ConnectTimeoutMs,
+            RequestTimeoutMs,
+            KeepAliveWhileIdle,
+            KeepAliveTimeoutMs,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -101,6 +137,10 @@ impl<'de> serde::Deserialize<'de> for ClientOptions {
                             "sslCert" | "ssl_cert" => Ok(GeneratedField::SslCert),
                             "sslCertPath" | "ssl_cert_path" => Ok(GeneratedField::SslCertPath),
                             "sslServerName" | "ssl_server_name" => Ok(GeneratedField::SslServerName),
+                            "connectTimeoutMs" | "connect_timeout_ms" => Ok(GeneratedField::ConnectTimeoutMs),
+                            "requestTimeoutMs" | "request_timeout_ms" => Ok(GeneratedField::RequestTimeoutMs),
+                            "keepAliveWhileIdle" | "keep_alive_while_idle" => Ok(GeneratedField::KeepAliveWhileIdle),
+                            "keepAliveTimeoutMs" | "keep_alive_timeout_ms" => Ok(GeneratedField::KeepAliveTimeoutMs),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -126,6 +166,10 @@ impl<'de> serde::Deserialize<'de> for ClientOptions {
                 let mut ssl_cert__ = None;
                 let mut ssl_cert_path__ = None;
                 let mut ssl_server_name__ = None;
+                let mut connect_timeout_ms__ = None;
+                let mut request_timeout_ms__ = None;
+                let mut keep_alive_while_idle__ = None;
+                let mut keep_alive_timeout_ms__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
                         GeneratedField::Host => {
@@ -166,6 +210,36 @@ impl<'de> serde::Deserialize<'de> for ClientOptions {
                             }
                             ssl_server_name__ = map.next_value()?;
                         }
+                        GeneratedField::ConnectTimeoutMs => {
+                            if connect_timeout_ms__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("connectTimeoutMs"));
+                            }
+                            connect_timeout_ms__ = 
+                                map.next_value::<::std::option::Option<::pbjson::private::NumberDeserialize<_>>>()?.map(|x| x.0)
+                            ;
+                        }
+                        GeneratedField::RequestTimeoutMs => {
+                            if request_timeout_ms__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("requestTimeoutMs"));
+                            }
+                            request_timeout_ms__ = 
+                                map.next_value::<::std::option::Option<::pbjson::private::NumberDeserialize<_>>>()?.map(|x| x.0)
+                            ;
+                        }
+                        GeneratedField::KeepAliveWhileIdle => {
+                            if keep_alive_while_idle__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("keepAliveWhileIdle"));
+                            }
+                            keep_alive_while_idle__ = map.next_value()?;
+                        }
+                        GeneratedField::KeepAliveTimeoutMs => {
+                            if keep_alive_timeout_ms__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("keepAliveTimeoutMs"));
+                            }
+                            keep_alive_timeout_ms__ = 
+                                map.next_value::<::std::option::Option<::pbjson::private::NumberDeserialize<_>>>()?.map(|x| x.0)
+                            ;
+                        }
                     }
                 }
                 Ok(ClientOptions {
@@ -175,6 +249,10 @@ impl<'de> serde::Deserialize<'de> for ClientOptions {
                     ssl_cert: ssl_cert__,
                     ssl_cert_path: ssl_cert_path__,
                     ssl_server_name: ssl_server_name__,
+                    connect_timeout_ms: connect_timeout_ms__,
+                    request_timeout_ms: request_timeout_ms__,
+                    keep_alive_while_idle: keep_alive_while_idle__,
+                    keep_alive_timeout_ms: keep_alive_timeout_ms__,
                 })
             }
         }

@@ -1,6 +1,7 @@
 use crate::{EnclaveAgentError, EnclaveCreateOptions};
 use anyhow::Result;
-use enclave_protos::vaultron::enclave::v1::{EnclaveError as EnclaveProtoError, EnclaveRequest, EnclaveResponse};
+use enclave_protos::vaultron::common::v1::EnclaveAgentError as EnclaveAgentProtoError;
+use enclave_protos::vaultron::enclave::v1::{EnclaveRequest, EnclaveResponse};
 use enclave_vsock::{create_vsock_client, VsockClientTrait};
 use log::{error, info};
 use prost::Message;
@@ -36,12 +37,12 @@ impl EnclaveMessageHandler {
                 Ok(response) => response,
                 Err(e) => {
                     error!("Failed to decode enclave response: {:?}", e);
-                    EnclaveProtoError::ResponseProtobufDecodeError.into()
+                    EnclaveAgentProtoError::ResponseDecodeError.into()
                 }
             },
             Err(e) => {
                 error!("Failed to send enclave request: {:?}", e);
-                EnclaveProtoError::VsockClientError.into()
+                EnclaveAgentProtoError::VsockClientError.into()
             }
         }
     }

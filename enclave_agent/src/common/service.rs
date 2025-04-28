@@ -1,13 +1,6 @@
-use super::CreateOptions;
-use crate::{
-    EnclaveAgentError, DEFAULT_ENCLAVE_AGENT_GRPC_SERVER_PORT, ENCLAVE_AGENT_GIT_REVISION, ENCLAVE_AGENT_VERSION,
-};
-use service_discovery::{
-    create_service_discovery_register, ServiceAttributesTrait, VaultronServiceDiscoveryError,
-    VaultronServiceRegisterTrait,
-};
+use crate::{DEFAULT_ENCLAVE_AGENT_GRPC_SERVER_PORT, ENCLAVE_AGENT_GIT_REVISION, ENCLAVE_AGENT_VERSION};
+use service_discovery::{ServiceInstanceAttributesTrait, VaultronServiceDiscoveryError};
 use std::collections::HashMap;
-use std::sync::Arc;
 use typed_builder::TypedBuilder;
 
 #[derive(Debug, Clone, Default, TypedBuilder)]
@@ -22,7 +15,7 @@ pub struct EnclaveAgentServiceAttributes {
     pub git_revision: String,
 }
 
-impl ServiceAttributesTrait for EnclaveAgentServiceAttributes {
+impl ServiceInstanceAttributesTrait for EnclaveAgentServiceAttributes {
     fn into_attributes(self) -> HashMap<String, String> {
         let mut hash_map = HashMap::new();
         hash_map.insert("host".to_string(), self.host.clone());
@@ -54,20 +47,4 @@ impl ServiceAttributesTrait for EnclaveAgentServiceAttributes {
             .git_revision(git_revision)
             .build())
     }
-}
-
-pub(crate) async fn create_enclave_agent_service_register(
-    options: &CreateOptions,
-) -> Result<Arc<Box<dyn VaultronServiceRegisterTrait<EnclaveAgentServiceAttributes>>>, EnclaveAgentError> {
-    let attributes = EnclaveAgentServiceAttributes::builder()
-        .host(options.ec2_instance_options.instance_address.clone())
-        .port(options.agent_create_options.service_options.port)
-        .build();
-    let service_register = create_service_discovery_register::<EnclaveAgentServiceAttributes>(
-        (&options.agent_create_options.service_options).into(),
-        attributes,
-        options.ec2_instance_options.instance_id.clone(),
-    )
-    .await?;
-    Ok(service_register)
 }

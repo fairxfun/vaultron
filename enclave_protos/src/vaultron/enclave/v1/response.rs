@@ -1,5 +1,7 @@
 pub use crate::gen::vaultron::enclave::v1::*;
 
+use crate::vaultron::common::v1::CoordinatorError;
+use crate::vaultron::common::v1::EnclaveAgentError;
 pub use crate::vaultron::common::v1::EnclaveError;
 pub use crate::vaultron::common::v1::StatusCode;
 
@@ -11,20 +13,25 @@ impl EnclaveResponse {
             .build()
     }
 
-    pub fn error<E>(err: E) -> Self
+    pub fn enclave_error<E>(err: E) -> Self
     where
         E: Into<EnclaveError>,
     {
         Self::builder().code(StatusCode::enclave_error(err)).build()
     }
 
-    pub fn unknown_error<T>(error_message: T) -> Self
+    pub fn enclave_agent_error<E>(err: E) -> Self
     where
-        T: ToString,
+        E: Into<EnclaveAgentError>,
     {
-        Self::builder()
-            .code(StatusCode::enclave_unknown_error(error_message))
-            .build()
+        Self::builder().code(StatusCode::enclave_agent_error(err)).build()
+    }
+
+    pub fn coordinator_error<E>(err: E) -> Self
+    where
+        E: Into<CoordinatorError>,
+    {
+        Self::builder().code(StatusCode::coordinator_error(err)).build()
     }
 
     pub fn is_success(&self) -> Result<(), EnclaveError> {
@@ -46,6 +53,18 @@ impl EnclaveResponse {
 
 impl From<EnclaveError> for EnclaveResponse {
     fn from(err: EnclaveError) -> Self {
-        Self::error(err)
+        Self::enclave_error(err)
+    }
+}
+
+impl From<EnclaveAgentError> for EnclaveResponse {
+    fn from(err: EnclaveAgentError) -> Self {
+        Self::enclave_agent_error(err)
+    }
+}
+
+impl From<CoordinatorError> for EnclaveResponse {
+    fn from(err: CoordinatorError) -> Self {
+        Self::coordinator_error(err)
     }
 }

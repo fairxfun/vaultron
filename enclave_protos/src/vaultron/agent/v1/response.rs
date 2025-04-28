@@ -97,3 +97,9 @@ impl EnclaveAgentResponse {
         }
     }
 }
+
+impl From<EnclaveAgentError> for EnclaveAgentResponse {
+    fn from(err: EnclaveAgentError) -> Self {
+        Self::error(err)
+    }
+}

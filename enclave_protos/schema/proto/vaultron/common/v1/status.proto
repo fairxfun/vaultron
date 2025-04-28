@@ -8,6 +8,7 @@ message StatusCode {
   oneof error {
     EnclaveError      enclave_error       = 3;
     EnclaveAgentError enclave_agent_error = 4;
+    CoordinatorError  coordinator_error   = 5;
   }
 }
 
@@ -47,4 +48,14 @@ enum EnclaveAgentError {
   ENCLAVE_AGENT_ERROR_DESCRIBE_ENCLAVE_ERROR = 5;
   ENCLAVE_AGENT_ERROR_IO_ERROR               = 6;
   ENCLAVE_AGENT_ERROR_SERDE_JSON_ERROR       = 7;
+  ENCLAVE_AGENT_ERROR_RESPONSE_DECODE_ERROR  = 8;
+  ENCLAVE_AGENT_ERROR_VSOCK_CLIENT_ERROR     = 9;
+}
+
+enum CoordinatorError {
+  Coordinator_ERROR_UNSPECIFIED               = 0;
+  Coordinator_ERROR_UNKNOWN_ERROR             = 1;
+  Coordinator_ERROR_INVALID_REQUEST_ERROR     = 2;
+  COORDINATOR_ERROR_NO_WORKER_AVAILABLE_ERROR = 3;
+  COORDINATOR_ERROR_NOT_READY_ERROR           = 4;
 }
