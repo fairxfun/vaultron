@@ -68,6 +68,8 @@ impl EnclaveController {
             info!("waiting for enclave to start");
             sleep(Duration::from_secs(5)).await;
         }
+
+        sleep(Duration::from_secs(5)).await;
         Ok(())
     }
 
@@ -75,15 +77,15 @@ impl EnclaveController {
         let mut args = vec![
             "run-enclave".to_string(),
             "--enclave-name".to_string(),
-            self.options.enclave_name.clone(),
+            self.options.name.clone(),
             "--enclave-cid".to_string(),
-            self.options.enclave_cid.to_string(),
+            self.options.cid.to_string(),
             "--eif-path".to_string(),
-            self.options.enclave_elf_file.to_string(),
+            self.options.elf_file.to_string(),
             "--cpu-count".to_string(),
-            self.options.enclave_cpu_count.to_string(),
+            self.options.cpu_count.to_string(),
             "--memory".to_string(),
-            self.options.enclave_memory_size.to_string(),
+            self.options.memory_size.to_string(),
         ];
         if self.options.debug_mode {
             args.push("--debug-mode".to_string());
@@ -101,7 +103,7 @@ impl EnclaveController {
 
     async fn do_stop_enclave(&self) -> Result<(), EnclaveAgentControllerError> {
         let output = Command::new("nitro-cli")
-            .args(["terminate-enclave", "--enclave-name", &self.options.enclave_name])
+            .args(["terminate-enclave", "--enclave-name", &self.options.name])
             .output()
             .await?;
         if output.status.success() {

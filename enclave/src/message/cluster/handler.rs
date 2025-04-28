@@ -23,6 +23,7 @@ impl ClusterMessageHandler {
         context: Arc<EnclaveServerContext>,
         seed: &[u8],
         enclave_type: EnclaveType,
+        expect_cluster_public_key: Option<Vec<u8>>,
     ) -> Result<Vec<u8>, EnclaveError> {
         if self.is_handler_initialized().await {
             return Err(EnclaveError::ClusterAlreadyInitialized);
@@ -30,9 +31,16 @@ impl ClusterMessageHandler {
 
         let handler = ClusterMessageHandlerInner::new(context, seed, enclave_type)?;
         let public_key = handler.get_cluster_public_key();
+        if let Some(expect_cluster_public_key) = expect_cluster_public_key {
+            if public_key != expect_cluster_public_key {
+                return Err(EnclaveError::InvalidClusterPublicKeyError);
+            }
+        }
+
         info!(
             "Enclave start with type: {:?}, cluster public key: {:?}",
-            enclave_type, public_key
+            enclave_type,
+            hex::encode(&public_key)
         );
         let mut write = self.handler.write().await;
         *write = Some(Arc::new(handler));
@@ -43,7 +51,7 @@ impl ClusterMessageHandler {
         let handler = self.get_message_handler().await;
         match handler {
             Ok(handler) => handler.process_request(request).await,
-            Err(err) => EnclaveResponse::error(err),
+            Err(err) => EnclaveResponse::enclave_error(err),
         }
     }
 

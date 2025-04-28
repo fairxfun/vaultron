@@ -10,7 +10,7 @@ impl InternalMessageHandler {
     ) -> Result<GetAttributesResponse, EnclaveError> {
         info!("Received get attributes request");
         let cluster_key = (self.cluster_handler.get_cluster_public_key().await).ok();
-        let enclave_type = self.cluster_handler.get_cluster_type().await?;
+        let enclave_type = self.cluster_handler.get_cluster_type().await.ok().map(|t| t.into());
         let response = GetAttributesResponse::builder()
             .git_revision(GIT_REVISION.to_string())
             .enclave_pcr0(self.context.settings.pcr0.clone())

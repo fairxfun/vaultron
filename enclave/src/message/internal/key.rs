@@ -20,7 +20,7 @@ impl InternalMessageHandler {
         let cluster_seed = self.context.nsm_handle.get_random_bytes(ENCRYPTION_KEY_LENGTH)?;
         let cluster_public_key = self
             .cluster_handler
-            .initialize(self.context.clone(), &cluster_seed, EnclaveType::Seed)
+            .initialize(self.context.clone(), &cluster_seed, EnclaveType::Seed, None)
             .await?;
         Ok(InitClusterKeyResponse::builder()
             .cluster_public_key(cluster_public_key)
@@ -46,6 +46,7 @@ impl InternalMessageHandler {
         if !self.cluster_handler.is_handler_initialized().await {
             return Err(EnclaveError::ClusterNotInitialized);
         }
+        let cluster_public_key = self.cluster_handler.get_cluster_public_key().await?;
         let expected_pcr0 = self.context.settings.pcr0.clone();
         let requester_doc = self
             .context
@@ -55,6 +56,7 @@ impl InternalMessageHandler {
         let encrypted_cluster_seed = self.cluster_handler.get_encoded_cluster_seed(requester_pubkey).await?;
         Ok(ForwardClusterKeySyncResponse::builder()
             .encrypted_cluster_seed(encrypted_cluster_seed)
+            .cluster_public_key(cluster_public_key)
             .build())
     }
 
@@ -81,11 +83,13 @@ impl InternalMessageHandler {
         let enclave_type = EnclaveType::from_i32(request.enclave_type).unwrap_or(EnclaveType::Seed);
         let cluster_public_key = self
             .cluster_handler
-            .initialize(self.context.clone(), &cluster_seed, enclave_type)
+            .initialize(
+                self.context.clone(),
+                &cluster_seed,
+                enclave_type,
+                Some(responder_response.cluster_public_key),
+            )
             .await?;
-        if cluster_public_key != responder_response.cluster_public_key {
-            return Err(EnclaveError::InvalidClusterPublicKeyError);
-        }
         Ok(ReplyClusterKeySyncResponse::builder()
             .cluster_public_key(cluster_public_key)
             .build())

@@ -1,8 +1,8 @@
-use super::create_enclave_agent_service_register;
 use crate::enclave::EnclaveController;
 use crate::message::{EnclaveAgentMessageHandler, EnclaveMessageHandler};
 use crate::{
-    enclave_agent_trace_init, get_ec2_instance_id, get_ec2_instance_ip, EnclaveAgentError, ENCLAVE_AGENT_GIT_REVISION,
+    enclave_agent_trace_init, get_ec2_instance_id, get_ec2_instance_ip, EnclaveAgentError,
+    EnclaveAgentServiceAttributes, ENCLAVE_AGENT_GIT_REVISION, ENCLAVE_AGENT_VERSION,
 };
 use enclave_grpc::GrpcServer;
 use enclave_protos::vaultron::agent::v1::enclave_agent_service_server::{
@@ -12,21 +12,22 @@ use enclave_protos::vaultron::agent::v1::{EnclaveAgentRequest, EnclaveAgentRespo
 use enclave_protos::vaultron::enclave::v1::{EnclaveRequest, EnclaveResponse};
 use enclave_protos::vaultron::service::v1::ServerOptions;
 use enclave_vsock::VsockClientCreateOptions;
-use log::info;
-use service_discovery::{VaultronServiceConfig, VaultronServiceRegisterTrait};
+use log::{error, info, warn};
+use serde::{Deserialize, Serialize};
+use service_discovery::{create_service_discovery_register, VaultronServiceConfig, VaultronServiceRegisterTrait};
 use std::sync::Arc;
 use tokio::signal::unix::{signal, SignalKind};
 use tonic::{Request, Response, Status};
 use typed_builder::TypedBuilder;
 
-#[derive(Debug, TypedBuilder)]
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct CreateOptions {
     pub ec2_instance_options: Ec2InstanceOptions,
     pub agent_create_options: AgentCreateOptions,
     pub enclave_create_options: EnclaveCreateOptions,
 }
 
-#[derive(Debug, Clone, TypedBuilder)]
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct Ec2InstanceOptions {
     pub instance_id: String,
     pub instance_address: String,
@@ -43,13 +44,13 @@ impl Ec2InstanceOptions {
     }
 }
 
-#[derive(Debug, Clone, TypedBuilder)]
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct AgentCreateOptions {
     pub service_options: AgentServiceOptions,
     pub log_level: String,
 }
 
-#[derive(Debug, Clone, TypedBuilder)]
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct AgentServiceOptions {
     pub region: String,
     pub namespace: String,
@@ -67,36 +68,39 @@ impl From<&AgentServiceOptions> for VaultronServiceConfig {
     }
 }
 
-#[derive(Debug, Clone, TypedBuilder)]
+#[derive(Debug, Clone, Serialize, Deserialize, TypedBuilder)]
 pub struct EnclaveCreateOptions {
-    pub enclave_name: String,
-    pub enclave_cid: u32,
-    pub enclave_vsock_port: u32,
-    pub enclave_cpu_count: u32,
-    pub enclave_memory_size: u32,
-    pub enclave_elf_file: String,
+    pub name: String,
+    pub cid: u32,
+    pub vsock_port: u32,
+    pub cpu_count: u32,
+    pub memory_size: u32,
+    pub elf_file: String,
     pub debug_mode: bool,
+    pub cluster_init_startup: bool,
 }
 
 impl From<&EnclaveCreateOptions> for VsockClientCreateOptions {
     fn from(options: &EnclaveCreateOptions) -> Self {
         VsockClientCreateOptions::builder()
-            .enclave_cid(options.enclave_cid)
-            .enclave_vsock_port(options.enclave_vsock_port)
+            .enclave_cid(options.cid)
+            .enclave_vsock_port(options.vsock_port)
             .build()
     }
 }
 
 #[derive(TypedBuilder)]
 pub struct EnclaveAgent {
-    enclave_message_handler: Arc<EnclaveMessageHandler>,
-    agent_message_handler: Arc<EnclaveAgentMessageHandler>,
+    pub(crate) enclave_message_handler: Arc<EnclaveMessageHandler>,
+    pub(crate) agent_message_handler: Arc<EnclaveAgentMessageHandler>,
 }
 
 impl EnclaveAgent {
     async fn new(options: &CreateOptions) -> Result<Self, EnclaveAgentError> {
         let controller = Arc::new(EnclaveController::new(options.enclave_create_options.clone()));
+        info!("try starting enclave");
         controller.try_start_enclave().await?;
+        info!("enclave started successfully");
         let enclave_message_handler = Arc::new(EnclaveMessageHandler::new(&options.enclave_create_options).await?);
         let agent_message_handler = Arc::new(EnclaveAgentMessageHandler::new(controller));
         Ok(EnclaveAgent::builder()
@@ -124,8 +128,28 @@ impl EnclaveAgentService for EnclaveAgent {
 
 pub async fn start_enclave_agent(options: CreateOptions) -> Result<(), EnclaveAgentError> {
     enclave_agent_trace_init(&options.agent_create_options.log_level)?;
-    info!("Start Enclave agent with git revision: {}", ENCLAVE_AGENT_GIT_REVISION);
+    info!(
+        "Start Enclave agent with version: {} and git revision: {} options: {:?}",
+        ENCLAVE_AGENT_VERSION, ENCLAVE_AGENT_GIT_REVISION, options
+    );
+    let service_register = create_enclave_agent_service_register(&options).await?;
     let agent = EnclaveAgent::new(&options).await?;
+    let service_tags = service_register.get_service_tags().await?;
+    if options.enclave_create_options.cluster_init_startup {
+        info!("try initializing enclave cluster");
+        if service_tags.is_some() {
+            error!("Cluster already initialized");
+            return Err(EnclaveAgentError::ClusterAlreadyInitializedError);
+        }
+        let service_tags = agent
+            .try_init_enclave_cluster_startup(options.enclave_create_options.debug_mode)
+            .await?;
+        service_register.update_service_tags(service_tags).await?;
+        info!("updated vaultron service tags successfully");
+    } else if service_tags.is_none() {
+        return Err(EnclaveAgentError::EnclaveServiceTagEmptyError);
+    }
+
     let server_options = ServerOptions::builder()
         .port(options.agent_create_options.service_options.port)
         .accept_http1(false)
@@ -135,14 +159,29 @@ pub async fn start_enclave_agent(options: CreateOptions) -> Result<(), EnclaveAg
     server
         .start(EnclaveAgentServiceServer::new(agent), server_options)
         .await?;
-    let service_register = create_enclave_agent_service_register(&options).await?;
     info!("Enclave agent started");
     service_register.register_instance().await?;
     wait_for_signal().await?;
     let _ = server.stop().await;
     service_register.deregister_instance().await?;
-    info!("Enclave agent stopped");
+    warn!("Enclave agent stopped");
     Ok(())
+}
+
+async fn create_enclave_agent_service_register(
+    options: &CreateOptions,
+) -> Result<Arc<Box<dyn VaultronServiceRegisterTrait<EnclaveAgentServiceAttributes>>>, EnclaveAgentError> {
+    let attributes = EnclaveAgentServiceAttributes::builder()
+        .host(options.ec2_instance_options.instance_address.clone())
+        .port(options.agent_create_options.service_options.port)
+        .build();
+    let service_register = create_service_discovery_register::<EnclaveAgentServiceAttributes>(
+        (&options.agent_create_options.service_options).into(),
+        attributes,
+        options.ec2_instance_options.instance_id.clone(),
+    )
+    .await?;
+    Ok(service_register)
 }
 
 async fn wait_for_signal() -> Result<(), EnclaveAgentError> {

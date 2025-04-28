@@ -17,11 +17,11 @@ pub struct EnclaveServer {
 impl EnclaveServer {
     pub fn new(context: Arc<EnclaveServerContext>) -> Result<Self, EnclaveError> {
         enclave_trace_init(&context.settings.log_level)?;
-        info!("Start Vaultron enclave with git revision: {}", GIT_REVISION);
-        info!("Start Vaultron enclave with pcr0: {:?}", context.settings.pcr0);
+        info!("Start enclave with git revision: {}", GIT_REVISION);
+        info!("Start enclave with pcr0: {:?}", hex::encode(&context.settings.pcr0));
         info!(
-            "Start Vaultron enclave with local pubkey: {:?}",
-            context.settings.local_key.public_key()
+            "Start enclave with local pubkey: {:?}",
+            hex::encode(context.settings.local_key.public_key())
         );
         let message_handler = create_message_handler(context.clone());
         let message_handler = Arc::new(Box::new(message_handler) as Box<dyn VsockMessageHandlerTrait>);
@@ -49,7 +49,7 @@ impl EnclaveServer {
     }
 }
 
-pub async fn start_vaultron() -> Result<(), EnclaveError> {
+pub async fn start_vaultron_enclave() -> Result<(), EnclaveError> {
     let context = Arc::new(EnclaveServerContext::new().await?);
     let server = EnclaveServer::new(context)?;
     server.start().await

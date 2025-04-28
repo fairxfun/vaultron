@@ -292,10 +292,10 @@ impl serde::Serialize for GetAttributesResponse {
         if !self.enclave_pcr0.is_empty() {
             len += 1;
         }
-        if self.enclave_type != 0 {
+        if !self.internal_public_key.is_empty() {
             len += 1;
         }
-        if !self.internal_public_key.is_empty() {
+        if self.enclave_type.is_some() {
             len += 1;
         }
         if self.cluster_public_key.is_some() {
@@ -308,13 +308,13 @@ impl serde::Serialize for GetAttributesResponse {
         if !self.enclave_pcr0.is_empty() {
             struct_ser.serialize_field("enclavePcr0", pbjson::private::base64::encode(&self.enclave_pcr0).as_str())?;
         }
-        if self.enclave_type != 0 {
-            let v = super::super::common::v1::EnclaveType::from_i32(self.enclave_type)
-                .ok_or_else(|| serde::ser::Error::custom(format!("Invalid variant {}", self.enclave_type)))?;
-            struct_ser.serialize_field("enclaveType", &v)?;
-        }
         if !self.internal_public_key.is_empty() {
             struct_ser.serialize_field("internalPublicKey", pbjson::private::base64::encode(&self.internal_public_key).as_str())?;
+        }
+        if let Some(v) = self.enclave_type.as_ref() {
+            let v = super::super::common::v1::EnclaveType::from_i32(*v)
+                .ok_or_else(|| serde::ser::Error::custom(format!("Invalid variant {}", *v)))?;
+            struct_ser.serialize_field("enclaveType", &v)?;
         }
         if let Some(v) = self.cluster_public_key.as_ref() {
             struct_ser.serialize_field("clusterPublicKey", pbjson::private::base64::encode(&v).as_str())?;
@@ -333,10 +333,10 @@ impl<'de> serde::Deserialize<'de> for GetAttributesResponse {
             "gitRevision",
             "enclave_pcr0",
             "enclavePcr0",
-            "enclave_type",
-            "enclaveType",
             "internal_public_key",
             "internalPublicKey",
+            "enclave_type",
+            "enclaveType",
             "cluster_public_key",
             "clusterPublicKey",
         ];
@@ -345,8 +345,8 @@ impl<'de> serde::Deserialize<'de> for GetAttributesResponse {
         enum GeneratedField {
             GitRevision,
             EnclavePcr0,
-            EnclaveType,
             InternalPublicKey,
+            EnclaveType,
             ClusterPublicKey,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
@@ -371,8 +371,8 @@ impl<'de> serde::Deserialize<'de> for GetAttributesResponse {
                         match value {
                             "gitRevision" | "git_revision" => Ok(GeneratedField::GitRevision),
                             "enclavePcr0" | "enclave_pcr0" => Ok(GeneratedField::EnclavePcr0),
-                            "enclaveType" | "enclave_type" => Ok(GeneratedField::EnclaveType),
                             "internalPublicKey" | "internal_public_key" => Ok(GeneratedField::InternalPublicKey),
+                            "enclaveType" | "enclave_type" => Ok(GeneratedField::EnclaveType),
                             "clusterPublicKey" | "cluster_public_key" => Ok(GeneratedField::ClusterPublicKey),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
@@ -395,8 +395,8 @@ impl<'de> serde::Deserialize<'de> for GetAttributesResponse {
             {
                 let mut git_revision__ = None;
                 let mut enclave_pcr0__ = None;
-                let mut enclave_type__ = None;
                 let mut internal_public_key__ = None;
+                let mut enclave_type__ = None;
                 let mut cluster_public_key__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
@@ -414,12 +414,6 @@ impl<'de> serde::Deserialize<'de> for GetAttributesResponse {
                                 Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
                             ;
                         }
-                        GeneratedField::EnclaveType => {
-                            if enclave_type__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("enclaveType"));
-                            }
-                            enclave_type__ = Some(map.next_value::<super::super::common::v1::EnclaveType>()? as i32);
-                        }
                         GeneratedField::InternalPublicKey => {
                             if internal_public_key__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("internalPublicKey"));
@@ -427,6 +421,12 @@ impl<'de> serde::Deserialize<'de> for GetAttributesResponse {
                             internal_public_key__ = 
                                 Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
                             ;
+                        }
+                        GeneratedField::EnclaveType => {
+                            if enclave_type__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("enclaveType"));
+                            }
+                            enclave_type__ = map.next_value::<::std::option::Option<super::super::common::v1::EnclaveType>>()?.map(|x| x as i32);
                         }
                         GeneratedField::ClusterPublicKey => {
                             if cluster_public_key__.is_some() {
@@ -441,8 +441,8 @@ impl<'de> serde::Deserialize<'de> for GetAttributesResponse {
                 Ok(GetAttributesResponse {
                     git_revision: git_revision__.unwrap_or_default(),
                     enclave_pcr0: enclave_pcr0__.unwrap_or_default(),
-                    enclave_type: enclave_type__.unwrap_or_default(),
                     internal_public_key: internal_public_key__.unwrap_or_default(),
+                    enclave_type: enclave_type__,
                     cluster_public_key: cluster_public_key__,
                 })
             }

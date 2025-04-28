@@ -9,6 +9,15 @@ pub enum EnclaveAgentError {
     #[error("Invalid request error")]
     InvalidRequestError,
 
+    #[error("Cluster already initialized error")]
+    ClusterAlreadyInitializedError,
+
+    #[error("Enclave service tag empty error")]
+    EnclaveServiceTagEmptyError,
+
+    #[error("Enclave info not found error")]
+    EnclaveInfoNotFoundError,
+
     #[error(transparent)]
     ReqwestError(#[from] reqwest::Error),
 
@@ -32,6 +41,15 @@ pub enum EnclaveAgentError {
 
     #[error(transparent)]
     ServiceDiscoveryError(#[from] service_discovery::VaultronServiceDiscoveryError),
+
+    #[error(transparent)]
+    HexError(#[from] hex::FromHexError),
+
+    #[error(transparent)]
+    AttestationError(#[from] enclave_attestation::EnclaveAttestationError),
+
+    #[error("enclave grpc code {0} error")]
+    EnclaveGrpcError(i32),
 
     #[error(transparent)]
     AnyError(#[from] anyhow::Error),

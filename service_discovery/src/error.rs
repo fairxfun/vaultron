@@ -12,6 +12,14 @@ pub enum VaultronServiceDiscoveryError {
     NamespaceNotFound,
     #[error("Service not found")]
     ServiceNotFound,
+    #[error("Service ID or ARN not found")]
+    ServiceIdOrArnNotFound,
+    #[error("Service tag not found")]
+    ServiceTagNotFound,
+    #[error("Service tag value not found")]
+    ServiceTagValueNotFound,
+    #[error(transparent)]
+    FromHexError(#[from] hex::FromHexError),
     #[error("AWS error: {0}")]
     AwsError(#[from] Box<aws_sdk_servicediscovery::Error>),
     #[error("AWS builder error: {0}")]
@@ -20,14 +28,16 @@ pub enum VaultronServiceDiscoveryError {
     AwsListNamespacesError(#[from] Box<aws_sdk_servicediscovery::operation::list_namespaces::ListNamespacesError>),
     #[error("AWS list services error: {0}")]
     AwsListServicesError(#[from] Box<aws_sdk_servicediscovery::operation::list_services::ListServicesError>),
+    #[error("AWS tag resource error: {0}")]
+    AwsTagResourceError(#[from] Box<aws_sdk_servicediscovery::operation::tag_resource::TagResourceError>),
+    #[error("AWS list tags for resource error: {0}")]
+    AwsListTagsForResourceError(
+        #[from] Box<aws_sdk_servicediscovery::operation::list_tags_for_resource::ListTagsForResourceError>,
+    ),
     #[error("AWS list instances error: {0}")]
     AwsListInstancesError(#[from] Box<aws_sdk_servicediscovery::operation::list_instances::ListInstancesError>),
     #[error("AWS get instance error: {0}")]
     AwsGetInstanceError(#[from] Box<aws_sdk_servicediscovery::operation::get_instance::GetInstanceError>),
-    #[error("AWS get instances health status error: {0}")]
-    AwsGetInstancesHealthStatusError(
-        #[from] Box<aws_sdk_servicediscovery::operation::get_instances_health_status::GetInstancesHealthStatusError>,
-    ),
     #[error("AWS register instance error: {0}")]
     AwsRegisterInstanceError(
         #[from] Box<aws_sdk_servicediscovery::operation::register_instance::RegisterInstanceError>,
@@ -77,6 +87,42 @@ impl
 impl
     From<
         aws_smithy_runtime_api::client::result::SdkError<
+            aws_sdk_servicediscovery::operation::tag_resource::TagResourceError,
+            aws_smithy_runtime_api::http::Response,
+        >,
+    > for VaultronServiceDiscoveryError
+{
+    fn from(
+        err: aws_smithy_runtime_api::client::result::SdkError<
+            aws_sdk_servicediscovery::operation::tag_resource::TagResourceError,
+            aws_smithy_runtime_api::http::Response,
+        >,
+    ) -> Self {
+        VaultronServiceDiscoveryError::AwsTagResourceError(Box::new(err.into_service_error()))
+    }
+}
+
+impl
+    From<
+        aws_smithy_runtime_api::client::result::SdkError<
+            aws_sdk_servicediscovery::operation::list_tags_for_resource::ListTagsForResourceError,
+            aws_smithy_runtime_api::http::Response,
+        >,
+    > for VaultronServiceDiscoveryError
+{
+    fn from(
+        err: aws_smithy_runtime_api::client::result::SdkError<
+            aws_sdk_servicediscovery::operation::list_tags_for_resource::ListTagsForResourceError,
+            aws_smithy_runtime_api::http::Response,
+        >,
+    ) -> Self {
+        VaultronServiceDiscoveryError::AwsListTagsForResourceError(Box::new(err.into_service_error()))
+    }
+}
+
+impl
+    From<
+        aws_smithy_runtime_api::client::result::SdkError<
             aws_sdk_servicediscovery::operation::list_instances::ListInstancesError,
             aws_smithy_runtime_api::http::Response,
         >,
@@ -107,24 +153,6 @@ impl
         >,
     ) -> Self {
         VaultronServiceDiscoveryError::AwsGetInstanceError(Box::new(err.into_service_error()))
-    }
-}
-
-impl
-    From<
-        aws_smithy_runtime_api::client::result::SdkError<
-            aws_sdk_servicediscovery::operation::get_instances_health_status::GetInstancesHealthStatusError,
-            aws_smithy_runtime_api::http::Response,
-        >,
-    > for VaultronServiceDiscoveryError
-{
-    fn from(
-        err: aws_smithy_runtime_api::client::result::SdkError<
-            aws_sdk_servicediscovery::operation::get_instances_health_status::GetInstancesHealthStatusError,
-            aws_smithy_runtime_api::http::Response,
-        >,
-    ) -> Self {
-        VaultronServiceDiscoveryError::AwsGetInstancesHealthStatusError(Box::new(err.into_service_error()))
     }
 }
 

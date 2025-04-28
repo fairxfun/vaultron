@@ -28,45 +28,45 @@ impl InternalMessageHandler {
                 let result = self.handle_ping_request(request).await;
                 match result {
                     Ok(response) => self.build_response(request, &response),
-                    Err(err) => EnclaveResponse::error(err),
+                    Err(err) => EnclaveResponse::enclave_error(err),
                 }
             }
             Some(enclave_internal_request::Request::GetAttributesRequest(request)) => {
                 let result = self.handle_get_attributes_request(request).await;
                 match result {
                     Ok(response) => self.build_response(request, &response),
-                    Err(err) => EnclaveResponse::error(err),
+                    Err(err) => EnclaveResponse::enclave_error(err),
                 }
             }
             Some(enclave_internal_request::Request::InitClusterKeyRequest(request)) => {
                 let result = self.handle_init_cluster_key_request(request).await;
                 match result {
                     Ok(response) => self.build_response(request, &response),
-                    Err(err) => EnclaveResponse::error(err),
+                    Err(err) => EnclaveResponse::enclave_error(err),
                 }
             }
             Some(enclave_internal_request::Request::InitClusterKeySyncRequest(request)) => {
                 let result = self.handle_init_cluster_key_sync_request(request).await;
                 match result {
                     Ok(response) => self.build_response(request, &response),
-                    Err(err) => EnclaveResponse::error(err),
+                    Err(err) => EnclaveResponse::enclave_error(err),
                 }
             }
             Some(enclave_internal_request::Request::ForwardClusterKeySyncRequest(request)) => {
                 let result = self.handle_forward_cluster_key_sync_request(request).await;
                 match result {
                     Ok(response) => self.build_padding_response(&response),
-                    Err(err) => EnclaveResponse::error(err),
+                    Err(err) => EnclaveResponse::enclave_error(err),
                 }
             }
             Some(enclave_internal_request::Request::ReplyClusterKeySyncRequest(request)) => {
                 let result = self.handle_reply_cluster_key_sync_request(request).await;
                 match result {
                     Ok(response) => self.build_padding_response(&response),
-                    Err(err) => EnclaveResponse::error(err),
+                    Err(err) => EnclaveResponse::enclave_error(err),
                 }
             }
-            _ => EnclaveResponse::error(EnclaveError::InvalidRequestError),
+            _ => EnclaveResponse::enclave_error(EnclaveError::InvalidRequestError),
         }
     }
 
@@ -91,7 +91,7 @@ impl InternalMessageHandler {
             .generate_attestation_document(user_data, public_key)
         {
             Ok(attestation_doc) => EnclaveResponse::success(attestation_doc),
-            Err(err) => EnclaveResponse::error(err),
+            Err(err) => EnclaveResponse::enclave_error(err),
         }
     }
 }

@@ -1,7 +1,8 @@
 use crate::enclave::EnclaveController;
+use crate::EnclaveAgentControllerError;
 use enclave_protos::vaultron::agent::v1::{
-    enclave_agent_request, DescribeEnclaveResponse, EnclaveAgentRequest, EnclaveAgentResponse, RestartEnclaveResponse,
-    StartEnclaveResponse, StopEnclaveResponse,
+    enclave_agent_request, DescribeEnclaveInfo, DescribeEnclaveResponse, EnclaveAgentRequest, EnclaveAgentResponse,
+    StartEnclaveResponse,
 };
 use enclave_protos::vaultron::common::v1::EnclaveAgentError as EnclaveAgentProtoError;
 use std::sync::Arc;
@@ -23,21 +24,25 @@ impl EnclaveAgentMessageHandler {
                 Ok(_) => StartEnclaveResponse::success().into(),
                 Err(e) => EnclaveAgentResponse::error(e),
             },
-            Some(enclave_agent_request::Request::StopRequest(_r)) => match self.controller.stop_enclave().await {
-                Ok(_) => StopEnclaveResponse::success().into(),
-                Err(e) => EnclaveAgentResponse::error(e),
-            },
-            Some(enclave_agent_request::Request::RestartRequest(_r)) => match self.controller.restart_enclave().await {
-                Ok(_) => RestartEnclaveResponse::success().into(),
-                Err(e) => EnclaveAgentResponse::error(e),
-            },
+            // Some(enclave_agent_request::Request::StopRequest(_r)) => match self.controller.stop_enclave().await {
+            //     Ok(_) => StopEnclaveResponse::success().into(),
+            //     Err(e) => EnclaveAgentResponse::error(e),
+            // },
+            // Some(enclave_agent_request::Request::RestartRequest(_r)) => match self.controller.restart_enclave().await {
+            //     Ok(_) => RestartEnclaveResponse::success().into(),
+            //     Err(e) => EnclaveAgentResponse::error(e),
+            // },
             Some(enclave_agent_request::Request::DescribeRequest(_r)) => {
                 match self.controller.describe_enclave().await {
                     Ok(enclave_info) => DescribeEnclaveResponse::success(enclave_info).into(),
                     Err(e) => EnclaveAgentResponse::error(e),
                 }
             }
-            None => EnclaveAgentResponse::error(EnclaveAgentProtoError::InvalidRequestError),
+            _ => EnclaveAgentProtoError::InvalidRequestError.into(),
         }
+    }
+
+    pub async fn describe_enclave(&self) -> Result<Option<DescribeEnclaveInfo>, EnclaveAgentControllerError> {
+        self.controller.describe_enclave().await
     }
 }

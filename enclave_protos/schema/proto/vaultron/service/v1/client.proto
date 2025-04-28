@@ -3,10 +3,14 @@ syntax = "proto3";
 package vaultron.service.v1;
 
 message ClientOptions {
-  optional string host            = 1;
-  optional uint32 port            = 2;
-  optional bool   is_ssl          = 3;
-  optional string ssl_cert        = 4;
-  optional string ssl_cert_path   = 5;
-  optional string ssl_server_name = 6;
+  optional string host                  = 1;
+  optional uint32 port                  = 2;
+  optional bool   is_ssl                = 3;
+  optional string ssl_cert              = 4;
+  optional string ssl_cert_path         = 5;
+  optional string ssl_server_name       = 6;
+  optional uint64 connect_timeout_ms    = 7;
+  optional uint64 request_timeout_ms    = 8;
+  optional bool   keep_alive_while_idle = 9;
+  optional uint64 keep_alive_timeout_ms = 10;
 }
