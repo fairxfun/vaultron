@@ -16,7 +16,12 @@ build-integration-tester:
 build: build-enclave build-enclave-agent build-integration-tester
 
 img:
-	docker build -t ghcr.io/fairxfun/vaultron-enclave$(if $(DOCKER_TAG),:$(DOCKER_TAG),:latest) -f ./container/enclave/Dockerfile .
+	docker buildx build \
+	--build-arg SOURCE_DATE_EPOCH=$$(date -d "$$(date +%Y-%m-%d)" +%s) \
+	--provenance=false \
+	--output type=docker,name=ghcr.io/fairxfun/vaultron-enclave$(if $(DOCKER_TAG),:$(DOCKER_TAG),:latest),rewrite-timestamp=true \
+	-f ./container/enclave/Dockerfile . \
+	--no-cache
 
 eif:
 	nitro-cli build-enclave --docker-uri ghcr.io/fairxfun/vaultron-enclave$(if $(DOCKER_TAG),:$(DOCKER_TAG),:latest) --output-file vaultron_enclave.eif
