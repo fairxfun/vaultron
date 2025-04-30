@@ -53,6 +53,11 @@ jobs:
             type=semver,pattern={{version}}
             type=sha
 
+      - name: Calculate SOURCE_DATE_EPOCH
+        id: date
+        run: |
+          echo "SOURCE_DATE_EPOCH=$(date -d "$(date +%Y-%m-%d)" +%s)" >> $GITHUB_ENV
+
       - name: Build binaries
         run: make build
         env:
@@ -63,22 +68,27 @@ jobs:
           chmod +x ./scripts/download_aws_enclave_root_cert.sh
           ./scripts/download_aws_enclave_root_cert.sh
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Docker Build and Push
-        uses: docker/build-push-action@v5
+      - name: Docker Build
+        uses: docker/build-push-action@v6.16.0
         with:
           context: .
           file: ./container/enclave/Dockerfile
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          push: true
+          push: false
           no-cache: true
           provenance: false
           build-args: |
-            SOURCE_DATE_EPOCH=$$(date -d "$$(date +%Y-%m-%d)" +%s)
+            SOURCE_DATE_EPOCH=${{ env.SOURCE_DATE_EPOCH }}
           outputs: type=docker,rewrite-timestamp=true
+
+      - name: Docker Push
+        run: |
+          echo "${{ steps.meta.outputs.tags }}" | while read -r tag; do
+            if [ -n "$tag" ] && [ "$tag" != '""' ]; then
+              docker push "$tag"
+            fi
+          done
 
       - name: Build EIF
         id: build_eif
