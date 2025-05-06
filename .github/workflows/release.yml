@@ -23,6 +23,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Get Git Revision
+        id: git_revision
+        run: |
+          echo "VAULTRON_GIT_REVISION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "Using git revision: $(git rev-parse --short HEAD)"
+
       - name: Toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -47,17 +53,42 @@ jobs:
             type=semver,pattern={{version}}
             type=sha
 
+      - name: Calculate SOURCE_DATE_EPOCH
+        id: date
+        run: |
+          echo "SOURCE_DATE_EPOCH=$(date -d "$(date +%Y-%m-%d)" +%s)" >> $GITHUB_ENV
+
       - name: Build binaries
         run: make build
+        env:
+          VAULTRON_GIT_REVISION: ${{ env.VAULTRON_GIT_REVISION }}
 
-      - name: Docker Build and Push
-        uses: docker/build-push-action@v5
+      - name: Download AWS Nitro Enclaves Root Certificate
+        run: |
+          chmod +x ./scripts/download_aws_enclave_root_cert.sh
+          ./scripts/download_aws_enclave_root_cert.sh
+
+      - name: Docker Build
+        uses: docker/build-push-action@v6.16.0
         with:
           context: .
           file: ./container/enclave/Dockerfile
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          push: true
+          push: false
+          no-cache: true
+          provenance: false
+          build-args: |
+            SOURCE_DATE_EPOCH=${{ env.SOURCE_DATE_EPOCH }}
+          outputs: type=docker,rewrite-timestamp=true
+
+      - name: Docker Push
+        run: |
+          echo "${{ steps.meta.outputs.tags }}" | while read -r tag; do
+            if [ -n "$tag" ] && [ "$tag" != '""' ]; then
+              docker push "$tag"
+            fi
+          done
 
       - name: Build EIF
         id: build_eif
@@ -82,6 +113,12 @@ jobs:
             target/x86_64-unknown-linux-gnu/release/vaultron_enclave_agent
             target/x86_64-unknown-linux-gnu/release/vaultron_enclave_agent.sha256
           body: |
+            Docker Build Information:
+            ```json
+            {
+              "SOURCE_DATE_EPOCH": "${{ env.SOURCE_DATE_EPOCH }}"
+            }
+            ```
             EIF Measurements:
             ```json
             ${{ fromJSON(env.EIF_MEASUREMENTS) }}
