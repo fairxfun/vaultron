@@ -1,4 +1,4 @@
-use super::key::EnclaveClusterKeys;
+use crate::cluster::EnclaveClusterKeys;
 use crate::server::EnclaveServerContext;
 use crate::EnclaveError;
 use anyhow::Result;

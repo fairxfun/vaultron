@@ -26,7 +26,6 @@ log = {version = "0.4.26"}
 openssl = { version = "0.10.72", features = ["vendored"] }
 postcard = {version = "1.1.1", features = ["alloc"]}
 prost = {version = "0.11.9"}
-rand = { version = "0.9.0", package = "rand" }
 serde = {version = "1.0.219"}
 serde_json = {version = "1.0.140"}
 serde_cbor = {version = "0.11"}
@@ -39,8 +38,12 @@ name="vaultron_enclave"
 path = "src/main.rs"
 
 [dev-dependencies]
-mockall = { version = "0.11.4" }
-tokio = { version = "1.26.0", features = ["macros", "rt", "test-util"] }
+bs64 = {version = "0.1.2"}
 ethers-signers = {version = "2.0.14"}
 ethers-core = {version = "2.0.14"}
-bs64 = {version = "0.1.2"}
+fastcrypto = { version = "0.1.9" }
+solana-keypair = { version = "2.2.1", default-features = false }
+solana-signer = { version = "2.2.1", default-features = false }
+sui-types = { git = "https://github.com/MystenLabs/sui.git", rev = "615516e" }
+tokio = { version = "1.26.0", features = ["macros", "rt", "test-util"] }
+mockall = { version = "0.11.4" }

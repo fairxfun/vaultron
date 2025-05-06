@@ -25,15 +25,15 @@ pub fn generate_multi_chain_wallet() -> Result<MultiChainWallet, EnclaveCryptoEr
     })
 }
 
-// pub fn recover_multi_chain_wallet(mnemonic: &str, index: Option<u32>) -> Result<MultiChainWallet, EnclaveCryptoError> {
-//     let seed = mnemonic_to_seed(mnemonic, "")?;
-//     let eth_keypair = derive_eth_keypair(&seed, index)?;
-//     let solana_keypair = derive_solana_keypair(&seed, index)?;
-//     let sui_keypair = derive_sui_keypair(&seed, index)?;
-//     Ok(MultiChainWallet {
-//         mnemonic: mnemonic.to_string(),
-//         eth_keypair,
-//         solana_keypair,
-//         sui_keypair,
-//     })
-// }
+pub fn recover_multi_chain_wallet(mnemonic: &str, index: Option<u32>) -> Result<MultiChainWallet, EnclaveCryptoError> {
+    let seed = mnemonic_to_seed(mnemonic, "")?;
+    let eth_keypair = derive_eth_keypair(&seed, index)?;
+    let solana_keypair = derive_solana_keypair(&seed, index)?;
+    let sui_keypair = derive_sui_keypair(&seed, index)?;
+    Ok(MultiChainWallet {
+        mnemonic: mnemonic.to_string(),
+        eth_keypair,
+        solana_keypair,
+        sui_keypair,
+    })
+}
