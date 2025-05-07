@@ -482,7 +482,7 @@ pub mod coordinator_service_client {
             self
         }
         ///
-        pub async fn enclave_request(
+        pub async fn enclave_cluster_request(
             &mut self,
             request: impl tonic::IntoRequest<
                 super::super::super::enclave::v1::EnclaveRequest,
@@ -502,45 +502,14 @@ pub mod coordinator_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/vaultron.agent.v1.CoordinatorService/enclave_request",
+                "/vaultron.agent.v1.CoordinatorService/enclave_cluster_request",
             );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(
                     GrpcMethod::new(
                         "vaultron.agent.v1.CoordinatorService",
-                        "enclave_request",
-                    ),
-                );
-            self.inner.unary(req, path, codec).await
-        }
-        ///
-        pub async fn enclave_agent_request(
-            &mut self,
-            request: impl tonic::IntoRequest<super::EnclaveAgentRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::EnclaveAgentResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::new(
-                        tonic::Code::Unknown,
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
-            let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/vaultron.agent.v1.CoordinatorService/enclave_agent_request",
-            );
-            let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "vaultron.agent.v1.CoordinatorService",
-                        "enclave_agent_request",
+                        "enclave_cluster_request",
                     ),
                 );
             self.inner.unary(req, path, codec).await
@@ -556,19 +525,11 @@ pub mod coordinator_service_server {
     #[async_trait]
     pub trait CoordinatorService: Send + Sync + 'static {
         ///
-        async fn enclave_request(
+        async fn enclave_cluster_request(
             &self,
             request: tonic::Request<super::super::super::enclave::v1::EnclaveRequest>,
         ) -> std::result::Result<
             tonic::Response<super::super::super::enclave::v1::EnclaveResponse>,
-            tonic::Status,
-        >;
-        ///
-        async fn enclave_agent_request(
-            &self,
-            request: tonic::Request<super::EnclaveAgentRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::EnclaveAgentResponse>,
             tonic::Status,
         >;
     }
@@ -652,14 +613,14 @@ pub mod coordinator_service_server {
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             let inner = self.inner.clone();
             match req.uri().path() {
-                "/vaultron.agent.v1.CoordinatorService/enclave_request" => {
+                "/vaultron.agent.v1.CoordinatorService/enclave_cluster_request" => {
                     #[allow(non_camel_case_types)]
-                    struct enclave_requestSvc<T: CoordinatorService>(pub Arc<T>);
+                    struct enclave_cluster_requestSvc<T: CoordinatorService>(pub Arc<T>);
                     impl<
                         T: CoordinatorService,
                     > tonic::server::UnaryService<
                         super::super::super::enclave::v1::EnclaveRequest,
-                    > for enclave_requestSvc<T> {
+                    > for enclave_cluster_requestSvc<T> {
                         type Response = super::super::super::enclave::v1::EnclaveResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
@@ -673,7 +634,7 @@ pub mod coordinator_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).enclave_request(request).await
+                                (*inner).enclave_cluster_request(request).await
                             };
                             Box::pin(fut)
                         }
@@ -685,53 +646,7 @@ pub mod coordinator_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
-                        let method = enclave_requestSvc(inner);
-                        let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            )
-                            .apply_max_message_size_config(
-                                max_decoding_message_size,
-                                max_encoding_message_size,
-                            );
-                        let res = grpc.unary(method, req).await;
-                        Ok(res)
-                    };
-                    Box::pin(fut)
-                }
-                "/vaultron.agent.v1.CoordinatorService/enclave_agent_request" => {
-                    #[allow(non_camel_case_types)]
-                    struct enclave_agent_requestSvc<T: CoordinatorService>(pub Arc<T>);
-                    impl<
-                        T: CoordinatorService,
-                    > tonic::server::UnaryService<super::EnclaveAgentRequest>
-                    for enclave_agent_requestSvc<T> {
-                        type Response = super::EnclaveAgentResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
-                        fn call(
-                            &mut self,
-                            request: tonic::Request<super::EnclaveAgentRequest>,
-                        ) -> Self::Future {
-                            let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                (*inner).enclave_agent_request(request).await
-                            };
-                            Box::pin(fut)
-                        }
-                    }
-                    let accept_compression_encodings = self.accept_compression_encodings;
-                    let send_compression_encodings = self.send_compression_encodings;
-                    let max_decoding_message_size = self.max_decoding_message_size;
-                    let max_encoding_message_size = self.max_encoding_message_size;
-                    let inner = self.inner.clone();
-                    let fut = async move {
-                        let inner = inner.0;
-                        let method = enclave_agent_requestSvc(inner);
+                        let method = enclave_cluster_requestSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
