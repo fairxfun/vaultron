@@ -1,5 +1,5 @@
 use super::inner::ClusterMessageHandlerInner;
-use super::user::{
+use crate::cluster::{
     generate_multi_chain_wallet, MultiChainWallet, UserAccountEthPair, UserAccountMnemonicPair, UserAccountSolanaPair,
     UserAccountSuiPair,
 };

@@ -1,7 +1,9 @@
 mod chain_key;
-mod encrypto;
+mod common;
+mod encrypt;
 mod error;
 
 pub use chain_key::*;
-pub use encrypto::*;
+pub use common::*;
+pub use encrypt::*;
 pub use error::*;

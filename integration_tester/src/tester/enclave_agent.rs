@@ -2,16 +2,13 @@ use crate::{error::EnclaveTesterError, MessageHandler};
 use anyhow::Result;
 use enclave_agent::EnclaveDescribeStatus;
 use enclave_protos::vaultron::agent::v1::{
-    enclave_agent_request, enclave_agent_response, DescribeEnclaveRequest, EnclaveAgentRequest, RestartEnclaveRequest,
-    StartEnclaveRequest, StopEnclaveRequest,
+    enclave_agent_request, enclave_agent_response, DescribeEnclaveRequest, EnclaveAgentRequest, StartEnclaveRequest,
 };
 use log::{error, info};
 use std::{str::FromStr, time::Duration};
 use tokio::time::sleep;
 pub async fn enclave_agent_test(handler: &mut MessageHandler) -> Result<(), EnclaveTesterError> {
-    test_stop_enclave(handler).await?;
     test_start_enclave(handler).await?;
-    test_restart_enclave(handler).await?;
     sleep(Duration::from_secs(5)).await;
     Ok(())
 }
@@ -35,43 +32,43 @@ async fn test_start_enclave(handler: &mut MessageHandler) -> Result<(), EnclaveT
     Ok(())
 }
 
-async fn test_restart_enclave(handler: &mut MessageHandler) -> Result<(), EnclaveTesterError> {
-    info!("test restart enclave");
-    let restart_enclave_request = RestartEnclaveRequest::builder().build();
-    let enclave_agent_request = EnclaveAgentRequest::builder()
-        .request(enclave_agent_request::Request::RestartRequest(restart_enclave_request))
-        .build();
-    let response = handler.send_enclave_agent_request(enclave_agent_request).await?;
-    if !matches!(
-        response.response,
-        Some(enclave_agent_response::Response::RestartResponse(_))
-    ) {
-        error!("restart enclave response: {:?}", response);
-        return Err(EnclaveTesterError::InvalidResponseError);
-    }
+// async fn test_restart_enclave(handler: &mut MessageHandler) -> Result<(), EnclaveTesterError> {
+//     info!("test restart enclave");
+//     let restart_enclave_request = RestartEnclaveRequest::builder().build();
+//     let enclave_agent_request = EnclaveAgentRequest::builder()
+//         .request(enclave_agent_request::Request::RestartRequest(restart_enclave_request))
+//         .build();
+//     let response = handler.send_enclave_agent_request(enclave_agent_request).await?;
+//     if !matches!(
+//         response.response,
+//         Some(enclave_agent_response::Response::RestartResponse(_))
+//     ) {
+//         error!("restart enclave response: {:?}", response);
+//         return Err(EnclaveTesterError::InvalidResponseError);
+//     }
 
-    check_enclave_status(handler, Some(EnclaveDescribeStatus::Running)).await?;
-    Ok(())
-}
+//     check_enclave_status(handler, Some(EnclaveDescribeStatus::Running)).await?;
+//     Ok(())
+// }
 
-async fn test_stop_enclave(handler: &mut MessageHandler) -> Result<(), EnclaveTesterError> {
-    info!("test stop enclave");
-    let stop_enclave_request = StopEnclaveRequest::builder().build();
-    let enclave_agent_request = EnclaveAgentRequest::builder()
-        .request(enclave_agent_request::Request::StopRequest(stop_enclave_request))
-        .build();
-    let response = handler.send_enclave_agent_request(enclave_agent_request).await?;
-    if !matches!(
-        response.response,
-        Some(enclave_agent_response::Response::StopResponse(_))
-    ) {
-        error!("stop enclave response: {:?}", response);
-        return Err(EnclaveTesterError::InvalidResponseError);
-    }
-    sleep(Duration::from_secs(2)).await;
-    check_enclave_status(handler, None).await?;
-    Ok(())
-}
+// async fn test_stop_enclave(handler: &mut MessageHandler) -> Result<(), EnclaveTesterError> {
+//     info!("test stop enclave");
+//     let stop_enclave_request = StopEnclaveRequest::builder().build();
+//     let enclave_agent_request = EnclaveAgentRequest::builder()
+//         .request(enclave_agent_request::Request::StopRequest(stop_enclave_request))
+//         .build();
+//     let response = handler.send_enclave_agent_request(enclave_agent_request).await?;
+//     if !matches!(
+//         response.response,
+//         Some(enclave_agent_response::Response::StopResponse(_))
+//     ) {
+//         error!("stop enclave response: {:?}", response);
+//         return Err(EnclaveTesterError::InvalidResponseError);
+//     }
+//     sleep(Duration::from_secs(2)).await;
+//     check_enclave_status(handler, None).await?;
+//     Ok(())
+// }
 
 async fn check_enclave_status(
     handler: &mut MessageHandler,

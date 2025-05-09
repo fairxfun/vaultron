@@ -29,7 +29,11 @@ impl AesGcmKey {
             .key
             .encrypt(nonce, data)
             .map_err(|_| EnclaveCryptoAesError::AesGcmEncryptionError)?;
-        Ok(ciphertext)
+        let aes_gcm_data = AesGcmData::builder()
+            .nonce(nonce.to_vec())
+            .encrypted_data(ciphertext)
+            .build();
+        Ok(aes_gcm_data.serialize())
     }
 
     pub fn decrypt(&self, data: &[u8]) -> Result<Vec<u8>, EnclaveCryptoError> {
@@ -45,8 +49,8 @@ impl AesGcmKey {
 
 #[derive(Debug, Clone, TypedBuilder)]
 pub struct AesGcmData {
-    nonce: Vec<u8>,
-    encrypted_data: Vec<u8>,
+    pub nonce: Vec<u8>,
+    pub encrypted_data: Vec<u8>,
 }
 
 impl AesGcmData {

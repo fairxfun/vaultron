@@ -1,8 +1,9 @@
 use super::{AttestationRequest, ATTESTATION_NONCE_SIZE};
-use crate::common::{random_bytes_by_rng, EnclaveError};
+use crate::common::EnclaveError;
 use anyhow::Result;
 use aws_nitro_enclaves_nsm_api::api::{Request, Response};
 use aws_nitro_enclaves_nsm_api::driver::{nsm_exit, nsm_init, nsm_process_request};
+use enclave_crypto::random_bytes_by_rng;
 
 #[derive(Debug)]
 pub struct EnclaveNsmHandle {

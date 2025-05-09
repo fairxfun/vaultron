@@ -56,7 +56,8 @@ jobs:
       - name: Calculate SOURCE_DATE_EPOCH
         id: date
         run: |
-          echo "SOURCE_DATE_EPOCH=$(date -d "$(date +%Y-%m-%d)" +%s)" >> $GITHUB_ENV
+          echo "SOURCE_DATE_EPOCH=$(date +%s)" >> $GITHUB_ENV
+          echo "BUILD_DATE=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
 
       - name: Build binaries
         run: make build
@@ -116,7 +117,8 @@ jobs:
             Docker Build Information:
             ```json
             {
-              "SOURCE_DATE_EPOCH": "${{ env.SOURCE_DATE_EPOCH }}"
+              "SOURCE_DATE_EPOCH": "${{ env.SOURCE_DATE_EPOCH }}",
+              "BUILD_DATE": "${{ env.BUILD_DATE }}"
             }
             ```
             EIF Measurements:

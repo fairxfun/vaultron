@@ -1,6 +1,6 @@
-use crate::{random_bytes_by_rng, EnclaveError};
+use crate::EnclaveError;
 use anyhow::Result;
-use enclave_crypto::{AesGcmKey, EciesKeyPair, AES_GCM_NONCE_LENGTH};
+use enclave_crypto::{random_bytes_by_rng, AesGcmKey, EciesKeyPair, AES_GCM_NONCE_LENGTH};
 use typed_builder::TypedBuilder;
 
 #[derive(TypedBuilder)]
@@ -37,18 +37,18 @@ impl EnclaveClusterKeys {
         Ok(encrypted_data)
     }
 
-    // pub fn decrypt(&self, data: &[u8]) -> Result<Vec<u8>, EnclaveError> {
-    //     let decrypted_data = self.ase_key.decrypt(data)?;
-    //     Ok(decrypted_data)
-    // }
+    pub fn decrypt(&self, data: &[u8]) -> Result<Vec<u8>, EnclaveError> {
+        let decrypted_data = self.ase_key.decrypt(data)?;
+        Ok(decrypted_data)
+    }
 
-    // pub fn encrypt_by_public_key(&self, data: &[u8]) -> Result<Vec<u8>, EnclaveError> {
-    //     let encrypted_data = self.ecies_key.encrypt_by_public_key(data)?;
-    //     Ok(encrypted_data)
-    // }
+    pub fn encrypt_by_public_key(&self, data: &[u8]) -> Result<Vec<u8>, EnclaveError> {
+        let encrypted_data = self.ecies_key.encrypt_by_public_key(data)?;
+        Ok(encrypted_data)
+    }
 
-    // pub fn decrypt_by_private_key(&self, data: &[u8]) -> Result<Vec<u8>, EnclaveError> {
-    //     let decrypted_data = self.ecies_key.decrypt_by_private_key(data)?;
-    //     Ok(decrypted_data)
-    // }
+    pub fn decrypt_by_private_key(&self, data: &[u8]) -> Result<Vec<u8>, EnclaveError> {
+        let decrypted_data = self.ecies_key.decrypt_by_private_key(data)?;
+        Ok(decrypted_data)
+    }
 }

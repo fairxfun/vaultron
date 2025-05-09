@@ -2,6 +2,7 @@
 
 dnf update -y
 mkdir -p /fairx/certs
+mkdir -p /fairx/logs
 
 get_metadata() {
     local path="http://169.254.169.254/latest/meta-data/tags/instance/$1"
@@ -82,8 +83,8 @@ Type=simple
 ExecStart=/fairx/vaultron_enclave_agent ${ENCLAVE_DEBUG_MODE} ${ENCLAVE_CLUSTER_INIT_STARTUP}
 Restart=always
 RestartSec=10
-StandardOutput=append:/fairx/vaultron_enclave_agent.log
-StandardError=append:/fairx/vaultron_enclave_agent.log
+StandardOutput=append:/fairx/logs/vaultron_enclave_agent.log
+StandardError=append:/fairx/logs/vaultron_enclave_agent.log
 
 [Install]
 WantedBy=multi-user.target
@@ -103,7 +104,7 @@ get_all_metadata
     echo "Debug Mode: ${ENCLAVE_DEBUG_MODE}"
     echo "Cluster Init Startup: ${ENCLAVE_CLUSTER_INIT_STARTUP}"
     echo "==========================="
-} > /fairx/vaultron_enclave_install.log
+} > /fairx/logs/vaultron_enclave_install.log
 
 get_aws_nitro_enclaves_root_cert
 get_vaultron_enclave
