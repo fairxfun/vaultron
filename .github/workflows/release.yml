@@ -21,7 +21,7 @@ jobs:
           dnf install -y tar make
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Get Git Revision
         id: git_revision
