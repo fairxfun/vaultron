@@ -18,7 +18,7 @@ jobs:
       - name: Install required tools
         run: |
           dnf update -y
-          dnf install -y tar make
+          dnf install -y tar gzip make
 
       - name: Checkout
         uses: actions/checkout@v4
