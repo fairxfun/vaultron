@@ -18,10 +18,10 @@ jobs:
       - name: Install required tools
         run: |
           dnf update -y
-          dnf install -y tar make
+          dnf install -y tar gzip make
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Get Git Revision
         id: git_revision
