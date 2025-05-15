@@ -1,6 +1,6 @@
 [package]
 name = "integration_tester"
-version = "0.1.0"
+version = "0.1.4"
 authors = ["mikerfrr"]
 edition = "2021"
 
