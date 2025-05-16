@@ -2386,7 +2386,7 @@ checksum = "edd0f118536f44f5ccd48bcb8b111bdc3de888b58c74639dfb034a357d0f206d"
 
 [[package]]
 name = "enclave_agent"
-version = "0.1.0"
+version = "0.1.4"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -2412,7 +2412,7 @@ dependencies = [
 
 [[package]]
 name = "enclave_attestation"
-version = "0.1.0"
+version = "0.1.4"
 dependencies = [
  "anyhow",
  "aws-nitro-enclaves-cose",
@@ -2428,7 +2428,7 @@ dependencies = [
 
 [[package]]
 name = "enclave_crypto"
-version = "0.1.0"
+version = "0.1.4"
 dependencies = [
  "aes-gcm",
  "anyhow",
@@ -2455,11 +2455,10 @@ dependencies = [
 
 [[package]]
 name = "enclave_grpc"
-version = "0.1.0"
+version = "0.1.4"
 dependencies = [
  "anyhow",
  "bytes",
- "enclave_grpc",
  "enclave_protos",
  "http 0.2.12",
  "http-body 0.4.6",
@@ -2478,7 +2477,7 @@ dependencies = [
 
 [[package]]
 name = "enclave_protos"
-version = "0.1.0"
+version = "0.1.4"
 dependencies = [
  "anyhow",
  "aws-nitro-enclaves-nsm-api",
@@ -2502,7 +2501,7 @@ dependencies = [
 
 [[package]]
 name = "enclave_protos_macros"
-version = "0.1.0"
+version = "0.1.4"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2511,7 +2510,7 @@ dependencies = [
 
 [[package]]
 name = "enclave_utils"
-version = "0.1.0"
+version = "0.1.4"
 dependencies = [
  "anyhow",
  "ethers-core",
@@ -2521,7 +2520,7 @@ dependencies = [
 
 [[package]]
 name = "enclave_vsock"
-version = "0.1.0"
+version = "0.1.4"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -4004,7 +4003,7 @@ dependencies = [
 
 [[package]]
 name = "integration_tester"
-version = "0.1.0"
+version = "0.1.4"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -6792,7 +6791,7 @@ dependencies = [
 
 [[package]]
 name = "service_discovery"
-version = "0.1.0"
+version = "0.1.4"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -8318,7 +8317,7 @@ dependencies = [
 
 [[package]]
 name = "vaultron_enclave"
-version = "0.1.0"
+version = "0.1.4"
 dependencies = [
  "aes-gcm",
  "anyhow",

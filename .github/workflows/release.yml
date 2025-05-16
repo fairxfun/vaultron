@@ -5,6 +5,11 @@ on:
     tags:
       - "v*"
   workflow_dispatch:
+    inputs:
+      source_date_epoch:
+        description: "SOURCE_DATE_EPOCH value (Unix timestamp)"
+        required: false
+        type: string
 
 jobs:
   release:
@@ -18,16 +23,10 @@ jobs:
       - name: Install required tools
         run: |
           dnf update -y
-          dnf install -y tar gzip make
+          dnf install -y tar gzip make git
 
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Get Git Revision
-        id: git_revision
-        run: |
-          echo "VAULTRON_GIT_REVISION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          echo "Using git revision: $(git rev-parse --short HEAD)"
 
       - name: Toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -56,7 +55,11 @@ jobs:
       - name: Calculate SOURCE_DATE_EPOCH
         id: date
         run: |
-          echo "SOURCE_DATE_EPOCH=$(date +%s)" >> $GITHUB_ENV
+          if [ -n "${{ github.event.inputs.source_date_epoch }}" ]; then
+            echo "SOURCE_DATE_EPOCH=${{ github.event.inputs.source_date_epoch }}" >> $GITHUB_ENV
+          else
+            echo "SOURCE_DATE_EPOCH=$(date +%s)" >> $GITHUB_ENV
+          fi
           echo "BUILD_DATE=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
 
       - name: Build binaries

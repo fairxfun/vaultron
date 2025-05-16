@@ -11,7 +11,7 @@ use enclave_agent::{
 use enclave_vsock::{DEFAULT_ENCLAVE_CID, DEFAULT_ENCLAVE_VSOCK_PORT};
 
 #[derive(Parser, Debug)]
-#[command(author, version = concat!("v", env!("CARGO_PKG_VERSION"), "-", env!("VAULTRON_GIT_REVISION")), about, long_about = None)]
+#[command(author, version = concat!(env!("VAULTRON_VERSION"), "-", env!("VAULTRON_GIT_REVISION")), about, long_about = None)]
 struct EnclaveAgentArgs {
     #[arg(long, default_value_t = DEFAULT_ENCLAVE_CID)]
     enclave_cid: u32,

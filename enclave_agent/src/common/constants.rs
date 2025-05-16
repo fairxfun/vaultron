@@ -1,6 +1,6 @@
 use super::EnclaveAgentError;
 
-pub const ENCLAVE_AGENT_VERSION: &str = concat!("v", env!("CARGO_PKG_VERSION"));
+pub const ENCLAVE_AGENT_VERSION: &str = env!("VAULTRON_VERSION");
 pub const ENCLAVE_AGENT_GIT_REVISION: &str = env!("VAULTRON_GIT_REVISION");
 
 pub const DEFAULT_ENCLAVE_AGENT_GRPC_SERVER_PORT: u32 = 8000;

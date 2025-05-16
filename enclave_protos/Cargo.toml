@@ -1,6 +1,6 @@
 [package]
 name = "enclave_protos"
-version = "0.1.0"
+version = "0.1.4"
 edition = "2021"
 
 [features]
@@ -26,7 +26,7 @@ proto_full = ["vaultron-agent-v1","vaultron-common-v1","vaultron-enclave-attesta
 [dependencies]
 anyhow = {version = "1.0.97"}
 aws-nitro-enclaves-nsm-api = { git = "https://github.com/aws/aws-nitro-enclaves-nsm-api.git", rev = "8ec7eac", features = ["nix"] }
-enclave_protos_macros = { version = "0.1.0", path = "../enclave_protos_macros" }
+enclave_protos_macros = { path = "../enclave_protos_macros" }
 http = { version = "0.2.9" }
 prost = { version = "0.11.9" }
 pbjson = { version = "0.5.1" }
