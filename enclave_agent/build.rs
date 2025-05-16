@@ -13,7 +13,7 @@ fn main() {
                 None
             }
         })
-        .unwrap_or_else(|| env!("CARGO_PKG_VERSION").to_string());
+        .unwrap_or_else(|| format!("v{}", env!("CARGO_PKG_VERSION")));
 
     // Get git hash
     let git_hash = Command::new("git")
