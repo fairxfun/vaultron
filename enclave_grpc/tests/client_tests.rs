@@ -65,6 +65,7 @@ async fn test_grpc_client_with_ssl_key_file() {
         .port(50053u32)
         .is_ssl(true)
         .ssl_cert_path(path.to_string_lossy().to_string())
+        .ssl_server_name("127.0.0.1".to_string())
         .build();
     let mut client = TestServiceClient::new(connect(&client_options).await.unwrap());
     let response = client
