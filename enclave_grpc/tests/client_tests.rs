@@ -8,7 +8,6 @@ use enclave_protos::vaultron::test::v1::test_service_client::TestServiceClient;
 use enclave_protos::vaultron::test::v1::test_service_server::TestServiceServer;
 use enclave_protos::vaultron::test::v1::{TestRequest, TestResponse};
 use rcgen::{generate_simple_self_signed, Certificate, CertificateParams};
-use std::path::PathBuf;
 use tonic::Response;
 
 #[tokio::test]
