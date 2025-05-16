@@ -27,6 +27,9 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -87,6 +90,7 @@ jobs:
           outputs: type=docker,rewrite-timestamp=true
 
       - name: Docker Push
+        if: ${{ !inputs.source_date_epoch }}
         run: |
           echo "${{ steps.meta.outputs.tags }}" | while read -r tag; do
             if [ -n "$tag" ] && [ "$tag" != '""' ]; then
@@ -107,6 +111,7 @@ jobs:
         run: make checksums
 
       - name: Create GitHub Release
+        if: ${{ !inputs.source_date_epoch }}
         uses: softprops/action-gh-release@v2.2.1
         with:
           files: |
