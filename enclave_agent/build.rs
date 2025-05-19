@@ -1,4 +1,4 @@
-use std::process::Command;
+use std::{env, process::Command};
 
 fn main() {
     // Get git tag version
@@ -14,8 +14,15 @@ fn main() {
             }
         });
     match tags {
-        Some(v) => println!("cargo:rustc-env=VAULTRON_VERSION={}", v),
-        None => println!("Failed to get git tag version"),
+        Some(v) => {
+            println!("cargo:rustc-env=VAULTRON_VERSION={}", v);
+        }
+        None => {
+            if env::var("VAULTRON_VERSION").is_err() {
+                let version = format!("v{}", env!("CARGO_PKG_VERSION"));
+                println!("cargo:rustc-env=VAULTRON_VERSION={}", version);
+            }
+        }
     }
 
     // Get git hash
