@@ -18,12 +18,15 @@ jobs:
       contents: write
       packages: write
     container:
-      image: amazonlinux:2023
+      image: public.ecr.aws/amazonlinux/amazonlinux:2023.7.20250414.0
+      env:
+        VAULTRON_GIT_REVISION: ${{ github.sha[0:7] }}
+        VAULTRON_VERSION: ${{ github.ref_type == 'tag' && github.ref_name }}
     steps:
       - name: Install required tools
         run: |
           dnf update -y
-          dnf install -y tar gzip make git
+          dnf install -y tar gzip make git jq
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -63,7 +66,7 @@ jobs:
           else
             echo "SOURCE_DATE_EPOCH=$(date +%s)" >> $GITHUB_ENV
           fi
-          echo "BUILD_DATE=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
+          echo "BUILD_DATETIME=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
 
       - name: Build binaries
         run: make build
@@ -80,7 +83,7 @@ jobs:
         with:
           context: .
           file: ./container/enclave/Dockerfile
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ghcr.io/fairxfun/vaultron-enclave:latest
           labels: ${{ steps.meta.outputs.labels }}
           push: false
           no-cache: true
@@ -88,12 +91,14 @@ jobs:
           build-args: |
             SOURCE_DATE_EPOCH=${{ env.SOURCE_DATE_EPOCH }}
           outputs: type=docker,rewrite-timestamp=true
+          platforms: linux/amd64
 
       - name: Docker Push
-        if: ${{ !inputs.source_date_epoch }}
+        if: ${{ !github.event.inputs.source_date_epoch }}
         run: |
           echo "${{ steps.meta.outputs.tags }}" | while read -r tag; do
             if [ -n "$tag" ] && [ "$tag" != '""' ]; then
+              docker tag ghcr.io/fairxfun/vaultron-enclave:latest "$tag"
               docker push "$tag"
             fi
           done
@@ -111,7 +116,7 @@ jobs:
         run: make checksums
 
       - name: Create GitHub Release
-        if: ${{ !inputs.source_date_epoch }}
+        if: ${{ !github.event.inputs.source_date_epoch }}
         uses: softprops/action-gh-release@v2.2.1
         with:
           files: |
@@ -126,7 +131,7 @@ jobs:
             ```json
             {
               "SOURCE_DATE_EPOCH": "${{ env.SOURCE_DATE_EPOCH }}",
-              "BUILD_DATE": "${{ env.BUILD_DATE }}"
+              "BUILD_DATETIME": "${{ env.BUILD_DATETIME }}"
             }
             ```
             EIF Measurements:
