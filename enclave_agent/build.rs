@@ -2,7 +2,7 @@ use std::process::Command;
 
 fn main() {
     // Get git tag version
-    let version = Command::new("git")
+    let tags = Command::new("git")
         .args(["describe", "--tags", "--abbrev=0"])
         .output()
         .ok()
@@ -12,8 +12,11 @@ fn main() {
             } else {
                 None
             }
-        })
-        .unwrap_or_else(|| format!("v{}", env!("CARGO_PKG_VERSION")));
+        });
+    match tags {
+        Some(v) => println!("cargo:rustc-env=VAULTRON_VERSION={}", v),
+        None => println!("Failed to get git tag version"),
+    }
 
     // Get git hash
     let git_hash = Command::new("git")
@@ -28,11 +31,11 @@ fn main() {
             } else {
                 None
             }
-        })
-        .unwrap_or_else(|| "unknown".to_string());
-
-    println!("cargo:rustc-env=VAULTRON_VERSION={}", version);
-    println!("cargo:rustc-env=VAULTRON_GIT_REVISION={}", git_hash);
+        });
+    match git_hash {
+        Some(hash) => println!("cargo:rustc-env=VAULTRON_GIT_REVISION={}", hash),
+        None => println!("Failed to get git hash"),
+    }
     println!("cargo:rerun-if-changed=.git/HEAD");
     println!("cargo:rerun-if-changed=.git/refs/tags");
 }

@@ -1,16 +1,22 @@
 use std::process::Command;
 
 fn main() {
-    let output = Command::new("git")
+    let git_hash = Command::new("git")
         .args(["rev-parse", "HEAD"])
         .output()
-        .expect("Failed to execute git command");
-    let git_hash = String::from_utf8(output.stdout)
-        .expect("Invalid UTF-8 sequence")
-        .trim()
-        .chars()
-        .take(7)
-        .collect::<String>();
-    println!("cargo:rustc-env=VAULTRON_GIT_REVISION={}", git_hash);
+        .ok()
+        .and_then(|output| {
+            if output.status.success() {
+                String::from_utf8(output.stdout)
+                    .ok()
+                    .map(|s| s.trim().chars().take(7).collect::<String>())
+            } else {
+                None
+            }
+        });
+    match git_hash {
+        Some(hash) => println!("cargo:rustc-env=VAULTRON_GIT_REVISION={}", hash),
+        _ => println!("Failed to get git hash"),
+    }
     println!("cargo:rerun-if-changed=.git/HEAD");
 }
