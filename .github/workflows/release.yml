@@ -6,9 +6,13 @@ on:
       - "v*"
   workflow_dispatch:
     inputs:
+      tag:
+        description: "Tag to build from tag version"
+        required: true
+        type: string
       source_date_epoch:
         description: "SOURCE_DATE_EPOCH value (Unix timestamp)"
-        required: false
+        required: true
         type: string
 
 jobs:
@@ -19,9 +23,6 @@ jobs:
       packages: write
     container:
       image: public.ecr.aws/amazonlinux/amazonlinux:2023.7.20250414.0
-      env:
-        VAULTRON_GIT_REVISION: ${{ github.sha[0:7] }}
-        VAULTRON_VERSION: ${{ github.ref_type == 'tag' && github.ref_name }}
     steps:
       - name: Install required tools
         run: |
@@ -33,6 +34,21 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.ref }}
+
+      - name: Get Git revision
+        id: git_rev
+        run: |
+          VAULTRON_GIT_REVISION=$(echo ${{ github.sha }} | cut -c1-7)
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            VAULTRON_VERSION=${{ github.event.inputs.tag }}
+          else
+            VAULTRON_VERSION=${{ github.ref_type == 'tag' && github.ref_name }}
+          fi
+          echo "VAULTRON_GIT_REVISION=$VAULTRON_GIT_REVISION" >> $GITHUB_ENV
+          echo "VAULTRON_VERSION=$VAULTRON_VERSION" >> $GITHUB_ENV
+          echo "Set VAULTRON_GIT_REVISION: $VAULTRON_GIT_REVISION"
+          echo "Set VAULTRON_VERSION: $VAULTRON_VERSION"
 
       - name: Toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -72,6 +88,7 @@ jobs:
         run: make build
         env:
           VAULTRON_GIT_REVISION: ${{ env.VAULTRON_GIT_REVISION }}
+          VAULTRON_VERSION: ${{ env.VAULTRON_VERSION }}
 
       - name: Download AWS Nitro Enclaves Root Certificate
         run: |
@@ -94,7 +111,7 @@ jobs:
           platforms: linux/amd64
 
       - name: Docker Push
-        if: ${{ !github.event.inputs.source_date_epoch }}
+        if: ${{ github.event_name != 'workflow_dispatch' }}
         run: |
           echo "${{ steps.meta.outputs.tags }}" | while read -r tag; do
             if [ -n "$tag" ] && [ "$tag" != '""' ]; then
@@ -116,7 +133,7 @@ jobs:
         run: make checksums
 
       - name: Create GitHub Release
-        if: ${{ !github.event.inputs.source_date_epoch }}
+        if: ${{ github.event_name != 'workflow_dispatch' }}
         uses: softprops/action-gh-release@v2.2.1
         with:
           files: |
