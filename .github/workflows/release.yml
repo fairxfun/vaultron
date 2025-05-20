@@ -65,25 +65,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate Docker metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/fairxfun/vaultron-enclave
-          tags: |
-            type=semver,pattern={{version}}
-            type=sha
-
-      - name: Calculate SOURCE_DATE_EPOCH
-        id: date
-        run: |
-          if [ -n "${{ github.event.inputs.source_date_epoch }}" ]; then
-            echo "SOURCE_DATE_EPOCH=${{ github.event.inputs.source_date_epoch }}" >> $GITHUB_ENV
-          else
-            echo "SOURCE_DATE_EPOCH=$(date +%s)" >> $GITHUB_ENV
-          fi
-          echo "BUILD_DATETIME=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
-
       - name: Build binaries
         run: make build
         env:
@@ -94,6 +75,16 @@ jobs:
         run: |
           chmod +x ./scripts/download_aws_enclave_root_cert.sh
           ./scripts/download_aws_enclave_root_cert.sh
+
+      - name: Calculate SOURCE_DATE_EPOCH
+        id: date
+        run: |
+          if [ -n "${{ github.event.inputs.source_date_epoch }}" ]; then
+            echo "SOURCE_DATE_EPOCH=${{ github.event.inputs.source_date_epoch }}" >> $GITHUB_ENV
+          else
+            echo "SOURCE_DATE_EPOCH=$(date +%s)" >> $GITHUB_ENV
+          fi
+          echo "BUILD_DATETIME=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
 
       - name: Docker Build
         uses: docker/build-push-action@v6.16.0
@@ -110,6 +101,24 @@ jobs:
           outputs: type=docker,rewrite-timestamp=true
           platforms: linux/amd64
 
+      - name: Build EIF
+        id: build_eif
+        run: |
+          make eif
+          measurements=$(nitro-cli describe-eif --eif-path ./target/x86_64-unknown-linux-gnu/elf/vaultron_enclave.eif | jq -c '.Measurements')
+          echo "EIF_MEASUREMENTS=$(jq -Rs . <<< "$measurements")" >> $GITHUB_ENV
+        env:
+          DOCKER_TAG: ${{ steps.meta.outputs.version }}
+
+      - name: Generate Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/fairxfun/vaultron-enclave
+          tags: |
+            type=semver,pattern={{version}}
+            type=sha
+
       - name: Docker Push
         if: ${{ github.event_name != 'workflow_dispatch' }}
         run: |
@@ -119,15 +128,6 @@ jobs:
               docker push "$tag"
             fi
           done
-
-      - name: Build EIF
-        id: build_eif
-        run: |
-          make eif
-          measurements=$(nitro-cli describe-eif --eif-path ./target/x86_64-unknown-linux-gnu/elf/vaultron_enclave.eif | jq -c '.Measurements')
-          echo "EIF_MEASUREMENTS=$(jq -Rs . <<< "$measurements")" >> $GITHUB_ENV
-        env:
-          DOCKER_TAG: ${{ steps.meta.outputs.version }}
 
       - name: Build checksums
         run: make checksums
