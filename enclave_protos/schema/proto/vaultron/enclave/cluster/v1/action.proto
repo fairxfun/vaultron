@@ -36,12 +36,12 @@ message VaultronActionTransferAttributes {
   VaultronActionToken token       = 1;
   bytes               to          = 2;
   string              amount      = 3;
-  string              max_gas_fee = 4;
+  optional string     max_gas_fee = 4;
 }
 
 message VaultronActionBuyAttributes {
   VaultronActionTokenPair pair                  = 1;
-  string                  defi_contract_address = 2;
+  string                  protocol_address      = 2;
   string                  base_amount           = 3;
   string                  max_trading_price     = 4;
   string                  slippage_tolerance    = 5;
@@ -49,7 +49,7 @@ message VaultronActionBuyAttributes {
 
 message VaultronActionSellAttributes {
   VaultronActionTokenPair pair                  = 1;
-  string                  defi_contract_address = 2;
+  bytes                   protocol_address      = 2;
   string                  trading_amount        = 3;
   string                  min_trading_price     = 4;
   string                  slippage_tolerance    = 5;
@@ -57,18 +57,16 @@ message VaultronActionSellAttributes {
 
 message VaultronActionStakeAttributes {
   VaultronActionToken token                 = 1;
-  string              defi_contract_address = 2;
+  bytes               protocol_address      = 2;
   string              amount                = 3;
-  bytes               protocol_address      = 4;
-  string              max_gas_fee           = 5;
+  string              max_gas_fee           = 4;
 }
 
 message VaultronActionUnstakeAttributes {
   VaultronActionToken token                 = 1;
-  string              defi_contract_address = 2;
+  bytes               protocol_address      = 2;
   string              amount                = 3;
-  bytes               protocol_address      = 4;
-  string              max_gas_fee           = 5;
+  string              max_gas_fee           = 4;
 }
 
 message VaultronActionAttributes {

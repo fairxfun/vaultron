@@ -1020,10 +1020,10 @@ impl serde::Serialize for TaskCreationAttributes {
         if !self.user_id.is_empty() {
             len += 1;
         }
-        if !self.name.is_empty() {
+        if !self.task_name.is_empty() {
             len += 1;
         }
-        if !self.description.is_empty() {
+        if !self.task_description.is_empty() {
             len += 1;
         }
         if !self.trigger_event_id.is_empty() {
@@ -1039,11 +1039,11 @@ impl serde::Serialize for TaskCreationAttributes {
         if !self.user_id.is_empty() {
             struct_ser.serialize_field("userId", &self.user_id)?;
         }
-        if !self.name.is_empty() {
-            struct_ser.serialize_field("name", &self.name)?;
+        if !self.task_name.is_empty() {
+            struct_ser.serialize_field("taskName", &self.task_name)?;
         }
-        if !self.description.is_empty() {
-            struct_ser.serialize_field("description", &self.description)?;
+        if !self.task_description.is_empty() {
+            struct_ser.serialize_field("taskDescription", &self.task_description)?;
         }
         if !self.trigger_event_id.is_empty() {
             struct_ser.serialize_field("triggerEventId", &self.trigger_event_id)?;
@@ -1066,8 +1066,10 @@ impl<'de> serde::Deserialize<'de> for TaskCreationAttributes {
         const FIELDS: &[&str] = &[
             "user_id",
             "userId",
-            "name",
-            "description",
+            "task_name",
+            "taskName",
+            "task_description",
+            "taskDescription",
             "trigger_event_id",
             "triggerEventId",
             "action",
@@ -1078,8 +1080,8 @@ impl<'de> serde::Deserialize<'de> for TaskCreationAttributes {
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             UserId,
-            Name,
-            Description,
+            TaskName,
+            TaskDescription,
             TriggerEventId,
             Action,
             ExpiryTime,
@@ -1105,8 +1107,8 @@ impl<'de> serde::Deserialize<'de> for TaskCreationAttributes {
                     {
                         match value {
                             "userId" | "user_id" => Ok(GeneratedField::UserId),
-                            "name" => Ok(GeneratedField::Name),
-                            "description" => Ok(GeneratedField::Description),
+                            "taskName" | "task_name" => Ok(GeneratedField::TaskName),
+                            "taskDescription" | "task_description" => Ok(GeneratedField::TaskDescription),
                             "triggerEventId" | "trigger_event_id" => Ok(GeneratedField::TriggerEventId),
                             "action" => Ok(GeneratedField::Action),
                             "expiryTime" | "expiry_time" => Ok(GeneratedField::ExpiryTime),
@@ -1130,8 +1132,8 @@ impl<'de> serde::Deserialize<'de> for TaskCreationAttributes {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut user_id__ = None;
-                let mut name__ = None;
-                let mut description__ = None;
+                let mut task_name__ = None;
+                let mut task_description__ = None;
                 let mut trigger_event_id__ = None;
                 let mut action__ = None;
                 let mut expiry_time__ = None;
@@ -1143,17 +1145,17 @@ impl<'de> serde::Deserialize<'de> for TaskCreationAttributes {
                             }
                             user_id__ = Some(map.next_value()?);
                         }
-                        GeneratedField::Name => {
-                            if name__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("name"));
+                        GeneratedField::TaskName => {
+                            if task_name__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("taskName"));
                             }
-                            name__ = Some(map.next_value()?);
+                            task_name__ = Some(map.next_value()?);
                         }
-                        GeneratedField::Description => {
-                            if description__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("description"));
+                        GeneratedField::TaskDescription => {
+                            if task_description__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("taskDescription"));
                             }
-                            description__ = Some(map.next_value()?);
+                            task_description__ = Some(map.next_value()?);
                         }
                         GeneratedField::TriggerEventId => {
                             if trigger_event_id__.is_some() {
@@ -1179,8 +1181,8 @@ impl<'de> serde::Deserialize<'de> for TaskCreationAttributes {
                 }
                 Ok(TaskCreationAttributes {
                     user_id: user_id__.unwrap_or_default(),
-                    name: name__.unwrap_or_default(),
-                    description: description__.unwrap_or_default(),
+                    task_name: task_name__.unwrap_or_default(),
+                    task_description: task_description__.unwrap_or_default(),
                     trigger_event_id: trigger_event_id__.unwrap_or_default(),
                     action: action__,
                     expiry_time: expiry_time__.unwrap_or_default(),
@@ -1349,7 +1351,7 @@ impl serde::Serialize for VaultronActionBuyAttributes {
         if self.pair.is_some() {
             len += 1;
         }
-        if !self.defi_contract_address.is_empty() {
+        if !self.protocol_address.is_empty() {
             len += 1;
         }
         if !self.base_amount.is_empty() {
@@ -1365,8 +1367,8 @@ impl serde::Serialize for VaultronActionBuyAttributes {
         if let Some(v) = self.pair.as_ref() {
             struct_ser.serialize_field("pair", v)?;
         }
-        if !self.defi_contract_address.is_empty() {
-            struct_ser.serialize_field("defiContractAddress", &self.defi_contract_address)?;
+        if !self.protocol_address.is_empty() {
+            struct_ser.serialize_field("protocolAddress", &self.protocol_address)?;
         }
         if !self.base_amount.is_empty() {
             struct_ser.serialize_field("baseAmount", &self.base_amount)?;
@@ -1388,8 +1390,8 @@ impl<'de> serde::Deserialize<'de> for VaultronActionBuyAttributes {
     {
         const FIELDS: &[&str] = &[
             "pair",
-            "defi_contract_address",
-            "defiContractAddress",
+            "protocol_address",
+            "protocolAddress",
             "base_amount",
             "baseAmount",
             "max_trading_price",
@@ -1401,7 +1403,7 @@ impl<'de> serde::Deserialize<'de> for VaultronActionBuyAttributes {
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             Pair,
-            DefiContractAddress,
+            ProtocolAddress,
             BaseAmount,
             MaxTradingPrice,
             SlippageTolerance,
@@ -1427,7 +1429,7 @@ impl<'de> serde::Deserialize<'de> for VaultronActionBuyAttributes {
                     {
                         match value {
                             "pair" => Ok(GeneratedField::Pair),
-                            "defiContractAddress" | "defi_contract_address" => Ok(GeneratedField::DefiContractAddress),
+                            "protocolAddress" | "protocol_address" => Ok(GeneratedField::ProtocolAddress),
                             "baseAmount" | "base_amount" => Ok(GeneratedField::BaseAmount),
                             "maxTradingPrice" | "max_trading_price" => Ok(GeneratedField::MaxTradingPrice),
                             "slippageTolerance" | "slippage_tolerance" => Ok(GeneratedField::SlippageTolerance),
@@ -1451,7 +1453,7 @@ impl<'de> serde::Deserialize<'de> for VaultronActionBuyAttributes {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut pair__ = None;
-                let mut defi_contract_address__ = None;
+                let mut protocol_address__ = None;
                 let mut base_amount__ = None;
                 let mut max_trading_price__ = None;
                 let mut slippage_tolerance__ = None;
@@ -1463,11 +1465,11 @@ impl<'de> serde::Deserialize<'de> for VaultronActionBuyAttributes {
                             }
                             pair__ = map.next_value()?;
                         }
-                        GeneratedField::DefiContractAddress => {
-                            if defi_contract_address__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("defiContractAddress"));
+                        GeneratedField::ProtocolAddress => {
+                            if protocol_address__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("protocolAddress"));
                             }
-                            defi_contract_address__ = Some(map.next_value()?);
+                            protocol_address__ = Some(map.next_value()?);
                         }
                         GeneratedField::BaseAmount => {
                             if base_amount__.is_some() {
@@ -1491,7 +1493,7 @@ impl<'de> serde::Deserialize<'de> for VaultronActionBuyAttributes {
                 }
                 Ok(VaultronActionBuyAttributes {
                     pair: pair__,
-                    defi_contract_address: defi_contract_address__.unwrap_or_default(),
+                    protocol_address: protocol_address__.unwrap_or_default(),
                     base_amount: base_amount__.unwrap_or_default(),
                     max_trading_price: max_trading_price__.unwrap_or_default(),
                     slippage_tolerance: slippage_tolerance__.unwrap_or_default(),
@@ -1512,7 +1514,7 @@ impl serde::Serialize for VaultronActionSellAttributes {
         if self.pair.is_some() {
             len += 1;
         }
-        if !self.defi_contract_address.is_empty() {
+        if !self.protocol_address.is_empty() {
             len += 1;
         }
         if !self.trading_amount.is_empty() {
@@ -1528,8 +1530,8 @@ impl serde::Serialize for VaultronActionSellAttributes {
         if let Some(v) = self.pair.as_ref() {
             struct_ser.serialize_field("pair", v)?;
         }
-        if !self.defi_contract_address.is_empty() {
-            struct_ser.serialize_field("defiContractAddress", &self.defi_contract_address)?;
+        if !self.protocol_address.is_empty() {
+            struct_ser.serialize_field("protocolAddress", pbjson::private::base64::encode(&self.protocol_address).as_str())?;
         }
         if !self.trading_amount.is_empty() {
             struct_ser.serialize_field("tradingAmount", &self.trading_amount)?;
@@ -1551,8 +1553,8 @@ impl<'de> serde::Deserialize<'de> for VaultronActionSellAttributes {
     {
         const FIELDS: &[&str] = &[
             "pair",
-            "defi_contract_address",
-            "defiContractAddress",
+            "protocol_address",
+            "protocolAddress",
             "trading_amount",
             "tradingAmount",
             "min_trading_price",
@@ -1564,7 +1566,7 @@ impl<'de> serde::Deserialize<'de> for VaultronActionSellAttributes {
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             Pair,
-            DefiContractAddress,
+            ProtocolAddress,
             TradingAmount,
             MinTradingPrice,
             SlippageTolerance,
@@ -1590,7 +1592,7 @@ impl<'de> serde::Deserialize<'de> for VaultronActionSellAttributes {
                     {
                         match value {
                             "pair" => Ok(GeneratedField::Pair),
-                            "defiContractAddress" | "defi_contract_address" => Ok(GeneratedField::DefiContractAddress),
+                            "protocolAddress" | "protocol_address" => Ok(GeneratedField::ProtocolAddress),
                             "tradingAmount" | "trading_amount" => Ok(GeneratedField::TradingAmount),
                             "minTradingPrice" | "min_trading_price" => Ok(GeneratedField::MinTradingPrice),
                             "slippageTolerance" | "slippage_tolerance" => Ok(GeneratedField::SlippageTolerance),
@@ -1614,7 +1616,7 @@ impl<'de> serde::Deserialize<'de> for VaultronActionSellAttributes {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut pair__ = None;
-                let mut defi_contract_address__ = None;
+                let mut protocol_address__ = None;
                 let mut trading_amount__ = None;
                 let mut min_trading_price__ = None;
                 let mut slippage_tolerance__ = None;
@@ -1626,11 +1628,13 @@ impl<'de> serde::Deserialize<'de> for VaultronActionSellAttributes {
                             }
                             pair__ = map.next_value()?;
                         }
-                        GeneratedField::DefiContractAddress => {
-                            if defi_contract_address__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("defiContractAddress"));
+                        GeneratedField::ProtocolAddress => {
+                            if protocol_address__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("protocolAddress"));
                             }
-                            defi_contract_address__ = Some(map.next_value()?);
+                            protocol_address__ = 
+                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
+                            ;
                         }
                         GeneratedField::TradingAmount => {
                             if trading_amount__.is_some() {
@@ -1654,7 +1658,7 @@ impl<'de> serde::Deserialize<'de> for VaultronActionSellAttributes {
                 }
                 Ok(VaultronActionSellAttributes {
                     pair: pair__,
-                    defi_contract_address: defi_contract_address__.unwrap_or_default(),
+                    protocol_address: protocol_address__.unwrap_or_default(),
                     trading_amount: trading_amount__.unwrap_or_default(),
                     min_trading_price: min_trading_price__.unwrap_or_default(),
                     slippage_tolerance: slippage_tolerance__.unwrap_or_default(),
@@ -1675,13 +1679,10 @@ impl serde::Serialize for VaultronActionStakeAttributes {
         if self.token.is_some() {
             len += 1;
         }
-        if !self.defi_contract_address.is_empty() {
+        if !self.protocol_address.is_empty() {
             len += 1;
         }
         if !self.amount.is_empty() {
-            len += 1;
-        }
-        if !self.protocol_address.is_empty() {
             len += 1;
         }
         if !self.max_gas_fee.is_empty() {
@@ -1691,14 +1692,11 @@ impl serde::Serialize for VaultronActionStakeAttributes {
         if let Some(v) = self.token.as_ref() {
             struct_ser.serialize_field("token", v)?;
         }
-        if !self.defi_contract_address.is_empty() {
-            struct_ser.serialize_field("defiContractAddress", &self.defi_contract_address)?;
+        if !self.protocol_address.is_empty() {
+            struct_ser.serialize_field("protocolAddress", pbjson::private::base64::encode(&self.protocol_address).as_str())?;
         }
         if !self.amount.is_empty() {
             struct_ser.serialize_field("amount", &self.amount)?;
-        }
-        if !self.protocol_address.is_empty() {
-            struct_ser.serialize_field("protocolAddress", pbjson::private::base64::encode(&self.protocol_address).as_str())?;
         }
         if !self.max_gas_fee.is_empty() {
             struct_ser.serialize_field("maxGasFee", &self.max_gas_fee)?;
@@ -1714,11 +1712,9 @@ impl<'de> serde::Deserialize<'de> for VaultronActionStakeAttributes {
     {
         const FIELDS: &[&str] = &[
             "token",
-            "defi_contract_address",
-            "defiContractAddress",
-            "amount",
             "protocol_address",
             "protocolAddress",
+            "amount",
             "max_gas_fee",
             "maxGasFee",
         ];
@@ -1726,9 +1722,8 @@ impl<'de> serde::Deserialize<'de> for VaultronActionStakeAttributes {
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             Token,
-            DefiContractAddress,
-            Amount,
             ProtocolAddress,
+            Amount,
             MaxGasFee,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
@@ -1752,9 +1747,8 @@ impl<'de> serde::Deserialize<'de> for VaultronActionStakeAttributes {
                     {
                         match value {
                             "token" => Ok(GeneratedField::Token),
-                            "defiContractAddress" | "defi_contract_address" => Ok(GeneratedField::DefiContractAddress),
-                            "amount" => Ok(GeneratedField::Amount),
                             "protocolAddress" | "protocol_address" => Ok(GeneratedField::ProtocolAddress),
+                            "amount" => Ok(GeneratedField::Amount),
                             "maxGasFee" | "max_gas_fee" => Ok(GeneratedField::MaxGasFee),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
@@ -1776,9 +1770,8 @@ impl<'de> serde::Deserialize<'de> for VaultronActionStakeAttributes {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut token__ = None;
-                let mut defi_contract_address__ = None;
-                let mut amount__ = None;
                 let mut protocol_address__ = None;
+                let mut amount__ = None;
                 let mut max_gas_fee__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
@@ -1788,18 +1781,6 @@ impl<'de> serde::Deserialize<'de> for VaultronActionStakeAttributes {
                             }
                             token__ = map.next_value()?;
                         }
-                        GeneratedField::DefiContractAddress => {
-                            if defi_contract_address__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("defiContractAddress"));
-                            }
-                            defi_contract_address__ = Some(map.next_value()?);
-                        }
-                        GeneratedField::Amount => {
-                            if amount__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("amount"));
-                            }
-                            amount__ = Some(map.next_value()?);
-                        }
                         GeneratedField::ProtocolAddress => {
                             if protocol_address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("protocolAddress"));
@@ -1807,6 +1788,12 @@ impl<'de> serde::Deserialize<'de> for VaultronActionStakeAttributes {
                             protocol_address__ = 
                                 Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
                             ;
+                        }
+                        GeneratedField::Amount => {
+                            if amount__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("amount"));
+                            }
+                            amount__ = Some(map.next_value()?);
                         }
                         GeneratedField::MaxGasFee => {
                             if max_gas_fee__.is_some() {
@@ -1818,9 +1805,8 @@ impl<'de> serde::Deserialize<'de> for VaultronActionStakeAttributes {
                 }
                 Ok(VaultronActionStakeAttributes {
                     token: token__,
-                    defi_contract_address: defi_contract_address__.unwrap_or_default(),
-                    amount: amount__.unwrap_or_default(),
                     protocol_address: protocol_address__.unwrap_or_default(),
+                    amount: amount__.unwrap_or_default(),
                     max_gas_fee: max_gas_fee__.unwrap_or_default(),
                 })
             }
@@ -2134,7 +2120,7 @@ impl serde::Serialize for VaultronActionTransferAttributes {
         if !self.amount.is_empty() {
             len += 1;
         }
-        if !self.max_gas_fee.is_empty() {
+        if self.max_gas_fee.is_some() {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("vaultron.enclave.cluster.v1.VaultronActionTransferAttributes", len)?;
@@ -2147,8 +2133,8 @@ impl serde::Serialize for VaultronActionTransferAttributes {
         if !self.amount.is_empty() {
             struct_ser.serialize_field("amount", &self.amount)?;
         }
-        if !self.max_gas_fee.is_empty() {
-            struct_ser.serialize_field("maxGasFee", &self.max_gas_fee)?;
+        if let Some(v) = self.max_gas_fee.as_ref() {
+            struct_ser.serialize_field("maxGasFee", v)?;
         }
         struct_ser.end()
     }
@@ -2247,7 +2233,7 @@ impl<'de> serde::Deserialize<'de> for VaultronActionTransferAttributes {
                             if max_gas_fee__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("maxGasFee"));
                             }
-                            max_gas_fee__ = Some(map.next_value()?);
+                            max_gas_fee__ = map.next_value()?;
                         }
                     }
                 }
@@ -2255,7 +2241,7 @@ impl<'de> serde::Deserialize<'de> for VaultronActionTransferAttributes {
                     token: token__,
                     to: to__.unwrap_or_default(),
                     amount: amount__.unwrap_or_default(),
-                    max_gas_fee: max_gas_fee__.unwrap_or_default(),
+                    max_gas_fee: max_gas_fee__,
                 })
             }
         }
@@ -2273,13 +2259,10 @@ impl serde::Serialize for VaultronActionUnstakeAttributes {
         if self.token.is_some() {
             len += 1;
         }
-        if !self.defi_contract_address.is_empty() {
+        if !self.protocol_address.is_empty() {
             len += 1;
         }
         if !self.amount.is_empty() {
-            len += 1;
-        }
-        if !self.protocol_address.is_empty() {
             len += 1;
         }
         if !self.max_gas_fee.is_empty() {
@@ -2289,14 +2272,11 @@ impl serde::Serialize for VaultronActionUnstakeAttributes {
         if let Some(v) = self.token.as_ref() {
             struct_ser.serialize_field("token", v)?;
         }
-        if !self.defi_contract_address.is_empty() {
-            struct_ser.serialize_field("defiContractAddress", &self.defi_contract_address)?;
+        if !self.protocol_address.is_empty() {
+            struct_ser.serialize_field("protocolAddress", pbjson::private::base64::encode(&self.protocol_address).as_str())?;
         }
         if !self.amount.is_empty() {
             struct_ser.serialize_field("amount", &self.amount)?;
-        }
-        if !self.protocol_address.is_empty() {
-            struct_ser.serialize_field("protocolAddress", pbjson::private::base64::encode(&self.protocol_address).as_str())?;
         }
         if !self.max_gas_fee.is_empty() {
             struct_ser.serialize_field("maxGasFee", &self.max_gas_fee)?;
@@ -2312,11 +2292,9 @@ impl<'de> serde::Deserialize<'de> for VaultronActionUnstakeAttributes {
     {
         const FIELDS: &[&str] = &[
             "token",
-            "defi_contract_address",
-            "defiContractAddress",
-            "amount",
             "protocol_address",
             "protocolAddress",
+            "amount",
             "max_gas_fee",
             "maxGasFee",
         ];
@@ -2324,9 +2302,8 @@ impl<'de> serde::Deserialize<'de> for VaultronActionUnstakeAttributes {
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             Token,
-            DefiContractAddress,
-            Amount,
             ProtocolAddress,
+            Amount,
             MaxGasFee,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
@@ -2350,9 +2327,8 @@ impl<'de> serde::Deserialize<'de> for VaultronActionUnstakeAttributes {
                     {
                         match value {
                             "token" => Ok(GeneratedField::Token),
-                            "defiContractAddress" | "defi_contract_address" => Ok(GeneratedField::DefiContractAddress),
-                            "amount" => Ok(GeneratedField::Amount),
                             "protocolAddress" | "protocol_address" => Ok(GeneratedField::ProtocolAddress),
+                            "amount" => Ok(GeneratedField::Amount),
                             "maxGasFee" | "max_gas_fee" => Ok(GeneratedField::MaxGasFee),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
@@ -2374,9 +2350,8 @@ impl<'de> serde::Deserialize<'de> for VaultronActionUnstakeAttributes {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut token__ = None;
-                let mut defi_contract_address__ = None;
-                let mut amount__ = None;
                 let mut protocol_address__ = None;
+                let mut amount__ = None;
                 let mut max_gas_fee__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
@@ -2386,18 +2361,6 @@ impl<'de> serde::Deserialize<'de> for VaultronActionUnstakeAttributes {
                             }
                             token__ = map.next_value()?;
                         }
-                        GeneratedField::DefiContractAddress => {
-                            if defi_contract_address__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("defiContractAddress"));
-                            }
-                            defi_contract_address__ = Some(map.next_value()?);
-                        }
-                        GeneratedField::Amount => {
-                            if amount__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("amount"));
-                            }
-                            amount__ = Some(map.next_value()?);
-                        }
                         GeneratedField::ProtocolAddress => {
                             if protocol_address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("protocolAddress"));
@@ -2405,6 +2368,12 @@ impl<'de> serde::Deserialize<'de> for VaultronActionUnstakeAttributes {
                             protocol_address__ = 
                                 Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
                             ;
+                        }
+                        GeneratedField::Amount => {
+                            if amount__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("amount"));
+                            }
+                            amount__ = Some(map.next_value()?);
                         }
                         GeneratedField::MaxGasFee => {
                             if max_gas_fee__.is_some() {
@@ -2416,9 +2385,8 @@ impl<'de> serde::Deserialize<'de> for VaultronActionUnstakeAttributes {
                 }
                 Ok(VaultronActionUnstakeAttributes {
                     token: token__,
-                    defi_contract_address: defi_contract_address__.unwrap_or_default(),
-                    amount: amount__.unwrap_or_default(),
                     protocol_address: protocol_address__.unwrap_or_default(),
+                    amount: amount__.unwrap_or_default(),
                     max_gas_fee: max_gas_fee__.unwrap_or_default(),
                 })
             }

@@ -6,8 +6,8 @@ import "vaultron/enclave/cluster/v1/action.proto";
 
 message TaskCreationAttributes {
   string                                               user_id          = 1;
-  string                                               name             = 2; 
-  string                                               description      = 3;
+  string                                               task_name        = 2; 
+  string                                               task_description = 3;
   string                                               trigger_event_id = 4;
   vaultron.enclave.cluster.v1.VaultronActionAttributes action           = 5;
   uint64                                               expiry_time      = 6; 

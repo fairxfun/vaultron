@@ -8,14 +8,6 @@ pub mod vaultron {
             // @@protoc_insertion_point(vaultron.agent.v1)
         }
     }
-    pub mod api {
-        #[cfg(feature = "vaultron-api-v1")]
-        // @@protoc_insertion_point(attribute:vaultron.api.v1)
-        pub mod v1 {
-            include!("vaultron.api.v1.rs");
-            // @@protoc_insertion_point(vaultron.api.v1)
-        }
-    }
     pub mod common {
         #[cfg(feature = "vaultron-common-v1")]
         // @@protoc_insertion_point(attribute:vaultron.common.v1)
