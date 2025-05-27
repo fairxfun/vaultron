@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package vaultron.coordinator.v1;
+
+import "vaultron/enclave/v1/request.proto";
+import "vaultron/enclave/v1/response.proto";
+
+enum CoordinatorStatus {
+  COORDINATOR_STATUS_UNSPECIFIED = 0;
+}
+
+service CoordinatorService {
+  rpc EnclaveCluster(vaultron.enclave.v1.EnclaveClusterRequest)  returns (vaultron.enclave.v1.EnclaveClusterResponse);
+}
