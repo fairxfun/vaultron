@@ -13,8 +13,11 @@ impl serde::Serialize for EnclaveClusterRequest {
         let mut struct_ser = serializer.serialize_struct("vaultron.enclave.v1.EnclaveClusterRequest", len)?;
         if let Some(v) = self.request.as_ref() {
             match v {
-                enclave_cluster_request::Request::CreateUserWalletRequest(v) => {
-                    struct_ser.serialize_field("createUserWalletRequest", v)?;
+                enclave_cluster_request::Request::CreateVaultronRequest(v) => {
+                    struct_ser.serialize_field("createVaultronRequest", v)?;
+                }
+                enclave_cluster_request::Request::SignTaskRequest(v) => {
+                    struct_ser.serialize_field("signTaskRequest", v)?;
                 }
             }
         }
@@ -28,13 +31,16 @@ impl<'de> serde::Deserialize<'de> for EnclaveClusterRequest {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "create_user_wallet_request",
-            "createUserWalletRequest",
+            "create_vaultron_request",
+            "createVaultronRequest",
+            "sign_task_request",
+            "signTaskRequest",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
-            CreateUserWalletRequest,
+            CreateVaultronRequest,
+            SignTaskRequest,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -56,7 +62,8 @@ impl<'de> serde::Deserialize<'de> for EnclaveClusterRequest {
                         E: serde::de::Error,
                     {
                         match value {
-                            "createUserWalletRequest" | "create_user_wallet_request" => Ok(GeneratedField::CreateUserWalletRequest),
+                            "createVaultronRequest" | "create_vaultron_request" => Ok(GeneratedField::CreateVaultronRequest),
+                            "signTaskRequest" | "sign_task_request" => Ok(GeneratedField::SignTaskRequest),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -79,11 +86,18 @@ impl<'de> serde::Deserialize<'de> for EnclaveClusterRequest {
                 let mut request__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
-                        GeneratedField::CreateUserWalletRequest => {
+                        GeneratedField::CreateVaultronRequest => {
                             if request__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("createUserWalletRequest"));
+                                return Err(serde::de::Error::duplicate_field("createVaultronRequest"));
                             }
-                            request__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_cluster_request::Request::CreateUserWalletRequest)
+                            request__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_cluster_request::Request::CreateVaultronRequest)
+;
+                        }
+                        GeneratedField::SignTaskRequest => {
+                            if request__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("signTaskRequest"));
+                            }
+                            request__ = map.next_value::<::std::option::Option<_>>()?.map(enclave_cluster_request::Request::SignTaskRequest)
 ;
                         }
                     }

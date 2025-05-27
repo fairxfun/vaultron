@@ -5,7 +5,8 @@ package vaultron.enclave.v1;
 import "vaultron/enclave/internal/v1/ping.proto";
 import "vaultron/enclave/internal/v1/key.proto";
 import "vaultron/enclave/internal/v1/attribute.proto";
-import "vaultron/enclave/cluster/v1/wallet.proto";
+import "vaultron/enclave/cluster/v1/vaultron.proto";
+import "vaultron/enclave/cluster/v1/task.proto";
 
 message EnclaveRequest {
   oneof request {
@@ -28,7 +29,8 @@ message EnclaveInternalRequest {
 
 message EnclaveClusterRequest {
   oneof request {
-    vaultron.enclave.cluster.v1.CreateUserWalletRequest create_user_wallet_request = 3;
+    vaultron.enclave.cluster.v1.CreateEnclaveVaultronRequest       create_vaultron_request = 1;
+    vaultron.enclave.cluster.v1.SignVaultronTaskTransactionRequest sign_task_request       = 2;
   }
 }
 

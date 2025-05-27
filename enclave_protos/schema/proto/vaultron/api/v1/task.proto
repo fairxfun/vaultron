@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package vaultron.api.v1;
+
+import "vaultron/enclave/cluster/v1/action.proto";
+import "vaultron/enclave/cluster/v1/task.proto";
+import "vaultron/enclave/attestation/v1/document.proto";
+import "vaultron/api/v1/action.proto";
+
+enum TaskStatus {
+  TASK_STATUS_UNSPECIFIED = 0;
+  TASK_STATUS_ACTIVE      = 1;   
+  TASK_STATUS_PAUSED      = 2;      
+  TASK_STATUS_EXPIRED     = 3;
+}
+
+message VaultronTask {
+  string                                             vaultron_id = 1;
+  string                                             task_id     = 2;
+  vaultron.enclave.cluster.v1.TaskCreationAttributes attributes  = 3;
+  TaskStatus                                         status      = 4;
+}
+
+message VaultronTaskExecution {
+  string                               task_id      = 1;
+  string                               execution_id = 2;
+  vaultron.api.v1.VaultronActionResult result       = 3;
+}
+
+message CreateTaskRequest {
+  string                                             vaultron_id                   = 1;
+  vaultron.enclave.cluster.v1.TaskCreationAttributes creation_attributes           = 2;
+  bytes                                              creation_attributes_signature = 3;
+}
+
+message PauseTaskRequest {
+  string task_id = 1;
+}
+
+message DeleteTaskRequest {
+  string task_id = 1;
+}
+
+message ListTaskRequest {
+  string          user_id     = 1;
+  optional string vaultron_id = 2;
+  int32           page_size   = 3;
+  optional string page_token  = 4;
+}
+
+message GetTaskExecutionsRequest {
+  string          task_id    = 1;
+  int32           page_size  = 2;
+  optional string page_token = 3;
+}
+
+message GetTaskExecutionAttestationRequest {
+  string execution_id = 1;
+}
+
+message CreateTaskResponse {
+  string task_id = 1;
+}
+
+message PauseTaskResponse {
+}
+
+message DeleteTaskResponse {
+}
+
+message ListTaskResponse {
+  repeated VaultronTask tasks          = 1;
+  optional string      next_page_token = 2;
+}
+
+message GetTaskExecutionsResponse {
+  repeated VaultronTaskExecution executions      = 1;
+  optional string                next_page_token = 2;
+}
+
+message GetTaskExecutionAttestationResponse {
+  vaultron.enclave.attestation.v1.AttestationDocument             document = 1;
+  vaultron.enclave.cluster.v1.SignVaultronTaskTransactionRequest  request  = 2;
+  vaultron.enclave.cluster.v1.SignVaultronTaskTransactionResponse response = 3;
+}

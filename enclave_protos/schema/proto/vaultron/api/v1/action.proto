@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package vaultron.api.v1;
+
+import "vaultron/enclave/cluster/v1/action.proto";
+
+message VaultronActionTransferResult {
+  vaultron.enclave.cluster.v1.VaultronActionToken token           = 1;
+  bytes               to              = 2;
+  string              transfer_amount = 3;
+  string              tx_hash         = 4;
+  string              gas_fee         = 5;
+  uint64              executed_at     = 6;
+}
+
+message VaultronActionBuyResult {
+  vaultron.enclave.cluster.v1.VaultronActionTokenPair pair           = 1;
+  string                  base_amount    = 2;
+  string                  trading_amount = 3;
+  string                  executed_price = 4;
+  string                  tx_hash        = 5;
+  uint64                  executed_at    = 6;
+}
+
+message VaultronActionSellResult {
+  vaultron.enclave.cluster.v1.VaultronActionTokenPair pair           = 1;
+  string                  trading_amount = 3;
+  string                  base_amount    = 4;
+  string                  executed_price = 5;
+  string                  tx_hash        = 6;
+  uint64                  executed_at    = 7;
+}
+
+message VaultronActionStakeResult {
+  vaultron.enclave.cluster.v1.VaultronActionToken token            = 1;
+  string              staked_amount    = 2;
+  bytes               protocol_address = 3;
+  string              tx_hash          = 4;
+  string              gas_fee          = 5;
+  uint64              executed_at      = 6;
+}
+
+message VaultronActionUnstakeResult {
+  vaultron.enclave.cluster.v1.VaultronActionToken token            = 1;
+  string              unstaked_amount  = 2;
+  bytes               protocol_address = 3;
+  string              tx_hash          = 4;
+  string              gas_fee          = 5;
+  uint64              executed_at      = 6;
+}
+
+message VaultronActionResult {
+  oneof result {
+    VaultronActionTransferResult transfer = 1;
+    VaultronActionBuyResult      buy      = 2;
+    VaultronActionSellResult     sell     = 3;
+    VaultronActionStakeResult    stake    = 4;
+    VaultronActionUnstakeResult  unstake  = 5;
+  }
+}

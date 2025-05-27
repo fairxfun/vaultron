@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package vaultron.enclave.cluster.v1;
+
+message ChainEndpoint {
+  uint32 chain_id = 1;
+}
+
+message DexEndpoint {
+  string name = 1;
+  uint32 url  = 2;
+}
+
+message Endpoint {
+  oneof endpoint {
+    ChainEndpoint chain = 1;
+    DexEndpoint   dex   = 2;
+  }
+}
+
+message VaultronActionToken {
+  Endpoint endpoint      = 1;
+  string   symbol        = 2; 
+  string   token_address = 3;
+}
+
+message VaultronActionTokenPair {
+  Endpoint endpoint              = 1;
+  string   base_token_symbol     = 2; 
+  string   trading_token_symbol  = 3; 
+  string   base_token_address    = 4;
+  string   trading_token_address = 5;
+}
+
+message VaultronActionTransferAttributes {
+  VaultronActionToken token       = 1;
+  bytes               to          = 2;
+  string              amount      = 3;
+  string              max_gas_fee = 4;
+}
+
+message VaultronActionBuyAttributes {
+  VaultronActionTokenPair pair                  = 1;
+  string                  defi_contract_address = 2;
+  string                  base_amount           = 3;
+  string                  max_trading_price     = 4;
+  string                  slippage_tolerance    = 5;
+}
+
+message VaultronActionSellAttributes {
+  VaultronActionTokenPair pair                  = 1;
+  string                  defi_contract_address = 2;
+  string                  trading_amount        = 3;
+  string                  min_trading_price     = 4;
+  string                  slippage_tolerance    = 5;
+}
+
+message VaultronActionStakeAttributes {
+  VaultronActionToken token                 = 1;
+  string              defi_contract_address = 2;
+  string              amount                = 3;
+  bytes               protocol_address      = 4;
+  string              max_gas_fee           = 5;
+}
+
+message VaultronActionUnstakeAttributes {
+  VaultronActionToken token                 = 1;
+  string              defi_contract_address = 2;
+  string              amount                = 3;
+  bytes               protocol_address      = 4;
+  string              max_gas_fee           = 5;
+}
+
+message VaultronActionAttributes {
+  oneof attributes {
+    VaultronActionTransferAttributes transfer = 1;
+    VaultronActionBuyAttributes      buy      = 2;
+    VaultronActionSellAttributes     sell     = 3;
+    VaultronActionStakeAttributes    stake    = 4;
+    VaultronActionUnstakeAttributes  unstake  = 5;
+  }
+}

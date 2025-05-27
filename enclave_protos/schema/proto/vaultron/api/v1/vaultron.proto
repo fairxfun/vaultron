@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package vaultron.api.v1;
+
+import "vaultron/enclave/cluster/v1/vaultron.proto";
+import "vaultron/enclave/attestation/v1/document.proto";
+
+message Vaultron {
+    string vaultron_id                                                = 1;
+    vaultron.enclave.cluster.v1.VaultronCreationAttributes attributes = 2;
+    bytes eth_public_key                                              = 3;
+    bytes solana_public_key                                           = 4;
+    bytes sui_public_key                                              = 5;    
+}
+
+message CreateVaultronRequest {
+    vaultron.enclave.cluster.v1.VaultronCreationAttributes attributes = 1;
+    bytes                                                  signature  = 2;
+}
+
+message DeleteVaultronRequest {
+    string vaultron_id = 1;
+}
+
+message ListVaultronRequest {
+    string          user_id     = 1;
+    int32           page_size   = 2;
+    optional string page_token  = 3;
+}
+
+message GetVaultronAttestationRequest {
+    string vaultron_id = 1;
+}
+
+message CreateVaultronResponse {
+    Vaultron vaultron = 1;
+}
+
+message DeleteVaultronResponse {
+}
+
+message ListVaultronResponse {
+    repeated Vaultron vaultrons        = 1;
+    optional string   next_page_token  = 2;
+}
+
+message GetVaultronAttestationResponse {
+    vaultron.enclave.attestation.v1.AttestationDocument       document = 1;
+    vaultron.enclave.cluster.v1.CreateEnclaveVaultronRequest  request  = 2;
+    vaultron.enclave.cluster.v1.CreateEnclaveVaultronResponse response = 3;
+}

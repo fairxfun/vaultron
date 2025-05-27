@@ -6,7 +6,7 @@ import "vaultron/common/v1/status.proto";
 import "vaultron/enclave/attestation/v1/document.proto";
 import "vaultron/enclave/internal/v1/ping.proto";
 import "vaultron/enclave/internal/v1/key.proto";
-import "vaultron/enclave/cluster/v1/wallet.proto";
+import "vaultron/enclave/cluster/v1/vaultron.proto";
 
 message EnclaveResponsePadding{}
 

@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package vaultron.enclave.cluster.v1;
+
+import "vaultron/enclave/cluster/v1/common.proto";
+
+enum VaultronUserSignatureType {
+  VAULTRON_USER_SIGNATURE_TYPE_UNSPECIFIED    = 0;
+  VAULTRON_USER_SIGNATURE_TYPE_FAIRX          = 1;
+  VAULTRON_USER_SIGNATURE_TYPE_WALLET_BITCOIN = 2;
+  VAULTRON_USER_SIGNATURE_TYPE_WALLET_ETH     = 3;
+  VAULTRON_USER_SIGNATURE_TYPE_WALLET_SOLANA  = 4;
+  VAULTRON_USER_SIGNATURE_TYPE_WALLET_SUI     = 5;
+}
+
+message VaultronCreationAttributes {
+    string user_id                                                    = 1;
+    string vaultron_name                                              = 2;
+    vaultron.enclave.cluster.v1.ClusterAttributes cluster             = 3;
+    VaultronUserSignatureType                     signature_type      = 4;
+    bytes                                         public_key          = 5;
+    bytes                                         recovery_public_Key = 6;
+    bytes                                         message             = 7;
+}
+
+message VaultronEncryptedAttributes {
+    VaultronCreationAttributes attributes           = 1;
+    bytes                      vaultron_wallet_seed = 2;
+}
+
+message CreateEnclaveVaultronRequest {
+    VaultronCreationAttributes attributes = 1;
+    bytes                      signature  = 2;
+}
+
+message CreateEnclaveVaultronResponse {
+    // Encrypted data of VaultronEncryptedAttributes
+    bytes encrypted_attributes  = 1;
+    // Encrypted vaultron wallet seed by user recovery public Key
+    bytes encrypted_seed         = 2;
+    bytes eth_public_key         = 3;
+    bytes solana_public_key      = 4;
+    bytes sui_public_key         = 5;
+}

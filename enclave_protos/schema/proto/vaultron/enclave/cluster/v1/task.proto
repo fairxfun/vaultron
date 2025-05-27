@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package vaultron.enclave.cluster.v1;
+
+import "vaultron/enclave/cluster/v1/action.proto";
+
+message TaskCreationAttributes {
+  string                                               user_id          = 1;
+  string                                               name             = 2; 
+  string                                               description      = 3;
+  string                                               trigger_event_id = 4;
+  vaultron.enclave.cluster.v1.VaultronActionAttributes action           = 5;
+  uint64                                               expiry_time      = 6; 
+}
+
+message SignVaultronTaskTransactionRequest{
+  bytes                    vaultron_encrypted_attributes = 1;
+  TaskCreationAttributes   creation_attributes           = 2;
+  bytes                    creation_attributes_signature = 3;
+  bytes                    action_transaction            = 4; 
+}
+
+message SignVaultronTaskTransactionResponse{
+  bool              success                       = 1;
+  optional string   error_message                 = 2;
+  optional bytes    action_transaction_signature  = 3;
+}
