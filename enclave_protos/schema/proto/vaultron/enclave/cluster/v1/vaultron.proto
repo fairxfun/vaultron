@@ -19,7 +19,7 @@ message VaultronCreationAttributes {
     vaultron.enclave.cluster.v1.ClusterAttributes cluster             = 3;
     VaultronUserSignatureType                     signature_type      = 4;
     bytes                                         public_key          = 5;
-    bytes                                         recovery_public_Key = 6;
+    bytes                                         recovery_public_key = 6;
     bytes                                         message             = 7;
 }
 

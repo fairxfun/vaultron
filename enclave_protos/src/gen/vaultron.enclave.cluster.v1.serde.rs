@@ -2466,7 +2466,7 @@ impl<'de> serde::Deserialize<'de> for VaultronCreationAttributes {
             "signatureType",
             "public_key",
             "publicKey",
-            "recovery_public_Key",
+            "recovery_public_key",
             "recoveryPublicKey",
             "message",
         ];
@@ -2506,7 +2506,7 @@ impl<'de> serde::Deserialize<'de> for VaultronCreationAttributes {
                             "cluster" => Ok(GeneratedField::Cluster),
                             "signatureType" | "signature_type" => Ok(GeneratedField::SignatureType),
                             "publicKey" | "public_key" => Ok(GeneratedField::PublicKey),
-                            "recoveryPublicKey" | "recovery_public_Key" => Ok(GeneratedField::RecoveryPublicKey),
+                            "recoveryPublicKey" | "recovery_public_key" => Ok(GeneratedField::RecoveryPublicKey),
                             "message" => Ok(GeneratedField::Message),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }

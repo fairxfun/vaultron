@@ -16,6 +16,14 @@ pub mod vaultron {
             // @@protoc_insertion_point(vaultron.common.v1)
         }
     }
+    pub mod coordinator {
+        #[cfg(feature = "vaultron-coordinator-v1")]
+        // @@protoc_insertion_point(attribute:vaultron.coordinator.v1)
+        pub mod v1 {
+            include!("vaultron.coordinator.v1.rs");
+            // @@protoc_insertion_point(vaultron.coordinator.v1)
+        }
+    }
     pub mod enclave {
         pub mod attestation {
             #[cfg(feature = "vaultron-enclave-attestation-v1")]

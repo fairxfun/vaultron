@@ -6,9 +6,9 @@ impl serde::Serialize for CoordinatorError {
         S: serde::Serializer,
     {
         let variant = match self {
-            Self::Unspecified => "Coordinator_ERROR_UNSPECIFIED",
-            Self::UnknownError => "Coordinator_ERROR_UNKNOWN_ERROR",
-            Self::InvalidRequestError => "Coordinator_ERROR_INVALID_REQUEST_ERROR",
+            Self::Unspecified => "COORDINATOR_ERROR_UNSPECIFIED",
+            Self::UnknownError => "COORDINATOR_ERROR_UNKNOWN_ERROR",
+            Self::InvalidRequestError => "COORDINATOR_ERROR_INVALID_REQUEST_ERROR",
             Self::NoWorkerAvailableError => "COORDINATOR_ERROR_NO_WORKER_AVAILABLE_ERROR",
             Self::NotReadyError => "COORDINATOR_ERROR_NOT_READY_ERROR",
         };
@@ -22,9 +22,9 @@ impl<'de> serde::Deserialize<'de> for CoordinatorError {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "Coordinator_ERROR_UNSPECIFIED",
-            "Coordinator_ERROR_UNKNOWN_ERROR",
-            "Coordinator_ERROR_INVALID_REQUEST_ERROR",
+            "COORDINATOR_ERROR_UNSPECIFIED",
+            "COORDINATOR_ERROR_UNKNOWN_ERROR",
+            "COORDINATOR_ERROR_INVALID_REQUEST_ERROR",
             "COORDINATOR_ERROR_NO_WORKER_AVAILABLE_ERROR",
             "COORDINATOR_ERROR_NOT_READY_ERROR",
         ];
@@ -69,9 +69,9 @@ impl<'de> serde::Deserialize<'de> for CoordinatorError {
                 E: serde::de::Error,
             {
                 match value {
-                    "Coordinator_ERROR_UNSPECIFIED" => Ok(CoordinatorError::Unspecified),
-                    "Coordinator_ERROR_UNKNOWN_ERROR" => Ok(CoordinatorError::UnknownError),
-                    "Coordinator_ERROR_INVALID_REQUEST_ERROR" => Ok(CoordinatorError::InvalidRequestError),
+                    "COORDINATOR_ERROR_UNSPECIFIED" => Ok(CoordinatorError::Unspecified),
+                    "COORDINATOR_ERROR_UNKNOWN_ERROR" => Ok(CoordinatorError::UnknownError),
+                    "COORDINATOR_ERROR_INVALID_REQUEST_ERROR" => Ok(CoordinatorError::InvalidRequestError),
                     "COORDINATOR_ERROR_NO_WORKER_AVAILABLE_ERROR" => Ok(CoordinatorError::NoWorkerAvailableError),
                     "COORDINATOR_ERROR_NOT_READY_ERROR" => Ok(CoordinatorError::NotReadyError),
                     _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),

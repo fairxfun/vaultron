@@ -8,11 +8,7 @@ import "vaultron/agent/v1/request.proto";
 import "vaultron/agent/v1/response.proto";
 
 service EnclaveAgentService {
-  rpc enclave_request(vaultron.enclave.v1.EnclaveRequest)          returns (vaultron.enclave.v1.EnclaveResponse);
-  rpc enclave_agent_request(vaultron.agent.v1.EnclaveAgentRequest) returns (vaultron.agent.v1.EnclaveAgentResponse);
-}
-
-service CoordinatorService {
-  rpc enclave_cluster_request(vaultron.enclave.v1.EnclaveRequest)  returns (vaultron.enclave.v1.EnclaveResponse);
+  rpc Enclave(vaultron.enclave.v1.EnclaveRequest)         returns (vaultron.enclave.v1.EnclaveResponse);
+  rpc EnclaveAgent(vaultron.agent.v1.EnclaveAgentRequest) returns (vaultron.agent.v1.EnclaveAgentResponse);
 }
 
