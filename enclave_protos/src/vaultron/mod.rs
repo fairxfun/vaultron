@@ -2,6 +2,8 @@
 pub mod agent;
 #[cfg(feature = "vaultron-common-v1")]
 pub mod common;
+#[cfg(feature = "vaultron-coordinator-v1")]
+pub mod coordinator;
 #[cfg(feature = "vaultron-enclave-v1")]
 pub mod enclave;
 #[cfg(feature = "vaultron-service-v1")]

@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package vaultron.agent.v1;
 
-import "vaultron/common/v1/status.proto";
-
 message StartEnclaveRequest {}
 
 message StopEnclaveRequest {}

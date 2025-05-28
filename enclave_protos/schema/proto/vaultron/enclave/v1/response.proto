@@ -3,14 +3,15 @@ syntax = "proto3";
 package vaultron.enclave.v1;
 
 import "vaultron/common/v1/status.proto";
-import "vaultron/enclave/attestation/v1/document.proto";
-import "vaultron/enclave/internal/v1/ping.proto";
-import "vaultron/enclave/internal/v1/key.proto";
-import "vaultron/enclave/cluster/v1/wallet.proto";
 
 message EnclaveResponsePadding{}
 
 message EnclaveResponse {
+  vaultron.common.v1.StatusCode code                 = 1;
+  bytes                         attestation_document = 2;
+}
+
+message EnclaveClusterResponse {
   vaultron.common.v1.StatusCode code                 = 1;
   bytes                         attestation_document = 2;
 }

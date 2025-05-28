@@ -3,7 +3,6 @@ syntax = "proto3";
 package vaultron.enclave.internal.v1;
 
 import "vaultron/enclave/common/v1/types.proto";
-import "vaultron/enclave/attestation/v1/document.proto";
 
 message InitClusterKeyRequest {}
 

@@ -53,9 +53,9 @@ enum EnclaveAgentError {
 }
 
 enum CoordinatorError {
-  Coordinator_ERROR_UNSPECIFIED               = 0;
-  Coordinator_ERROR_UNKNOWN_ERROR             = 1;
-  Coordinator_ERROR_INVALID_REQUEST_ERROR     = 2;
+  COORDINATOR_ERROR_UNSPECIFIED               = 0;
+  COORDINATOR_ERROR_UNKNOWN_ERROR             = 1;
+  COORDINATOR_ERROR_INVALID_REQUEST_ERROR     = 2;
   COORDINATOR_ERROR_NO_WORKER_AVAILABLE_ERROR = 3;
   COORDINATOR_ERROR_NOT_READY_ERROR           = 4;
 }

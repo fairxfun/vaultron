@@ -2,7 +2,6 @@ use super::derive_key_from_path;
 use super::get_eth_derivation_path;
 use super::BlockChainPublicKeyPair;
 use crate::BlockChainKeyPair;
-use crate::EnclaveCryptoChainKeyError;
 use crate::EnclaveCryptoError;
 use ethers_core::k256::ecdsa::SigningKey;
 use ethers_signers::Signer as EthersSigner;
@@ -33,7 +32,7 @@ fn derive_eth_sining_key(seed: &[u8], index: Option<u32>) -> Result<(Vec<u8>, Si
     let private_key = derive_key_from_path(seed, &path)?;
     let signing_key = match SigningKey::from_slice(&private_key) {
         Ok(key) => key,
-        Err(_) => return Err(EnclaveCryptoChainKeyError::SigningKeyError.into()),
+        Err(_) => return Err(EnclaveCryptoError::SigningKeyError),
     };
     Ok((private_key, signing_key))
 }
