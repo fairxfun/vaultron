@@ -5,18 +5,6 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum EnclaveCryptoError {
-    #[error(transparent)]
-    EnclaveCryptoAesError(#[from] EnclaveCryptoAesError),
-
-    #[error(transparent)]
-    EnclaveCryptoChainKeyError(#[from] EnclaveCryptoChainKeyError),
-
-    #[error(transparent)]
-    EnclaveCryptoEciesError(#[from] EnclaveCryptoEciesError),
-}
-
-#[derive(Error, Debug)]
-pub enum EnclaveCryptoChainKeyError {
     #[error("Mnemonic generation error")]
     MnemonicGenerationError,
 
@@ -42,13 +30,19 @@ pub enum EnclaveCryptoChainKeyError {
     Bip39Error(#[from] Bip39Error),
 
     #[error(transparent)]
-    SuiError(#[from] sui_types::error::SuiError),
+    SuiError(#[from] Box<sui_types::error::SuiError>),
 
     #[error(transparent)]
     Bip32Error(#[from] bip32::Error),
 
     #[error(transparent)]
     AnyhowError(#[from] AnyhowError),
+
+    #[error(transparent)]
+    EnclaveCryptoAesError(#[from] EnclaveCryptoAesError),
+
+    #[error(transparent)]
+    EnclaveCryptoEciesError(#[from] EnclaveCryptoEciesError),
 }
 
 #[derive(Error, Debug)]

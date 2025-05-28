@@ -126,7 +126,6 @@ pub struct DescribeEnclaveResponse {
 #[derive(typed_builder::TypedBuilder)]
 #[builder(field_defaults(default, setter(into)))]
 #[derive(enclave_protos_macros::ProtoBuilder)]
-#[allow(clippy::large_enum_variant)]
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct EnclaveAgentResponse {
@@ -139,7 +138,8 @@ pub struct EnclaveAgentResponse {
 pub mod enclave_agent_response {
     #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Oneof)]
-    pub enum Response {
+    #[allow(clippy::large_enum_variant)]
+pub enum Response {
         #[prost(message, tag="2")]
         StartResponse(super::StartEnclaveResponse),
         #[prost(message, tag="3")]

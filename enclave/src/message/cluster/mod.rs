@@ -1,5 +1,5 @@
 mod handler;
 mod inner;
-mod wallet;
+mod vaultron;
 
 pub use handler::*;

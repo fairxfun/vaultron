@@ -24,8 +24,10 @@ message VaultronCreationAttributes {
 }
 
 message VaultronEncryptedAttributes {
-    VaultronCreationAttributes attributes           = 1;
-    bytes                      vaultron_wallet_seed = 2;
+    bytes                     user_id          = 1;
+    VaultronUserSignatureType signature_type   = 2;
+    bytes                     user_public_key  = 3;
+    bytes                     user_wallet_seed = 4;
 }
 
 message CreateEnclaveVaultronRequest {

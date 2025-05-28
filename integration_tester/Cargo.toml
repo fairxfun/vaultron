@@ -9,10 +9,12 @@ anyhow = {version = "1.0.97"}
 async-trait = {version = "0.1.64"}
 enclave_agent = {path = "../enclave_agent"}
 enclave_attestation = {path = "../enclave_attestation"}
+enclave_crypto =  {path = "../enclave_crypto"}
 enclave_protos = {path = "../enclave_protos", features = ["proto_full", "grpc-client"]}
 enclave_grpc =  {path = "../enclave_grpc"}
 enclave_utils = {path = "../enclave_utils"}
 service_discovery = {path = "../service_discovery"}
+vaultron_enclave =  {path = "../enclave"}
 env_logger = {version = "0.11.7"}
 ethers-signers = {version = "2.0.14"}
 ethers-core = {version = "2.0.14"}

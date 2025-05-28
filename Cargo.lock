@@ -4009,6 +4009,7 @@ dependencies = [
  "async-trait",
  "enclave_agent",
  "enclave_attestation",
+ "enclave_crypto",
  "enclave_grpc",
  "enclave_protos",
  "enclave_utils",
@@ -4025,6 +4026,7 @@ dependencies = [
  "tokio",
  "tonic 0.9.2",
  "typed-builder",
+ "vaultron_enclave",
 ]
 
 [[package]]

@@ -12,7 +12,8 @@ pub struct EnclaveRequest {
 pub mod enclave_request {
     #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Oneof)]
-    pub enum Request {
+    #[allow(clippy::large_enum_variant)]
+pub enum Request {
         #[prost(message, tag="1")]
         InternalRequest(super::EnclaveInternalRequest),
         #[prost(message, tag="2")]
@@ -32,7 +33,8 @@ pub struct EnclaveInternalRequest {
 pub mod enclave_internal_request {
     #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Oneof)]
-    pub enum Request {
+    #[allow(clippy::large_enum_variant)]
+pub enum Request {
         #[prost(message, tag="1")]
         PingRequest(super::super::internal::v1::PingRequest),
         #[prost(message, tag="2")]
@@ -60,7 +62,8 @@ pub struct EnclaveClusterRequest {
 pub mod enclave_cluster_request {
     #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Oneof)]
-    pub enum Request {
+    #[allow(clippy::large_enum_variant)]
+pub enum Request {
         #[prost(message, tag="1")]
         CreateVaultronRequest(super::super::cluster::v1::CreateEnclaveVaultronRequest),
         #[prost(message, tag="2")]

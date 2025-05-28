@@ -112,12 +112,12 @@ impl EnclaveAgent {
 
 #[async_trait::async_trait]
 impl EnclaveAgentService for EnclaveAgent {
-    async fn enclave_request(&self, request: Request<EnclaveRequest>) -> Result<Response<EnclaveResponse>, Status> {
+    async fn enclave(&self, request: Request<EnclaveRequest>) -> Result<Response<EnclaveResponse>, Status> {
         let response = self.enclave_message_handler.handle_request(request.get_ref()).await;
         Ok(Response::new(response))
     }
 
-    async fn enclave_agent_request(
+    async fn enclave_agent(
         &self,
         request: Request<EnclaveAgentRequest>,
     ) -> Result<Response<EnclaveAgentResponse>, Status> {

@@ -17,33 +17,10 @@ macro_rules! impl_serialization {
 
 #[derive(Debug, TypedBuilder, Serialize, Deserialize)]
 pub struct UserAccountMnemonicPair {
-    pub user_id: Vec<u8>,
+    pub user_id: String,
+    pub signature_type: i32,
     pub user_public_key: Vec<u8>,
     pub mnemonic: String,
 }
 
-#[derive(Debug, TypedBuilder, Serialize, Deserialize)]
-pub struct UserAccountEthPair {
-    pub user_id: Vec<u8>,
-    pub user_public_key: Vec<u8>,
-    pub eth_private_key: Vec<u8>,
-}
-
-#[derive(Debug, TypedBuilder, Serialize, Deserialize)]
-pub struct UserAccountSolanaPair {
-    pub user_id: Vec<u8>,
-    pub user_public_key: Vec<u8>,
-    pub solana_private_key: Vec<u8>,
-}
-
-#[derive(Debug, TypedBuilder, Serialize, Deserialize)]
-pub struct UserAccountSuiPair {
-    pub user_id: Vec<u8>,
-    pub user_public_key: Vec<u8>,
-    pub sui_private_key: Vec<u8>,
-}
-
 impl_serialization!(UserAccountMnemonicPair);
-impl_serialization!(UserAccountEthPair);
-impl_serialization!(UserAccountSolanaPair);
-impl_serialization!(UserAccountSuiPair);

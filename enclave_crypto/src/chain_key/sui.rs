@@ -1,6 +1,5 @@
 use super::get_sui_derivation_path;
 use crate::BlockChainKeyPair;
-use crate::EnclaveCryptoChainKeyError;
 use crate::EnclaveCryptoError;
 use anyhow::Result;
 use bip32::DerivationPath;
@@ -13,14 +12,13 @@ use sui_types::crypto::ToFromBytes;
 
 pub fn derive_sui_keypair(seed: &[u8], index: Option<u32>) -> Result<BlockChainKeyPair, EnclaveCryptoError> {
     let path = get_sui_derivation_path(index);
-    let derivation_path =
-        DerivationPath::from_str(&path).map_err(|_| EnclaveCryptoChainKeyError::DeriveKeyPathError)?;
+    let derivation_path = DerivationPath::from_str(&path).map_err(|_| EnclaveCryptoError::DeriveKeyPathError)?;
     let (sui_address, keypair) = derive_key_pair_from_path(seed, Some(derivation_path), &SignatureScheme::ED25519)
-        .map_err(|_| EnclaveCryptoChainKeyError::DeriveKeyFromPathError)?;
+        .map_err(|_| EnclaveCryptoError::DeriveKeyFromPathError)?;
     let private_key = match keypair {
         SuiKeyPair::Ed25519(ed25519_keypair) => ed25519_keypair.private(),
         _ => {
-            return Err(EnclaveCryptoChainKeyError::WrongKeyPairError.into());
+            return Err(EnclaveCryptoError::WrongKeyPairError);
         }
     };
     Ok(BlockChainKeyPair {

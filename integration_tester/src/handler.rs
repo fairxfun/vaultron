@@ -37,7 +37,7 @@ impl MessageHandler {
         &mut self,
         request: EnclaveAgentRequest,
     ) -> Result<EnclaveAgentResponse, EnclaveTesterError> {
-        let response = self.client.enclave_agent_request(tonic::Request::new(request)).await?;
+        let response = self.client.enclave_agent(tonic::Request::new(request)).await?;
         Ok(response.into_inner())
     }
 
@@ -49,7 +49,7 @@ impl MessageHandler {
         R: DeserializeOwned + Message + Default,
         P: DeserializeOwned + Message + Default,
     {
-        let response = self.client.enclave_request(tonic::Request::new(request)).await?;
+        let response = self.client.enclave(tonic::Request::new(request)).await?;
         self.parse_enclave_response::<R, P>(response.get_ref())
     }
 

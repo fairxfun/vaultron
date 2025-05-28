@@ -39,12 +39,15 @@ impl ClusterMessageHandlerInner {
         }
 
         match &r.request {
-            Some(enclave_cluster_request::Request::CreateUserWalletRequest(request)) => {
-                let result = self.handle_create_user_wallet_request(request).await;
+            Some(enclave_cluster_request::Request::CreateVaultronRequest(request)) => {
+                let result = self.handle_create_user_vaultron_request(request).await;
                 match result {
                     Ok(response) => self.build_response(request, &response),
                     Err(err) => EnclaveResponse::enclave_error(err),
                 }
+            }
+            Some(enclave_cluster_request::Request::SignTaskRequest(_request)) => {
+                todo!()
             }
             _ => EnclaveResponse::enclave_error(EnclaveError::InvalidRequestError),
         }

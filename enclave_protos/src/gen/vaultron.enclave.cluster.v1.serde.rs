@@ -2608,18 +2608,32 @@ impl serde::Serialize for VaultronEncryptedAttributes {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
-        if self.attributes.is_some() {
+        if !self.user_id.is_empty() {
             len += 1;
         }
-        if !self.vaultron_wallet_seed.is_empty() {
+        if self.signature_type != 0 {
+            len += 1;
+        }
+        if !self.user_public_key.is_empty() {
+            len += 1;
+        }
+        if !self.user_wallet_seed.is_empty() {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("vaultron.enclave.cluster.v1.VaultronEncryptedAttributes", len)?;
-        if let Some(v) = self.attributes.as_ref() {
-            struct_ser.serialize_field("attributes", v)?;
+        if !self.user_id.is_empty() {
+            struct_ser.serialize_field("userId", pbjson::private::base64::encode(&self.user_id).as_str())?;
         }
-        if !self.vaultron_wallet_seed.is_empty() {
-            struct_ser.serialize_field("vaultronWalletSeed", pbjson::private::base64::encode(&self.vaultron_wallet_seed).as_str())?;
+        if self.signature_type != 0 {
+            let v = VaultronUserSignatureType::from_i32(self.signature_type)
+                .ok_or_else(|| serde::ser::Error::custom(format!("Invalid variant {}", self.signature_type)))?;
+            struct_ser.serialize_field("signatureType", &v)?;
+        }
+        if !self.user_public_key.is_empty() {
+            struct_ser.serialize_field("userPublicKey", pbjson::private::base64::encode(&self.user_public_key).as_str())?;
+        }
+        if !self.user_wallet_seed.is_empty() {
+            struct_ser.serialize_field("userWalletSeed", pbjson::private::base64::encode(&self.user_wallet_seed).as_str())?;
         }
         struct_ser.end()
     }
@@ -2631,15 +2645,22 @@ impl<'de> serde::Deserialize<'de> for VaultronEncryptedAttributes {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "attributes",
-            "vaultron_wallet_seed",
-            "vaultronWalletSeed",
+            "user_id",
+            "userId",
+            "signature_type",
+            "signatureType",
+            "user_public_key",
+            "userPublicKey",
+            "user_wallet_seed",
+            "userWalletSeed",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
-            Attributes,
-            VaultronWalletSeed,
+            UserId,
+            SignatureType,
+            UserPublicKey,
+            UserWalletSeed,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -2661,8 +2682,10 @@ impl<'de> serde::Deserialize<'de> for VaultronEncryptedAttributes {
                         E: serde::de::Error,
                     {
                         match value {
-                            "attributes" => Ok(GeneratedField::Attributes),
-                            "vaultronWalletSeed" | "vaultron_wallet_seed" => Ok(GeneratedField::VaultronWalletSeed),
+                            "userId" | "user_id" => Ok(GeneratedField::UserId),
+                            "signatureType" | "signature_type" => Ok(GeneratedField::SignatureType),
+                            "userPublicKey" | "user_public_key" => Ok(GeneratedField::UserPublicKey),
+                            "userWalletSeed" | "user_wallet_seed" => Ok(GeneratedField::UserWalletSeed),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -2682,29 +2705,49 @@ impl<'de> serde::Deserialize<'de> for VaultronEncryptedAttributes {
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                let mut attributes__ = None;
-                let mut vaultron_wallet_seed__ = None;
+                let mut user_id__ = None;
+                let mut signature_type__ = None;
+                let mut user_public_key__ = None;
+                let mut user_wallet_seed__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
-                        GeneratedField::Attributes => {
-                            if attributes__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("attributes"));
+                        GeneratedField::UserId => {
+                            if user_id__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("userId"));
                             }
-                            attributes__ = map.next_value()?;
+                            user_id__ = 
+                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
+                            ;
                         }
-                        GeneratedField::VaultronWalletSeed => {
-                            if vaultron_wallet_seed__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("vaultronWalletSeed"));
+                        GeneratedField::SignatureType => {
+                            if signature_type__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("signatureType"));
                             }
-                            vaultron_wallet_seed__ = 
+                            signature_type__ = Some(map.next_value::<VaultronUserSignatureType>()? as i32);
+                        }
+                        GeneratedField::UserPublicKey => {
+                            if user_public_key__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("userPublicKey"));
+                            }
+                            user_public_key__ = 
+                                Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::UserWalletSeed => {
+                            if user_wallet_seed__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("userWalletSeed"));
+                            }
+                            user_wallet_seed__ = 
                                 Some(map.next_value::<::pbjson::private::BytesDeserialize<_>>()?.0)
                             ;
                         }
                     }
                 }
                 Ok(VaultronEncryptedAttributes {
-                    attributes: attributes__,
-                    vaultron_wallet_seed: vaultron_wallet_seed__.unwrap_or_default(),
+                    user_id: user_id__.unwrap_or_default(),
+                    signature_type: signature_type__.unwrap_or_default(),
+                    user_public_key: user_public_key__.unwrap_or_default(),
+                    user_wallet_seed: user_wallet_seed__.unwrap_or_default(),
                 })
             }
         }
