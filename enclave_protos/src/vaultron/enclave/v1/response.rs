@@ -27,13 +27,6 @@ impl EnclaveResponse {
         Self::builder().code(StatusCode::enclave_agent_error(err)).build()
     }
 
-    pub fn coordinator_error<E>(err: E) -> Self
-    where
-        E: Into<CoordinatorError>,
-    {
-        Self::builder().code(StatusCode::coordinator_error(err)).build()
-    }
-
     pub fn is_success(&self) -> Result<(), EnclaveError> {
         match &self.code {
             Some(code) => {
@@ -63,7 +56,16 @@ impl From<EnclaveAgentError> for EnclaveResponse {
     }
 }
 
-impl From<CoordinatorError> for EnclaveResponse {
+impl EnclaveClusterResponse {
+    pub fn coordinator_error<E>(err: E) -> Self
+    where
+        E: Into<CoordinatorError>,
+    {
+        Self::builder().code(StatusCode::coordinator_error(err)).build()
+    }
+}
+
+impl From<CoordinatorError> for EnclaveClusterResponse {
     fn from(err: CoordinatorError) -> Self {
         Self::coordinator_error(err)
     }
